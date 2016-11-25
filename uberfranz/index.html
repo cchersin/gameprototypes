@@ -12,7 +12,8 @@ var Container = PIXI.Container,
     autoDetectRenderer = PIXI.autoDetectRenderer,
     loader = PIXI.loader,
     resources = PIXI.loader.resources,
-    Sprite = PIXI.Sprite;
+    Sprite = PIXI.Sprite,
+    Rectangle = PIXI.Rectangle;
 
 //Create the renderer
 var renderer = autoDetectRenderer(256, 256, {antialias: false, transparent: false, resolution: 1});
@@ -29,7 +30,7 @@ document.body.appendChild(renderer.view);
 
 //Create a container object called the `stage`
 var stage = new Container();
-var uberfranzSprite = null;
+var mainSprite = null;
 var cinghialiSprite = [];
 var state = null;
 
@@ -37,34 +38,70 @@ var state = null;
 loader
   .add("uberfranzIdle", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
+  .add("tiles", "images/tiles.gif")
   .load(setup);
 
 
+
+function addTile(row,col){
+  //Create the `tileset` sprite from the texture
+  var tileTexture = resources.tiles.texture;
+
+  //Create a rectangle object that defines the position and
+  //size of the sub-image you want to extract from the texture
+  var tileRectangle = new Rectangle(0, 48, 48, 48);
+
+  //Tell the texture to use that rectangular section
+  tileTexture.frame = tileRectangle;
+
+  //Create the sprite from the texture
+  var tile = new Sprite(tileTexture);
+
+  //Position the rocket sprite on the canvas
+  tile.x = col * 48;
+  tile.y = row * 48;
+
+  //Add the rocket to the stage
+  stage.addChild(tile);
+}
+
+
 function setup() {
-  uberfranzSprite = new Sprite(
+  var uberfranzSprite = new Sprite(
     resources.uberfranzIdle.texture
   );
 
-  uberfranzSprite.x = 0;
-  uberfranzSprite.y = 0;
-  uberfranzSprite.vx = 0;
-  uberfranzSprite.vy = 0;
+  for(var row = 0; row <= 10; row++ ){
+    for(var col = 0; col <= 10; col++ ){
+      addTile(row,col);
+    }
+  }
 
-  stage.addChild(uberfranzSprite);
+  mainSprite = uberfranzSprite;
+
+  mainSprite.x = 0;
+  mainSprite.y = 0;
+  mainSprite.vx = 0;
+  mainSprite.vy = 0;
+
+  stage.addChild(mainSprite);
 
   for(var i = 0; i <= 5; i++ ){
     cinghialiSprite[i] = new Sprite(
       resources.cinghialeIdle.texture
     );
 
-    cinghialiSprite[i].x = 50 * (i+1);
-    cinghialiSprite[i].y = 80 * i;
+    cinghialiSprite[i].x = Math.random() * 500;
+    cinghialiSprite[i].y = 80 * (i + 1);
     cinghialiSprite[i].vx = 1;
     cinghialiSprite[i].vy = 0;
 
     stage.addChild(cinghialiSprite[i]);
 
   }
+
+  
+
 
   
 
@@ -79,8 +116,8 @@ function setup() {
   left.press = function() {
 
     //Change the cat's velocity when the key is pressed
-    uberfranzSprite.vx = -5;
-    uberfranzSprite.vy = 0;
+    mainSprite.vx = -5;
+    mainSprite.vy = 0;
   };
 
   //Left arrow key `release` method
@@ -89,41 +126,41 @@ function setup() {
     //If the left arrow has been released, and the right arrow isn't down,
     //and the cat isn't moving vertically:
     //Stop the cat
-    if (!right.isDown && uberfranzSprite.vy === 0) {
-      uberfranzSprite.vx = 0;
+    if (!right.isDown && mainSprite.vy === 0) {
+      mainSprite.vx = 0;
     }
   };
 
   //Up
   up.press = function() {
-    uberfranzSprite.vy = -5;
-    uberfranzSprite.vx = 0;
+    mainSprite.vy = -5;
+    mainSprite.vx = 0;
   };
   up.release = function() {
-    if (!down.isDown && uberfranzSprite.vx === 0) {
-      uberfranzSprite.vy = 0;
+    if (!down.isDown && mainSprite.vx === 0) {
+      mainSprite.vy = 0;
     }
   };
 
   //Right
   right.press = function() {
-    uberfranzSprite.vx = 5;
-    uberfranzSprite.vy = 0;
+    mainSprite.vx = 5;
+    mainSprite.vy = 0;
   };
   right.release = function() {
-    if (!left.isDown && uberfranzSprite.vy === 0) {
-      uberfranzSprite.vx = 0;
+    if (!left.isDown && mainSprite.vy === 0) {
+      mainSprite.vx = 0;
     }
   };
 
   //Down
   down.press = function() {
-    uberfranzSprite.vy = 5;
-    uberfranzSprite.vx = 0;
+    mainSprite.vy = 5;
+    mainSprite.vx = 0;
   };
   down.release = function() {
-    if (!up.isDown && uberfranzSprite.vx === 0) {
-      uberfranzSprite.vy = 0;
+    if (!up.isDown && mainSprite.vx === 0) {
+      mainSprite.vy = 0;
     }
   };
 
@@ -146,21 +183,21 @@ function gameLoop() {
 }
 
 function play() {
-  uberfranzSprite.x += uberfranzSprite.vx;
-  uberfranzSprite.y += uberfranzSprite.vy;
+  mainSprite.x += mainSprite.vx;
+  mainSprite.y += mainSprite.vy;
   
   for(var i = 0; i < cinghialiSprite.length; i++){
 
   	cinghialiSprite[i].x += cinghialiSprite[i].vx; 
     cinghialiSprite[i].y += cinghialiSprite[i].vy; 
 
-    if(cinghialiSprite[i].x > 500)
-  	  cinghialiSprite[i].vx = -2;
-    else if(cinghialiSprite[i].x < 0)
-   	  cinghialiSprite[i].vx = 2;
-  
-	//check for a collision between the cat and the box
-	if (hitTestRectangle(uberfranzSprite, cinghialiSprite[i])) {
+    if(cinghialiSprite[i].x > 500){
+      var xBegin = -Math.random() * 50;
+      cinghialiSprite[i].x = xBegin;
+    }
+
+	  //check for a collision between the cat and the box
+	  if (hitTestRectangle(mainSprite, cinghialiSprite[i])) {
 	    console.log('hit!!!');
     } 
   }
