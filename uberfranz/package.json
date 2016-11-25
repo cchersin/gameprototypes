@@ -1,0 +1,10 @@
+{
+  "name": "Uberfranz",
+  "version": "0.0.1",
+  "main": "index.html",
+  "window": {
+    "title": "Uberfranz",
+    "toolbar": true,
+    "frame" : true
+  }
+}
