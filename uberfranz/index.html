@@ -3,6 +3,7 @@
 <title>Uberfranz</title>
 <body>
 <script src="js/pixi.js"></script>
+<script src="js/utils.js"></script>
 <script>
 
 function onLoad(){
@@ -33,6 +34,13 @@ var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
 var state = null;
+var platform = null;
+
+//Capture the keyboard arrow keys
+  var left = leftArrow,
+      up = upArrow,
+      right = rightArrow,
+      down = downArrow;
 
 
 loader
@@ -40,6 +48,22 @@ loader
   .add("cinghialeIdle", "images/cinghiale.png")
   .add("tiles", "images/tiles.gif")
   .load(setup);
+
+
+var movementSpeed = 0.8;
+var movementSpeedInAir = 0.1;
+var gravity = 0.5;
+var velocityMultiplier = 0.96;
+var velocityMultiplierLand = 0.8;
+var jumped = false;
+var jumpHeight = 7;
+var runJumpMultipler = 0.1;
+var playerDead = 0;
+var idleCostume = null;
+var moving = false;
+var xCollision = false;
+var yCollision = false;
+var playerMovementAnimation = false;
 
 
 
@@ -65,17 +89,48 @@ function addTile(row,col){
   stage.addChild(tile);
 }
 
+function addPlatform(row,col){
+  //Create the `tileset` sprite from the texture
+  var tileTexture = resources.tiles.texture;
+
+  //Create a rectangle object that defines the position and
+  //size of the sub-image you want to extract from the texture
+  var tileRectangle = new Rectangle(0, 0, 288, 48);
+
+  //Tell the texture to use that rectangular section
+  tileTexture.frame = tileRectangle;
+
+  //Create the sprite from the texture
+  platform = new Sprite(tileTexture);
+
+  //Position the rocket sprite on the canvas
+  platform.x = col * 48;
+  platform.y = row * 48;
+
+  //Add the rocket to the stage
+  stage.addChild(platform);
+}
+
+function hitPlatform(){
+  return hitTestRectangle(mainSprite,platform);
+}
+
 
 function setup() {
+
+  idleCostume = resources.uberfranzIdle.texture;
+
   var uberfranzSprite = new Sprite(
-    resources.uberfranzIdle.texture
+    idleCostume
   );
 
-  for(var row = 0; row <= 10; row++ ){
+  /*for(var row = 0; row <= 10; row++ ){
     for(var col = 0; col <= 10; col++ ){
       addTile(row,col);
     }
-  }
+  }*/
+
+  addPlatform(7,0);
 
   mainSprite = uberfranzSprite;
 
@@ -86,7 +141,7 @@ function setup() {
 
   stage.addChild(mainSprite);
 
-  for(var i = 0; i <= 5; i++ ){
+  /*for(var i = 0; i <= 5; i++ ){
     cinghialiSprite[i] = new Sprite(
       resources.cinghialeIdle.texture
     );
@@ -98,20 +153,9 @@ function setup() {
 
     stage.addChild(cinghialiSprite[i]);
 
-  }
+  }*/
 
-  
-
-
-  
-
-  //Capture the keyboard arrow keys
-  var left = keyboard(37),
-      up = keyboard(38),
-      right = keyboard(39),
-      down = keyboard(40);
-
-
+/*
       //Left arrow key `press` method
   left.press = function() {
 
@@ -162,7 +206,7 @@ function setup() {
     if (!up.isDown && mainSprite.vx === 0) {
       mainSprite.vy = 0;
     }
-  };
+  };*/
 
   state = play;
   gameLoop();
@@ -183,10 +227,123 @@ function gameLoop() {
 }
 
 function play() {
+
+  mainSprite.texture = idleCostume;
+  moving = false;
+  xCollision = false;
+  yCollision = false;
+
   mainSprite.x += mainSprite.vx;
-  mainSprite.y += mainSprite.vy;
+  if(hitPlatform()){
+    xCollision = true;
+  }
+  if(xCollision){
+      mainSprite.y += Math.abs(mainSprite.vx/2);
+      if(hitPlatform()){
+        mainSprite.y += Math.abs(mainSprite.vx/2);
+        if(hitPlatform()){
+          mainSprite.y += Math.abs(mainSprite.vx/2);
+          if(hitPlatform()){
+            mainSprite.y += Math.abs(mainSprite.vx/2);
+            if(hitPlatform()){
+               mainSprite.y += - Math.abs(mainSprite.vx/2)*4;
+               mainSprite.x += -mainSprite.vx;
+               mainSprite.vx = 0;
+            } else {
+              mainSprite.y += -Math.abs(mainSprite.vx/2);
+            }
+          } else {
+            mainSprite.y += -Math.abs(mainSprite.vx/2);
+          }
+        } else {
+          mainSprite.y += -Math.abs(mainSprite.vx/2);
+        }
+      } else {
+        mainSprite.y += -Math.abs(mainSprite.vx/2);
+      }
+  }
   
-  for(var i = 0; i < cinghialiSprite.length; i++){
+  mainSprite.y += mainSprite.vy;
+  if(hitPlatform()){
+    yCollision = true;
+  }
+
+  if(yCollision){
+    mainSprite.vx = mainSprite.vx * velocityMultiplierLand;
+    if(upArrow.isDown && mainSprite.vy < 0){
+      mainSprite.vy = jumpHeight * (1 + Math.abs(mainSprite.vx * runJumpMultipler));
+      jumped = true;
+      // Producti suono jump
+    } else {
+       if(mainSprite.vy < 0){
+          jumped = false;
+       }
+       mainSprite.y = - mainSprite.vy;
+       mainSprite.vy = 0;
+    }
+  }
+
+  if( jumped && (!upArrow.isDown && mainSprite.vy > 0)){
+    mainSprite.vy = mainSprite.vy * 0.6;
+  }
+
+  // Se sta toccando die allora
+  // Se sta toccando win allora
+
+  if(leftArrow.isDown){
+    moving = true;
+    // punta in direzione 90
+    if(yCollision){
+      mainSprite.vx += -movementSpeed;
+    } else {
+      mainSprite.vx += -movementSpeedInAir;
+    }
+  } else {
+    if(rightArrow.isDown){
+        moving = true;
+        //punta in direzione -90
+        if(yCollision){
+           mainSprite.vx += movementSpeed;
+        } else {
+           mainSprite.vx += movementSpeedInAir;
+        }
+    } else {
+        playerMovementAnimation = false;
+        if(jumped){
+          // passa al costume jump
+        } else {
+          // passa al costume idle
+          if(yCollision){
+            playerMovementAnimation += Math.abs(mainSprite.vx * 1);
+            if(playerMovementAnimation < 10){
+              //Passa al costume run1
+            } else if(playerMovementAnimation < 20){
+              // Passa al costume run 2
+            } else if(playerMovementAnimation < 30){
+              // Passa al costume run 3 
+            } else if(playerMovementAnimation < 40){
+              // passa al costume run 2
+            } else {
+              playerMovementAnimation += -40;
+               // Passa al costume run 1 
+            }
+             
+          } else {
+            // passa al costume idle
+          }
+        }
+
+    }
+  }
+
+  
+
+  mainSprite.vx = mainSprite.vx * velocityMultiplier;
+  mainSprite.vy = mainSprite.vy * velocityMultiplier;
+  mainSprite.vy  += gravity;
+ 
+  
+  /*for(var i = 0; i < cinghialiSprite.length; i++){
 
   	cinghialiSprite[i].x += cinghialiSprite[i].vx; 
     cinghialiSprite[i].y += cinghialiSprite[i].vy; 
@@ -199,98 +356,10 @@ function play() {
 	  //check for a collision between the cat and the box
 	  if (hitTestRectangle(mainSprite, cinghialiSprite[i])) {
 	    console.log('hit!!!');
+      mainSprite.y = 0;
     } 
-  }
+  }*/
 }
-
-function keyboard(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
-}
-
-
-function hitTestRectangle(r1, r2) {
-
-  //Define the variables we'll need to calculate
-  var hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
-
-  //hit will determine whether there's a collision
-  hit = false;
-
-  //Find the center points of each sprite
-  r1.centerX = r1.x + r1.width / 2;
-  r1.centerY = r1.y + r1.height / 2;
-  r2.centerX = r2.x + r2.width / 2;
-  r2.centerY = r2.y + r2.height / 2;
-
-  //Find the half-widths and half-heights of each sprite
-  r1.halfWidth = r1.width / 2;
-  r1.halfHeight = r1.height / 2;
-  r2.halfWidth = r2.width / 2;
-  r2.halfHeight = r2.height / 2;
-
-  //Calculate the distance vector between the sprites
-  vx = r1.centerX - r2.centerX;
-  vy = r1.centerY - r2.centerY;
-
-  //Figure out the combined half-widths and half-heights
-  combinedHalfWidths = r1.halfWidth + r2.halfWidth;
-  combinedHalfHeights = r1.halfHeight + r2.halfHeight;
-
-  //Check for a collision on the x axis
-  if (Math.abs(vx) < combinedHalfWidths) {
-
-    //A collision might be occuring. Check for a collision on the y axis
-    if (Math.abs(vy) < combinedHalfHeights) {
-
-      //There's definitely a collision happening
-      hit = true;
-    } else {
-
-      //There's no collision on the y axis
-      hit = false;
-    }
-  } else {
-
-    //There's no collision on the x axis
-    hit = false;
-  }
-
-  //`hit` will be either `true` or `false`
-  return hit;
-};
 
 }
 
