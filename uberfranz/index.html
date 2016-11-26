@@ -34,7 +34,7 @@ var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
 var state = null;
-var platform = null;
+var platforms = [];
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -101,7 +101,7 @@ function addPlatform(row,col){
   tileTexture.frame = tileRectangle;
 
   //Create the sprite from the texture
-  platform = new Sprite(tileTexture);
+  var platform = new Sprite(tileTexture);
 
   //Position the rocket sprite on the canvas
   platform.x = col * 48;
@@ -109,10 +109,17 @@ function addPlatform(row,col){
 
   //Add the rocket to the stage
   stage.addChild(platform);
+
+  platforms.push(platform);
 }
 
 function hitPlatform(){
-  return hitTestRectangle(mainSprite,platform);
+  for(var i= 0; i < platforms.length; i++){
+   if(hitTestRectangle(mainSprite,platforms[i]))
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -130,6 +137,8 @@ function setup() {
     }
   }*/
 
+  addPlatform(3,8);
+  addPlatform(5,4);
   addPlatform(7,0);
 
   mainSprite = uberfranzSprite;
