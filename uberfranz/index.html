@@ -65,6 +65,8 @@ var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = false;
 
+var TILE_SIZE = 48;
+
 
 
 function addTile(row,col){
@@ -73,7 +75,7 @@ function addTile(row,col){
 
   //Create a rectangle object that defines the position and
   //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, 48, 48, 48);
+  var tileRectangle = new Rectangle(0, TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
   //Tell the texture to use that rectangular section
   tileTexture.frame = tileRectangle;
@@ -82,8 +84,8 @@ function addTile(row,col){
   var tile = new Sprite(tileTexture);
 
   //Position the rocket sprite on the canvas
-  tile.x = col * 48;
-  tile.y = row * 48;
+  tile.x = col * TILE_SIZE;
+  tile.y = row * TILE_SIZE;
 
   //Add the rocket to the stage
   stage.addChild(tile);
@@ -95,7 +97,7 @@ function addPlatform(row,col){
 
   //Create a rectangle object that defines the position and
   //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, 0, 288, 48);
+  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * 6, TILE_SIZE);
 
   //Tell the texture to use that rectangular section
   tileTexture.frame = tileRectangle;
@@ -104,8 +106,8 @@ function addPlatform(row,col){
   var platform = new Sprite(tileTexture);
 
   //Position the rocket sprite on the canvas
-  platform.x = col * 48;
-  platform.y = row * 48;
+  platform.x = col * TILE_SIZE;
+  platform.y = row * TILE_SIZE;
 
   //Add the rocket to the stage
   stage.addChild(platform);
@@ -150,19 +152,19 @@ function setup() {
 
   stage.addChild(mainSprite);
 
-  /*for(var i = 0; i <= 5; i++ ){
+  for(var i = 0; i < 2; i++ ){
     cinghialiSprite[i] = new Sprite(
       resources.cinghialeIdle.texture
     );
 
-    cinghialiSprite[i].x = Math.random() * 500;
-    cinghialiSprite[i].y = 80 * (i + 1);
+    cinghialiSprite[i].x = TILE_SIZE * 4 + (TILE_SIZE*i*2);
+    cinghialiSprite[i].y = (TILE_SIZE * 5) - cinghialiSprite[i].height;
     cinghialiSprite[i].vx = 1;
     cinghialiSprite[i].vy = 0;
 
     stage.addChild(cinghialiSprite[i]);
 
-  }*/
+  }
 
 /*
       //Left arrow key `press` method
