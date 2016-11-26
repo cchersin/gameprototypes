@@ -2,6 +2,7 @@
 <meta charset="utf-8">
 <title>Uberfranz</title>
 <body>
+<script src="js/levels.js"></script>
 <script src="js/pixi.js"></script>
 <script src="js/utils.js"></script>
 <script>
@@ -34,7 +35,8 @@ var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
 var state = null;
-var platforms = [];
+var currLevel = 0;
+var platforms = levels[currLevel].platforms;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -91,13 +93,13 @@ function addTile(row,col){
   stage.addChild(tile);
 }
 
-function addPlatform(row,col){
+function createPlatformSprite(row,col,size){
   //Create the `tileset` sprite from the texture
   var tileTexture = resources.tiles.texture;
 
   //Create a rectangle object that defines the position and
   //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * 6, TILE_SIZE);
+  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * size, TILE_SIZE);
 
   //Tell the texture to use that rectangular section
   tileTexture.frame = tileRectangle;
@@ -112,12 +114,12 @@ function addPlatform(row,col){
   //Add the rocket to the stage
   stage.addChild(platform);
 
-  platforms.push(platform);
+  return platform;
 }
 
 function hitPlatform(){
   for(var i= 0; i < platforms.length; i++){
-   if(hitTestRectangle(mainSprite,platforms[i]))
+   if(hitTestRectangle(mainSprite,platforms[i].sprite))
     return true;
   }
 
@@ -139,10 +141,11 @@ function setup() {
     }
   }*/
 
-  addPlatform(3,8);
-  addPlatform(5,4);
-  addPlatform(7,0);
 
+  for(var i = 0; i < platforms.length; i++){
+    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].size);
+  }
+  
   mainSprite = uberfranzSprite;
 
   mainSprite.x = 0;
