@@ -1,1 +1,7 @@
 nwjs.app
+credits.html
+chromedriver
+*.psd
+minidump*
+payload
+nwjc
