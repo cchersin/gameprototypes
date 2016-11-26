@@ -52,7 +52,7 @@ loader
 
 var movementSpeed = 0.8;
 var movementSpeedInAir = 0.1;
-var gravity = 0.5;
+var gravity = 0.1;
 var velocityMultiplier = 0.96;
 var velocityMultiplierLand = 0.8;
 var jumped = false;
@@ -270,20 +270,20 @@ function play() {
 
   if(yCollision){
     mainSprite.vx = mainSprite.vx * velocityMultiplierLand;
-    if(upArrow.isDown && mainSprite.vy < 0){
-      mainSprite.vy = jumpHeight * (1 + Math.abs(mainSprite.vx * runJumpMultipler));
+    if(upArrow.isDown && mainSprite.vy > 0){
+      mainSprite.vy = -(jumpHeight * (1 + Math.abs(mainSprite.vx * runJumpMultipler)));
       jumped = true;
       // Producti suono jump
     } else {
-       if(mainSprite.vy < 0){
+       if(mainSprite.vy > 0){
           jumped = false;
        }
-       mainSprite.y = - mainSprite.vy;
+       mainSprite.y += - mainSprite.vy;
        mainSprite.vy = 0;
     }
   }
 
-  if( jumped && (!upArrow.isDown && mainSprite.vy > 0)){
+  if( jumped && (!upArrow.isDown && mainSprite.vy < 0)){
     mainSprite.vy = mainSprite.vy * 0.6;
   }
 
@@ -340,7 +340,7 @@ function play() {
 
   mainSprite.vx = mainSprite.vx * velocityMultiplier;
   mainSprite.vy = mainSprite.vy * velocityMultiplier;
-  mainSprite.vy  += gravity;
+  mainSprite.vy += gravity;
  
   
   /*for(var i = 0; i < cinghialiSprite.length; i++){
