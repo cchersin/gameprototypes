@@ -36,7 +36,8 @@ var Container = PIXI.Container,
     Rectangle = PIXI.Rectangle;
 
 //Create the renderer
-var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE, levels[currLevel].container.height*TILE_SIZE, {antialias: false, transparent: false, resolution: 1});
+var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE, levels[currLevel].container.height*TILE_SIZE, 
+                                  {antialias: false, transparent: false, resolution: 1});
 renderer.backgroundColor = 0x061639;
 
 renderer.view.style.position = "absolute";
@@ -52,8 +53,10 @@ $("#display")[0].appendChild(renderer.view);
 var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
+var winSprite;
 var state = null;
-var greeTile = null;
+var greenTile = null;
+var weaponCount = 0;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -65,7 +68,8 @@ var greeTile = null;
 loader
   .add("uberfranzIdle", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
-  .add("tiles", "images/tiles.gif")
+  .add("greenTile", "images/tiles.gif")
+  .add("yellowTile", "images/tiles.gif")
   .load(setup);
 
 
@@ -87,30 +91,13 @@ var playerMovementAnimation = false;
 
 
 
-
-function getTileTexture(x,y){
-  //Create the `tileset` sprite from the texture
-  var tileTexture = resources.tiles.texture;
-
-  //Create a rectangle object that defines the position and
-  //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-  //Tell the texture to use that rectangular section
-  tileTexture.frame = tileRectangle;
-
-  return tileTexture;
-}
-
-
-
-function createPlatformSprite(row,col,width,height){
+function createPlatformSprite(row,col,width,height,tileTexture){
 
   var platform = new Container();
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
-      var tile = new Sprite(greenTile);
+       var tile = new Sprite(tileTexture);
        tile.x = i * TILE_SIZE;
        tile.y = j * TILE_SIZE;
        platform.addChild(tile);
@@ -119,27 +106,6 @@ function createPlatformSprite(row,col,width,height){
 
   platform.x = col * TILE_SIZE;
   platform.y = row * TILE_SIZE;
-
-/*
-  //Create the `tileset` sprite from the texture
-  var tileTexture = resources.tiles.texture;
-
-  //Create a rectangle object that defines the position and
-  //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * width, TILE_SIZE * height);
-
-  //Tell the texture to use that rectangular section
-  tileTexture.frame = tileRectangle;
-
-  //Create the sprite from the texture
-  var platform = new Sprite(tileTexture);
-
-  //Position the rocket sprite on the canvas
-  platform.x = col * TILE_SIZE;
-  platform.y = row * TILE_SIZE;
-
-  //Add the rocket to the stage
-  stage.addChild(platform);*/
 
   return platform;
 }
@@ -156,22 +122,21 @@ function hitPlatform(){
 
 function setup() {
 
-  greenTile = getTileTexture(0,1);
+  
+  resources.greenTile.texture.frame = new Rectangle(0 * TILE_SIZE, 1 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  resources.yellowTile.texture.frame = new Rectangle(0 * TILE_SIZE, 0 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  
   idleCostume = resources.uberfranzIdle.texture;
 
   var uberfranzSprite = new Sprite(
     idleCostume
   );
 
-  /*for(var row = 0; row <= 10; row++ ){
-    for(var col = 0; col <= 10; col++ ){
-      addTile(row,col);
-    }
-  }*/
+  var weaponKey = keyboard(65);
 
 
   for(var i = 0; i < platforms.length; i++){
-    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height);
+    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height,resources.greenTile.texture);
     stage.addChild(platforms[i].sprite);
 
     if(platforms[i].enemies != null){
@@ -203,58 +168,25 @@ function setup() {
 
   stage.addChild(mainSprite);
 
-  
+  winSprite = createPlatformSprite(0,2,2,2, resources.yellowTile.texture);
+  stage.addChild(winSprite);
 
-/*
-      //Left arrow key `press` method
-  left.press = function() {
 
-    //Change the cat's velocity when the key is pressed
-    mainSprite.vx = -5;
-    mainSprite.vy = 0;
+  weaponKey.press = function() {
+    weaponCount++;
+
+    setTimeout(function(){ if( weaponCount > 0 )
+                              weaponCount--; }, 500);
   };
 
   //Left arrow key `release` method
-  left.release = function() {
+  /*left.release = function() {
 
     //If the left arrow has been released, and the right arrow isn't down,
     //and the cat isn't moving vertically:
     //Stop the cat
     if (!right.isDown && mainSprite.vy === 0) {
       mainSprite.vx = 0;
-    }
-  };
-
-  //Up
-  up.press = function() {
-    mainSprite.vy = -5;
-    mainSprite.vx = 0;
-  };
-  up.release = function() {
-    if (!down.isDown && mainSprite.vx === 0) {
-      mainSprite.vy = 0;
-    }
-  };
-
-  //Right
-  right.press = function() {
-    mainSprite.vx = 5;
-    mainSprite.vy = 0;
-  };
-  right.release = function() {
-    if (!left.isDown && mainSprite.vy === 0) {
-      mainSprite.vx = 0;
-    }
-  };
-
-  //Down
-  down.press = function() {
-    mainSprite.vy = 5;
-    mainSprite.vx = 0;
-  };
-  down.release = function() {
-    if (!up.isDown && mainSprite.vx === 0) {
-      mainSprite.vy = 0;
     }
   };*/
 
@@ -338,6 +270,9 @@ function play() {
   }
 
   // Se sta toccando die allora
+  if(hitTestRectangle(mainSprite,winSprite)){
+    console.log('win');
+  }
   // Se sta toccando win allora
 
   if(leftArrow.isDown){
@@ -397,6 +332,8 @@ function play() {
     var enemies = platforms[i].enemies;
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
+        if(enemies[j].sprite == null)
+          continue;
 
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
         enemies[j].sprite.y += enemies[j].sprite.vy; 
@@ -411,7 +348,15 @@ function play() {
 
 	      //check for a collision between the cat and the box
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
-	        console.log('hit!!!');
+          if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
+                           || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
+            console.log('Cinghiale steso!!!');
+            stage.removeChild(enemies[j].sprite);
+            enemies[j].sprite = null;
+          } else {
+            console.log('Uberfranz perde potenza...');
+          }
+          weaponCount = 0;
         }
       }
     } 
