@@ -1,13 +1,31 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>Uberfranz</title>
-<body>
+<head>
+<style>
+div.centre
+{
+  width: 576px;
+  height: 576px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
 <script src="js/levels.js"></script>
 <script src="js/pixi.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/jquery-3.1.1.min.js"></script>
 <script>
 
-function onLoad(){
+$(function(){
+
+var currLevel = 0;
+var platforms = levels[currLevel].platforms;
+var TILE_SIZE = 48;
+
 
 ///Aliases
 var Container = PIXI.Container,
@@ -18,16 +36,16 @@ var Container = PIXI.Container,
     Rectangle = PIXI.Rectangle;
 
 //Create the renderer
-var renderer = autoDetectRenderer(256, 256, {antialias: false, transparent: false, resolution: 1});
+var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE, levels[currLevel].container.height*TILE_SIZE, {antialias: false, transparent: false, resolution: 1});
 renderer.backgroundColor = 0x061639;
 
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
 renderer.autoResize = true;
-renderer.resize(window.innerWidth, window.innerHeight);
+//renderer.resize(window.innerWidth, window.innerHeight);
 
 //Add the canvas to the HTML document
-document.body.appendChild(renderer.view);
+$("#display")[0].appendChild(renderer.view);
 
 
 //Create a container object called the `stage`
@@ -35,8 +53,7 @@ var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
 var state = null;
-var currLevel = 0;
-var platforms = levels[currLevel].platforms;
+var greeTile = null;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -67,39 +84,49 @@ var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = false;
 
-var TILE_SIZE = 48;
 
 
 
-function addTile(row,col){
+
+function getTileTexture(x,y){
   //Create the `tileset` sprite from the texture
   var tileTexture = resources.tiles.texture;
 
   //Create a rectangle object that defines the position and
   //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  var tileRectangle = new Rectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
   //Tell the texture to use that rectangular section
   tileTexture.frame = tileRectangle;
 
-  //Create the sprite from the texture
-  var tile = new Sprite(tileTexture);
-
-  //Position the rocket sprite on the canvas
-  tile.x = col * TILE_SIZE;
-  tile.y = row * TILE_SIZE;
-
-  //Add the rocket to the stage
-  stage.addChild(tile);
+  return tileTexture;
 }
 
-function createPlatformSprite(row,col,size){
+
+
+function createPlatformSprite(row,col,width,height){
+
+  var platform = new Container();
+
+  for(var i=0; i < width; i++){
+    for(var j=0; j < height; j++){
+      var tile = new Sprite(greenTile);
+       tile.x = i * TILE_SIZE;
+       tile.y = j * TILE_SIZE;
+       platform.addChild(tile);
+    }
+  }
+
+  platform.x = col * TILE_SIZE;
+  platform.y = row * TILE_SIZE;
+
+/*
   //Create the `tileset` sprite from the texture
   var tileTexture = resources.tiles.texture;
 
   //Create a rectangle object that defines the position and
   //size of the sub-image you want to extract from the texture
-  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * size, TILE_SIZE);
+  var tileRectangle = new Rectangle(0, 0, TILE_SIZE * width, TILE_SIZE * height);
 
   //Tell the texture to use that rectangular section
   tileTexture.frame = tileRectangle;
@@ -112,7 +139,7 @@ function createPlatformSprite(row,col,size){
   platform.y = row * TILE_SIZE;
 
   //Add the rocket to the stage
-  stage.addChild(platform);
+  stage.addChild(platform);*/
 
   return platform;
 }
@@ -129,6 +156,7 @@ function hitPlatform(){
 
 function setup() {
 
+  greenTile = getTileTexture(0,1);
   idleCostume = resources.uberfranzIdle.texture;
 
   var uberfranzSprite = new Sprite(
@@ -143,7 +171,8 @@ function setup() {
 
 
   for(var i = 0; i < platforms.length; i++){
-    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].size);
+    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height);
+    stage.addChild(platforms[i].sprite);
 
     if(platforms[i].enemies != null){
       var enemies = platforms[i].enemies;
@@ -167,8 +196,8 @@ function setup() {
   
   mainSprite = uberfranzSprite;
 
-  mainSprite.x = 0;
-  mainSprite.y = 0;
+  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
+  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE;
   mainSprite.vx = 0;
   mainSprite.vy = 0;
 
@@ -372,7 +401,7 @@ function play() {
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
         enemies[j].sprite.y += enemies[j].sprite.vy; 
 
-        if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].size -1)){
+        if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].width -1)){
           enemies[j].sprite.vx = -1;
           enemies[j].sprite.scale.x = 1;
         } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col + 1)){
@@ -389,14 +418,11 @@ function play() {
   }
 }
 
-}
-
-onLoad();
-  
-
-
-
+});
 
 </script>
+</head>
 
+<body>
+<div id="display" class="centre"></div>
 </body>
