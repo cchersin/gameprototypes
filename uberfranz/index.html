@@ -5,8 +5,6 @@
 <style>
 div.centre
 {
-  width: 720px;
-  height: 720px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -24,7 +22,7 @@ $(function(){
 
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
-var TILE_SIZE = 60;
+var TILE_SIZE = 55;
 
 
 ///Aliases
@@ -47,6 +45,8 @@ renderer.autoResize = true;
 
 //Add the canvas to the HTML document
 $("#display")[0].appendChild(renderer.view);
+$("display").width(levels[currLevel].container.width*TILE_SIZE);
+$("display").height(levels[currLevel].container.height*TILE_SIZE);
 
 
 //Create a container object called the `stage`
@@ -93,7 +93,7 @@ var velocityMultiplier = 0.96;
 var velocityMultiplierLand = 0.8;
 var jumped = false;
 var jumpHeight = 7;
-var runJumpMultipler = 0.1;
+var runJumpMultipler = 0.2;
 var playerDead = 0;
 var idleCostume = null;
 var moving = false;
