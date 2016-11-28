@@ -5,8 +5,8 @@
 <style>
 div.centre
 {
-  width: 576px;
-  height: 576px;
+  width: 720px;
+  height: 720px;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -24,7 +24,7 @@ $(function(){
 
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
-var TILE_SIZE = 48;
+var TILE_SIZE = 60;
 
 
 ///Aliases
@@ -67,9 +67,11 @@ var weaponCount = 0;
 
 loader
   .add("uberfranzIdle", "images/uberfranz_idle.png")
-  //.add("uberfranzRun1", "images/uberfranz.png")
-  //.add("uberfranzRun2", "images/uberfranz.png")
-  //.add("uberfranzRun3", "images/uberfranz.png")
+  .add("uberfranzRun1", "images/uberfranz_run1.png")
+  .add("uberfranzRun2", "images/uberfranz_run2.png")
+  .add("uberfranzRun3", "images/uberfranz_run3.png")
+  .add("uberfranzJump", "images/uberfranz_jump.png")
+  .add("uberfranzDead", "images/uberfranz_dead.png")
   //.add("uberfranzBeatEnemy", "images/uberfranz.png")
   //.add("uberfranzMaglioDasburgo", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
@@ -92,7 +94,7 @@ var idleCostume = null;
 var moving = false;
 var xCollision = false;
 var yCollision = false;
-var playerMovementAnimation = false;
+var playerMovementAnimation = 0;
 
 
 
@@ -133,10 +135,12 @@ function setup() {
   resources.yellowTile.texture.frame = new Rectangle(0 * TILE_SIZE, 0 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   
   idleCostume = resources.uberfranzIdle.texture;
-  /*run1Costume =  resources.uberfranzRun1.texture;
+  run1Costume = resources.uberfranzRun1.texture;
   run2Costume = resources.uberfranzRun2.texture;
   run3Costume = resources.uberfranzRun3.texture;
-  uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
+  jumpCostume = resources.uberfranzJump.texture;
+  deadCostume = resources.uberfranzDead.texture;
+  /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
   cinghialeIdle = resources.cinghialeIdle.texture;
   /*cinghialeBeated = resources.cinghialeBeated.texture; TODO ....*/
 
@@ -290,7 +294,7 @@ function play() {
 
   if(leftArrow.isDown){
     moving = true;
-    // punta in direzione 90
+    //mainSprite.scale.x = 1;
     if(yCollision){
       mainSprite.vx += -movementSpeed;
     } else {
@@ -299,40 +303,48 @@ function play() {
   } else {
     if(rightArrow.isDown){
         moving = true;
-        //punta in direzione -90
+        //mainSprite.scale.x = -1;
         if(yCollision){
            mainSprite.vx += movementSpeed;
         } else {
            mainSprite.vx += movementSpeedInAir;
         }
     } else {
-        playerMovementAnimation = false;
+        playerMovementAnimation = 0;
         if(jumped){
-          // passa al costume jump
+          mainSprite.texture = jumpCostume;
         } else {
-          // passa al costume idle
-          if(yCollision){
-            playerMovementAnimation += Math.abs(mainSprite.vx * 1);
-            if(playerMovementAnimation < 10){
-              //Passa al costume run1
-            } else if(playerMovementAnimation < 20){
-              // Passa al costume run 2
-            } else if(playerMovementAnimation < 30){
-              // Passa al costume run 3 
-            } else if(playerMovementAnimation < 40){
-              // passa al costume run 2
-            } else {
-              playerMovementAnimation += -40;
-               // Passa al costume run 1 
-            }
-             
-          } else {
-            // passa al costume idle
-          }
+          mainSprite.texture = idleCostume;
         }
+        
 
     }
   }
+
+  if(moving){
+     if(jumped){
+        mainSprite.texture = jumpCostume;
+     } else {
+        if(yCollision){
+            playerMovementAnimation += Math.abs(mainSprite.vx * 1);
+            if(playerMovementAnimation < 20){
+              mainSprite.texture = run1Costume;
+             } else if(playerMovementAnimation < 40){
+              mainSprite.texture = run2Costume;
+            } else if(playerMovementAnimation < 60){
+              mainSprite.texture = run3Costume;
+            } else if(playerMovementAnimation < 80){
+              mainSprite.texture = run2Costume;
+            } else {
+               playerMovementAnimation += -80;
+               mainSprite.texture = run1Costume;
+            }
+             
+        } else {
+            mainSprite.texture = idleCostume;
+        }
+     }
+   }
 
   
 
