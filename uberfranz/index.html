@@ -216,6 +216,12 @@ function setup() {
 
   stage.addChild(mainSprite);
 
+
+  var pointer = t.makePointer();
+  pointer.visible=true;
+  pointer.x=0;
+  pointer.y=0;
+
   //Create an alias for the texture atlas frame ids
   var id = resources["arrowRight"].textures;
 
@@ -235,6 +241,15 @@ function setup() {
   playButton.over = function(){ console.log("over") };
   playButton.out = function(){  console.log("out") };
   playButton.tap = function(){ console.log("tapped") };
+
+  
+
+  winSprite.press = function(){ console.log("pressed") };
+  winSprite.release = function(){ console.log("released") };
+  winSprite.over = function(){ console.log("over") };
+  winSprite.out = function(){  console.log("out") };
+  winSprite.tap = function(){ console.log("tapped") };
+t.makeInteractive(winSprite);
 
  // Chromium 54.0.2840.99
 
@@ -288,6 +303,9 @@ function gameLoop() {
 
   //Update the current game state:
   state();
+
+  //Update Tink
+  t.update();
 
   //Render the stage to see the animation
   renderer.render(stage);
