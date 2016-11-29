@@ -72,11 +72,13 @@ loader
   .add("uberfranzRun2R", "images/uberfranz_run2_r.png")
   .add("uberfranzRun3R", "images/uberfranz_run3_r.png")
   .add("uberfranzJumpR", "images/uberfranz_jump_r.png")
+  .add("uberfranzWeaponR", "images/uberfranz_weapon_r.png")
   .add("uberfranzIdleL", "images/uberfranz_idle_l.png")
   .add("uberfranzRun1L", "images/uberfranz_run1_l.png")
   .add("uberfranzRun2L", "images/uberfranz_run2_l.png")
   .add("uberfranzRun3L", "images/uberfranz_run3_l.png")
   .add("uberfranzJumpL", "images/uberfranz_jump_l.png")
+  .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
   //.add("uberfranzBeatEnemy", "images/uberfranz.png")
   //.add("uberfranzMaglioDasburgo", "images/uberfranz.png")
@@ -156,6 +158,7 @@ function setup() {
   run2Costume = resources.uberfranzRun2R.texture;
   run3Costume = resources.uberfranzRun3R.texture;
   jumpCostume = resources.uberfranzJumpR.texture;
+  weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
   cinghialeIdle = resources.cinghialeIdle.texture;
@@ -209,7 +212,7 @@ function setup() {
 
   stage.addChild(mainSprite);
 
- 
+ // Chromium 54.0.2840.99
 
 
   weaponKey.press = function() {
@@ -225,6 +228,7 @@ function setup() {
     run2Costume = resources.uberfranzRun2L.texture;
     run3Costume = resources.uberfranzRun3L.texture;
     jumpCostume = resources.uberfranzJumpL.texture;
+    weaponCostume = resources.uberfranzWeaponL.texture;
   }
 
   right.press = function(){
@@ -233,6 +237,7 @@ function setup() {
     run2Costume = resources.uberfranzRun2R.texture;
     run3Costume = resources.uberfranzRun3R.texture;
     jumpCostume = resources.uberfranzJumpR.texture;
+    weaponCostume = resources.uberfranzWeaponR.texture;
   }
 
   //Left arrow key `release` method
@@ -366,6 +371,9 @@ function play() {
   }
 
   if(moving){
+    if(weaponCount > 0){
+      mainSprite.texture = weaponCostume;
+    } else {
      if(jumped){
         mainSprite.texture = jumpCostume;
      } else {
@@ -383,11 +391,11 @@ function play() {
                playerMovementAnimation += -80;
                mainSprite.texture = run1Costume;
             }
-             
         } else {
             mainSprite.texture = idleCostume;
         }
-     }
+      }
+    }
    }
 
   
