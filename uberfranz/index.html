@@ -14,6 +14,7 @@ div.centre
 
 <script src="js/levels.js"></script>
 <script src="js/pixi.js"></script>
+<script src="js/sound.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script>
@@ -83,7 +84,14 @@ loader
   //.add("cinghialeBeated", "images/cinghiale.png")
   .add("greenTile", "images/tiles.gif")
   .add("yellowTile", "images/tiles.gif")
+  .add("win", "images/win.png")
   .load(setup);
+
+  //Load the sounds
+sounds.load([
+  "sounds/jump.wav", 
+ ]);
+sounds.whenLoaded = setupSounds;
 
 
 var movementSpeed = 0.8;
@@ -100,7 +108,7 @@ var moving = false;
 var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = 0;
-
+var jumpSound = null;
 
 
 
@@ -130,6 +138,10 @@ function hitPlatform(){
   }
 
   return false;
+}
+
+function setupSounds(){
+  jumpSound = sounds["sounds/jump.wav"];
 }
 
 
@@ -180,6 +192,12 @@ function setup() {
       }
     }
   }
+
+
+  winSprite = new Sprite(
+    resources.win.texture
+  );
+  stage.addChild(winSprite);
   
   mainSprite = uberfranzSprite;
 
@@ -190,8 +208,7 @@ function setup() {
 
   stage.addChild(mainSprite);
 
-  winSprite = createPlatformSprite(0,2,2,2, resources.yellowTile.texture);
-  stage.addChild(winSprite);
+ 
 
 
   weaponKey.press = function() {
@@ -294,7 +311,7 @@ function play() {
     if(upArrow.isDown && mainSprite.vy > 0){
       mainSprite.vy = -(jumpHeight * (1 + Math.abs(mainSprite.vx * runJumpMultipler)));
       jumped = true;
-      // Producti suono jump
+      jumpSound.play();
     } else {
        if(mainSprite.vy > 0){
           jumped = false;
