@@ -1,0 +1,39 @@
+{"frames": [
+
+{
+	"filename": "arrow_right_down.png",
+	"frame": {"x":1,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "arrow_right_over.png",
+	"frame": {"x":1,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "arrow_right_up.png",
+	"frame": {"x":1,"y":1,"w":50,"h":50},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":50},
+	"sourceSize": {"w":50,"h":50},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "arrow_right.png",
+	"format": "RGBA8888",
+	"size": {"w":52,"h":52},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ab9611bb9e5b466779e8c269fd8601cf:79882797de2b3be74a30f6d34fa28682:d308625217ee29562b625d1a173f6102$"
+}
+}

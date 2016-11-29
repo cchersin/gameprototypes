@@ -15,6 +15,7 @@ div.centre
 <script src="js/levels.js"></script>
 <script src="js/pixi.js"></script>
 <script src="js/sound.js"></script>
+<script src="js/tink.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script>
@@ -48,6 +49,8 @@ renderer.autoResize = true;
 $("#display")[0].appendChild(renderer.view);
 $("display").width(levels[currLevel].container.width*TILE_SIZE);
 $("display").height(levels[currLevel].container.height*TILE_SIZE);
+
+var t = new Tink(PIXI, renderer.view);
 
 
 //Create a container object called the `stage`
@@ -87,6 +90,7 @@ loader
   .add("greenTile", "images/tiles.gif")
   .add("yellowTile", "images/tiles.gif")
   .add("win", "images/win.png")
+  .add("arrowRight","images/arrow_right.json")
   .load(setup);
 
   //Load the sounds
@@ -211,6 +215,26 @@ function setup() {
   mainSprite.vy = 0;
 
   stage.addChild(mainSprite);
+
+  //Create an alias for the texture atlas frame ids
+  var id = resources["arrowRight"].textures;
+
+  var buttonFrames = [
+    id[0],
+    id[1],
+    id[2]
+  ];
+
+
+
+  var playButton = t.button(buttonFrames, 32, 96);
+  stage.addChild(playButton);
+
+  playButton.press = function(){ console.log("pressed") };
+  playButton.release = function(){ console.log("released") };
+  playButton.over = function(){ console.log("over") };
+  playButton.out = function(){  console.log("out") };
+  playButton.tap = function(){ console.log("tapped") };
 
  // Chromium 54.0.2840.99
 
