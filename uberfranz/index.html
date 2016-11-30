@@ -120,7 +120,12 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
-       var tile = new Sprite(tileTexture);
+       //var tile = new Sprite(tileTexture);
+       var tile = new PIXI.Graphics();
+       tile.lineStyle(1, 0xEEEEEE, 1);
+       tile.beginFill(0xCCCCCC);
+       tile.drawRect(0, 0, TILE_SIZE, TILE_SIZE);
+       tile.endFill();
        tile.x = i * TILE_SIZE;
        tile.y = j * TILE_SIZE;
        platform.addChild(tile);
@@ -226,36 +231,8 @@ function setup() {
   pointer.x=0;
   pointer.y=0;
 
-  //Create an alias for the texture atlas frame ids
-  var id = resources["arrowRight"].textures;
 
-  var buttonFrames = [
-    id[0],
-    id[1],
-    id[2]
-  ];
-
-
-
-  var playButton = t.button(buttonFrames, 32, 96);
-  stage.addChild(playButton);
-
-  playButton.press = function(){ console.log("pressed") };
-  playButton.release = function(){ console.log("released") };
-  playButton.over = function(){ console.log("over") };
-  playButton.out = function(){  console.log("out") };
-  playButton.tap = function(){ console.log("tapped") };
-
-  
-
-  winSprite.press = function(){ console.log("pressed") };
-  winSprite.release = function(){ console.log("released") };
-  winSprite.over = function(){ console.log("over") };
-  winSprite.out = function(){  console.log("out") };
-  winSprite.tap = function(){ console.log("tapped") };
-t.makeInteractive(winSprite);
-
- // Chromium 54.0.2840.99
+  t.makeInteractive(winSprite);
 
 
   weaponKey.press = function() {
