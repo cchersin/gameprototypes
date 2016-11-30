@@ -124,7 +124,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
        var tile = new PIXI.Graphics();
        tile.lineStyle(1, 0xEEEEEE, 1);
        tile.beginFill(0xCCCCCC);
-       tile.drawRect(0, 0, TILE_SIZE, TILE_SIZE);
+       tile.drawRect(0, 0, TILE_SIZE -2, TILE_SIZE-2);
        tile.endFill();
        tile.x = i * TILE_SIZE;
        tile.y = j * TILE_SIZE;
