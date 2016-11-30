@@ -93,11 +93,7 @@ loader
   .add("arrowRight","images/arrow_right.json")
   .load(setup);
 
-  //Load the sounds
-sounds.load([
-  "sounds/jump.wav", 
- ]);
-sounds.whenLoaded = setupSounds;
+  
 
 
 var movementSpeed = 0.8;
@@ -146,12 +142,20 @@ function hitPlatform(){
   return false;
 }
 
-function setupSounds(){
-  jumpSound = sounds["sounds/jump.wav"];
-}
+
 
 
 function setup() {
+
+  //Load the sounds
+  sounds.load([
+  "sounds/bounce.mp3", 
+   ]);
+  sounds.whenLoaded = setupSounds;
+
+  function setupSounds(){
+    jumpSound = sounds["sounds/bounce.mp3"];
+
 
   
   resources.greenTile.texture.frame = new Rectangle(0 * TILE_SIZE, 1 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -292,6 +296,7 @@ t.makeInteractive(winSprite);
 
   state = play;
   gameLoop();
+ }
 
 }
 
