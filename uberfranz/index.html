@@ -25,7 +25,8 @@ $(function(){
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
 var TILE_SIZE = 55;
-
+var CONTROL_BUTTON_WIDTH = 100;
+var CONTROL_BUTTON_HEIGHT = 100;
 
 ///Aliases
 var Container = PIXI.Container,
@@ -36,7 +37,7 @@ var Container = PIXI.Container,
     Rectangle = PIXI.Rectangle;
 
 //Create the renderer
-var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE, levels[currLevel].container.height*TILE_SIZE, 
+var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2, levels[currLevel].container.height*TILE_SIZE, 
                                   {antialias: false, transparent: false, resolution: 1});
 renderer.backgroundColor = 0x061639;
 
@@ -47,7 +48,7 @@ renderer.autoResize = true;
 
 //Add the canvas to the HTML document
 $("#display")[0].appendChild(renderer.view);
-$("display").width(levels[currLevel].container.width*TILE_SIZE);
+$("display").width(levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2);
 $("display").height(levels[currLevel].container.height*TILE_SIZE);
 
 var t = new Tink(PIXI, renderer.view);
@@ -87,8 +88,6 @@ loader
   //.add("uberfranzMaglioDasburgo", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
   //.add("cinghialeBeated", "images/cinghiale.png")
-  .add("greenTile", "images/tiles.gif")
-  .add("yellowTile", "images/tiles.gif")
   .add("win", "images/win.png")
   .add("arrowRight","images/arrow_right.json")
   .load(setup);
@@ -111,6 +110,8 @@ var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = 0;
 var jumpSound = null;
+var leftButtonPressed = 0;
+var rightButtonPressed = 0;
 
 
 
@@ -126,7 +127,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
        tile.beginFill(0xCCCCCC);
        tile.drawRect(0, 0, TILE_SIZE -2, TILE_SIZE-2);
        tile.endFill();
-       tile.x = i * TILE_SIZE;
+       tile.x = CONTROL_BUTTON_WIDTH + i * TILE_SIZE;
        tile.y = j * TILE_SIZE;
        platform.addChild(tile);
     }
@@ -161,11 +162,7 @@ function setup() {
   function setupSounds(){
     jumpSound = sounds["sounds/bounce.mp3"];
 
-
-  
-  resources.greenTile.texture.frame = new Rectangle(0 * TILE_SIZE, 1 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  resources.yellowTile.texture.frame = new Rectangle(0 * TILE_SIZE, 0 * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  
+ 
   idleCostume = resources.uberfranzIdleR.texture;
   run1Costume = resources.uberfranzRun1R.texture;
   run2Costume = resources.uberfranzRun2R.texture;
@@ -186,7 +183,7 @@ function setup() {
 
 
   for(var i = 0; i < platforms.length; i++){
-    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height,resources.greenTile.texture);
+    platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height,null);
     stage.addChild(platforms[i].sprite);
 
     if(platforms[i].enemies != null){
@@ -197,7 +194,7 @@ function setup() {
          resources.cinghialeIdle.texture
        );
 
-       cinghialeSprite.x = TILE_SIZE * (platforms[i].col + enemies[j].col);
+       cinghialeSprite.x = TILE_SIZE * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
        cinghialeSprite.y = (TILE_SIZE * platforms[i].row) - cinghialeSprite.height;
        cinghialeSprite.vx = -1;
        cinghialeSprite.vy = 0;
@@ -213,7 +210,7 @@ function setup() {
   winSprite = new Sprite(
     resources.win.texture
   );
-  winSprite.x = 80;
+  winSprite.x = 180;
   stage.addChild(winSprite);
   
   mainSprite = uberfranzSprite;
@@ -231,8 +228,36 @@ function setup() {
   pointer.x=0;
   pointer.y=0;
 
+  var leftButton = new PIXI.Graphics();
+  leftButton.lineStyle(1, 0xEEEEEE, 1);
+  leftButton.beginFill(0x00FF00);
+  leftButton.drawRect(0, 0, CONTROL_BUTTON_WIDTH, CONTROL_BUTTON_HEIGHT);
+  leftButton.endFill();
+  leftButton.x = 0;
+  leftButton.y = levels[currLevel].container.height*TILE_SIZE-CONTROL_BUTTON_HEIGHT;
+  stage.addChild(leftButton);
 
-  t.makeInteractive(winSprite);
+  var rightButton = new PIXI.Graphics();
+  rightButton.lineStyle(1, 0xEEEEEE, 1);
+  rightButton.beginFill(0x00FF00);
+  rightButton.drawRect(0, 0, CONTROL_BUTTON_WIDTH, CONTROL_BUTTON_HEIGHT);
+  rightButton.endFill();
+  rightButton.x = levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH;
+  rightButton.y = levels[currLevel].container.height*TILE_SIZE-CONTROL_BUTTON_HEIGHT;
+  stage.addChild(rightButton);
+
+  t.makeInteractive(leftButton);
+  t.makeInteractive(rightButton);
+
+  leftButton.press = function(){ leftButtonPressed++; };
+  leftButton.release = function(){ leftButtonPressed--; };
+  
+  rightButton.press = function(){ rightButtonPressed++; };
+  rightButton.release = function(){ rightButtonPressed--; };
+  //rightButton.over = function(){ console.log("over") };
+  //rightButton.out = function(){ console.log("out") };
+  //rightButton.tap = function(){ rightButtonPressed++; setTimeout(function(){ if( rightButtonPressed > 0 )
+                              //rightButtonPressed--; }, 100);};
 
 
   weaponKey.press = function() {
@@ -361,7 +386,7 @@ function play() {
   }
   // Se sta toccando win allora
 
-  if(leftArrow.isDown){
+  if(leftArrow.isDown || leftButtonPressed > 0){
     moving = true;
     //mainSprite.anchor.x = 0;
     //mainSprite.scale.x = 1;
@@ -372,7 +397,7 @@ function play() {
       mainSprite.vx += -movementSpeedInAir;
     }
   } else {
-    if(rightArrow.isDown){
+    if(rightArrow.isDown || rightButtonPressed > 0){
         moving = true;
         //mainSprite.anchor.x = 1;
         //mainSprite.scale.x = -1;
@@ -439,10 +464,10 @@ function play() {
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
         enemies[j].sprite.y += enemies[j].sprite.vy; 
 
-        if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].width -1)){
+        if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = -1;
           enemies[j].sprite.scale.x = 1;
-        } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col + 1)){
+        } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col + 1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
           enemies[j].sprite.scale.x = -1;
         }
