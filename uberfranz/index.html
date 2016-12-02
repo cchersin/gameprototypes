@@ -173,6 +173,24 @@ myDiv.addEventListener("touchend", function() {
     myDiv.style.backgroundColor = coloreOriginario;
 });*/
 
+var leftCostumes = function(){
+    idleCostume = resources.uberfranzIdleL.texture;
+    run1Costume = resources.uberfranzRun1L.texture;
+    run2Costume = resources.uberfranzRun2L.texture;
+    run3Costume = resources.uberfranzRun3L.texture;
+    jumpCostume = resources.uberfranzJumpL.texture;
+    weaponCostume = resources.uberfranzWeaponL.texture;
+}
+
+var rightCostumes = function(){
+    idleCostume = resources.uberfranzIdleR.texture;
+    run1Costume = resources.uberfranzRun1R.texture;
+    run2Costume = resources.uberfranzRun2R.texture;
+    run3Costume = resources.uberfranzRun3R.texture;
+    jumpCostume = resources.uberfranzJumpR.texture;
+    weaponCostume = resources.uberfranzWeaponR.texture;
+}
+
 function detectActions(touches){
   leftGesture = false;
   rightGesture = false;
@@ -182,13 +200,17 @@ function detectActions(touches){
     upGesture = true;
   } else {
     if(touches[i].clientX < rendererWidth / 2){
+      leftCostumes();
      leftGesture = true;
     } else {
+      rightCostumes();
      rightGesture = true;
     }
   }
  };
 }
+
+
 
 $(window).on("touchstart", function(ev) {
     var e = ev.originalEvent;
@@ -217,11 +239,8 @@ function setup() {
     jumpSound = sounds["sounds/bounce.mp3"];
 
  
-  idleCostume = resources.uberfranzIdleR.texture;
-  run1Costume = resources.uberfranzRun1R.texture;
-  run2Costume = resources.uberfranzRun2R.texture;
-  run3Costume = resources.uberfranzRun3R.texture;
-  jumpCostume = resources.uberfranzJumpR.texture;
+  rightCostumes();
+  
   weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
@@ -286,37 +305,6 @@ function setup() {
   pointer.x=0;
   pointer.y=0;
 
-  /*var leftButton = new PIXI.Graphics();
-  leftButton.lineStyle(1, 0xEEEEEE, 1);
-  leftButton.beginFill(0x00FF00);
-  leftButton.drawRect(0, 0, CONTROL_BUTTON_WIDTH, CONTROL_BUTTON_HEIGHT);
-  leftButton.endFill();
-  leftButton.x = 0;
-  leftButton.y = levels[currLevel].container.height*TILE_SIZE-CONTROL_BUTTON_HEIGHT;
-  stage.addChild(leftButton);
-
-  var rightButton = new PIXI.Graphics();
-  rightButton.lineStyle(1, 0xEEEEEE, 1);
-  rightButton.beginFill(0x00FF00);
-  rightButton.drawRect(0, 0, CONTROL_BUTTON_WIDTH, CONTROL_BUTTON_HEIGHT);
-  rightButton.endFill();
-  rightButton.x = levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH;
-  rightButton.y = levels[currLevel].container.height*TILE_SIZE-CONTROL_BUTTON_HEIGHT;
-  stage.addChild(rightButton);
-
-  t.makeInteractive(leftButton);
-  t.makeInteractive(rightButton);
-
-  leftButton.press = function(){ leftGesture++; };
-  leftButton.release = function(){ leftGesture--; };
-  
-  rightButton.press = function(){ rightGesture++; };
-  rightButton.release = function(){ rightGesture--; };*/
-  //rightButton.over = function(){ console.log("over") };
-  //rightButton.out = function(){ console.log("out") };
-  //rightButton.tap = function(){ rightGesture++; setTimeout(function(){ if( rightGesture > 0 )
-                              //rightGesture--; }, 100);};
-
 
   weaponKey.press = function() {
     weaponCount++;
@@ -326,33 +314,12 @@ function setup() {
   };
 
   left.press = function(){
-     idleCostume = resources.uberfranzIdleL.texture;
-    run1Costume = resources.uberfranzRun1L.texture;
-    run2Costume = resources.uberfranzRun2L.texture;
-    run3Costume = resources.uberfranzRun3L.texture;
-    jumpCostume = resources.uberfranzJumpL.texture;
-    weaponCostume = resources.uberfranzWeaponL.texture;
+    leftCostumes();
   }
 
   right.press = function(){
-     idleCostume = resources.uberfranzIdleR.texture;
-    run1Costume = resources.uberfranzRun1R.texture;
-    run2Costume = resources.uberfranzRun2R.texture;
-    run3Costume = resources.uberfranzRun3R.texture;
-    jumpCostume = resources.uberfranzJumpR.texture;
-    weaponCostume = resources.uberfranzWeaponR.texture;
+     rightCostumes();
   }
-
-  //Left arrow key `release` method
-  /*left.release = function() {
-
-    //If the left arrow has been released, and the right arrow isn't down,
-    //and the cat isn't moving vertically:
-    //Stop the cat
-    if (!right.isDown && mainSprite.vy === 0) {
-      mainSprite.vx = 0;
-    }
-  };*/
 
   state = play;
   gameLoop();
