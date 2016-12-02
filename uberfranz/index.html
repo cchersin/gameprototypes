@@ -53,9 +53,11 @@ renderer.autoResize = true;
 //renderer.resize(window.innerWidth, window.innerHeight);
 
 //Add the canvas to the HTML document
-$("#display")[0].appendChild(renderer.view);
-$("display").width(rendererWidth);
-$("display").height(rendererHeight);
+var display = $("#display");
+
+display[0].appendChild(renderer.view);
+display.width(rendererWidth);
+display.height(rendererHeight);
 
 var t = new Tink(PIXI, renderer.view);
 
@@ -267,10 +269,14 @@ function setup() {
   
   mainSprite = uberfranzSprite;
 
+ //console.log(levels[currLevel].mainCharacter.col + "-" + levels[currLevel].mainCharacter.row);
+
   mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
   mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE;
   mainSprite.vx = 0;
   mainSprite.vy = 0;
+
+  //console.log(mainSprite.x + "-" + mainSprite.y);
 
   stage.addChild(mainSprite);
 
@@ -539,6 +545,24 @@ function play() {
       }
     } 
   }
+
+ // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+//var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+
+//console.log(mainSprite.x + mainSprite.height + ' ' + $(window).height);
+var scrollTop = $(window).scrollTop();
+//console.log("scrollTop " + scrollTop + " x " + mainSprite.y);
+if(mainSprite.y + 70 > scrollTop + $(window).height()){
+    console.log("out of screen - bottom");
+    $(window).scrollTop(mainSprite.y + 70 - $(window).height());
+} else {
+
+  if(mainSprite.y  < scrollTop ){
+      console.log("out of screen top");
+     $(window).scrollTop(0);
+  }
+}
 
 
 
