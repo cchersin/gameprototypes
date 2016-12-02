@@ -8,6 +8,9 @@ div.centre
   display: block;
   margin-left: auto;
   margin-right: auto;
+  width:800px;
+  height:600px;
+
 }
 </style>
 
@@ -25,8 +28,8 @@ $(function(){
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
 var TILE_SIZE = 55;
-var CONTROL_BUTTON_WIDTH = 100;
-var CONTROL_BUTTON_HEIGHT = 100;
+var CONTROL_BUTTON_WIDTH = 0;
+var CONTROL_BUTTON_HEIGHT = 0;
 
 ///Aliases
 var Container = PIXI.Container,
@@ -36,8 +39,11 @@ var Container = PIXI.Container,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle;
 
+var rendererWidth = levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2;
+var rendererHeight = levels[currLevel].container.height*TILE_SIZE;
+
 //Create the renderer
-var renderer = autoDetectRenderer(levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2, levels[currLevel].container.height*TILE_SIZE, 
+var renderer = autoDetectRenderer(rendererWidth, rendererHeight, 
                                   {antialias: false, transparent: false, resolution: 1});
 renderer.backgroundColor = 0x061639;
 
@@ -48,8 +54,8 @@ renderer.autoResize = true;
 
 //Add the canvas to the HTML document
 $("#display")[0].appendChild(renderer.view);
-$("display").width(levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2);
-$("display").height(levels[currLevel].container.height*TILE_SIZE);
+$("display").width(rendererWidth);
+$("display").height(rendererHeight);
 
 var t = new Tink(PIXI, renderer.view);
 
@@ -110,8 +116,8 @@ var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = 0;
 var jumpSound = null;
-var leftButtonPressed = 0;
-var rightButtonPressed = 0;
+var leftButtonPressed = false;
+var rightButtonPressed = false;
 
 
 
@@ -147,6 +153,45 @@ function hitPlatform(){
 
   return false;
 }
+
+/*var myDiv = document.getElementById("myDiv");
+ 
+ 
+myDiv.addEventListener("touchstart", function() {
+ 
+    coloreOriginario = myDiv.style.backgroundColor;
+    myDiv.style.backgroundColor = "red";
+});
+ 
+ 
+myDiv.addEventListener("touchend", function() {
+ 
+    myDiv.style.backgroundColor = coloreOriginario;
+});*/
+
+function detectActions(touches){
+  leftButtonPressed = false;
+  rightButtonPressed = false;
+ for (var i = touches.length - 1; i >= 0; i--) {
+   if(touches[i].clientX < rendererWidth / 2){
+     leftButtonPressed = true;
+   } else {
+     rightButtonPressed = true;
+   }
+ };
+}
+
+$(window).on("touchstart", function(ev) {
+    var e = ev.originalEvent;
+    console.log(e.touches);
+    detectActions(e.touches);
+});
+
+$(window).on("touchend", function(ev) {
+    var e = ev.originalEvent;
+    console.log(e.touches);
+    detectActions(e.touches);
+});
 
 
 
@@ -228,7 +273,7 @@ function setup() {
   pointer.x=0;
   pointer.y=0;
 
-  var leftButton = new PIXI.Graphics();
+  /*var leftButton = new PIXI.Graphics();
   leftButton.lineStyle(1, 0xEEEEEE, 1);
   leftButton.beginFill(0x00FF00);
   leftButton.drawRect(0, 0, CONTROL_BUTTON_WIDTH, CONTROL_BUTTON_HEIGHT);
@@ -253,7 +298,7 @@ function setup() {
   leftButton.release = function(){ leftButtonPressed--; };
   
   rightButton.press = function(){ rightButtonPressed++; };
-  rightButton.release = function(){ rightButtonPressed--; };
+  rightButton.release = function(){ rightButtonPressed--; };*/
   //rightButton.over = function(){ console.log("over") };
   //rightButton.out = function(){ console.log("out") };
   //rightButton.tap = function(){ rightButtonPressed++; setTimeout(function(){ if( rightButtonPressed > 0 )
@@ -386,7 +431,7 @@ function play() {
   }
   // Se sta toccando win allora
 
-  if(leftArrow.isDown || leftButtonPressed > 0){
+  if(leftArrow.isDown || leftButtonPressed == true){
     moving = true;
     //mainSprite.anchor.x = 0;
     //mainSprite.scale.x = 1;
@@ -397,7 +442,7 @@ function play() {
       mainSprite.vx += -movementSpeedInAir;
     }
   } else {
-    if(rightArrow.isDown || rightButtonPressed > 0){
+    if(rightArrow.isDown || rightButtonPressed == true){
         moving = true;
         //mainSprite.anchor.x = 1;
         //mainSprite.scale.x = -1;
