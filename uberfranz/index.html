@@ -116,8 +116,10 @@ var xCollision = false;
 var yCollision = false;
 var playerMovementAnimation = 0;
 var jumpSound = null;
-var leftButtonPressed = false;
-var rightButtonPressed = false;
+var leftGesture = false;
+var rightGesture = false;
+var upGesture = false;
+
 
 
 
@@ -170,14 +172,19 @@ myDiv.addEventListener("touchend", function() {
 });*/
 
 function detectActions(touches){
-  leftButtonPressed = false;
-  rightButtonPressed = false;
+  leftGesture = false;
+  rightGesture = false;
+  upGesture = false;
  for (var i = touches.length - 1; i >= 0; i--) {
-   if(touches[i].clientX < rendererWidth / 2){
-     leftButtonPressed = true;
-   } else {
-     rightButtonPressed = true;
-   }
+  if(touches[i].clientY < 100){
+    upGesture = true;
+  } else {
+    if(touches[i].clientX < rendererWidth / 2){
+     leftGesture = true;
+    } else {
+     rightGesture = true;
+    }
+  }
  };
 }
 
@@ -294,15 +301,15 @@ function setup() {
   t.makeInteractive(leftButton);
   t.makeInteractive(rightButton);
 
-  leftButton.press = function(){ leftButtonPressed++; };
-  leftButton.release = function(){ leftButtonPressed--; };
+  leftButton.press = function(){ leftGesture++; };
+  leftButton.release = function(){ leftGesture--; };
   
-  rightButton.press = function(){ rightButtonPressed++; };
-  rightButton.release = function(){ rightButtonPressed--; };*/
+  rightButton.press = function(){ rightGesture++; };
+  rightButton.release = function(){ rightGesture--; };*/
   //rightButton.over = function(){ console.log("over") };
   //rightButton.out = function(){ console.log("out") };
-  //rightButton.tap = function(){ rightButtonPressed++; setTimeout(function(){ if( rightButtonPressed > 0 )
-                              //rightButtonPressed--; }, 100);};
+  //rightButton.tap = function(){ rightGesture++; setTimeout(function(){ if( rightGesture > 0 )
+                              //rightGesture--; }, 100);};
 
 
   weaponKey.press = function() {
@@ -408,7 +415,7 @@ function play() {
 
   if(yCollision){
     mainSprite.vx = mainSprite.vx * velocityMultiplierLand;
-    if(upArrow.isDown && mainSprite.vy > 0){
+    if((upArrow.isDown || upGesture) && mainSprite.vy > 0){
       mainSprite.vy = -(jumpHeight * (1 + Math.abs(mainSprite.vx * runJumpMultipler)));
       jumped = true;
       jumpSound.play();
@@ -421,7 +428,7 @@ function play() {
     }
   }
 
-  if( jumped && (!upArrow.isDown && mainSprite.vy < 0)){
+  if( jumped && (!(upArrow.isDown || upGesture) && mainSprite.vy < 0)){
     mainSprite.vy = mainSprite.vy * 0.6;
   }
 
@@ -431,7 +438,7 @@ function play() {
   }
   // Se sta toccando win allora
 
-  if(leftArrow.isDown || leftButtonPressed == true){
+  if(leftArrow.isDown || leftGesture == true){
     moving = true;
     //mainSprite.anchor.x = 0;
     //mainSprite.scale.x = 1;
@@ -442,7 +449,7 @@ function play() {
       mainSprite.vx += -movementSpeedInAir;
     }
   } else {
-    if(rightArrow.isDown || rightButtonPressed == true){
+    if(rightArrow.isDown || rightGesture == true){
         moving = true;
         //mainSprite.anchor.x = 1;
         //mainSprite.scale.x = -1;
