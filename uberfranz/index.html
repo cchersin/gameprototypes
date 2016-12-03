@@ -4,14 +4,12 @@
 <head>
 <style>
 div.centre
-{
+/*{
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width:800px;
-  height:600px;
 
-}
+}*/
 </style>
 
 
@@ -21,6 +19,7 @@ div.centre
 <script src="js/tink.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
+
 <script>
 
 $(function(){
@@ -30,6 +29,7 @@ var platforms = levels[currLevel].platforms;
 var TILE_SIZE = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
+var power = 100;
 
 ///Aliases
 var Container = PIXI.Container,
@@ -56,13 +56,22 @@ renderer.autoResize = true;
 var display = $("#display");
 
 display[0].appendChild(renderer.view);
-display.width(rendererWidth);
-display.height(rendererHeight);
+//display.width(rendererWidth);
+//display.height(rendererHeight);
 
 document.body.addEventListener('touchmove', function(event) {
   event.preventDefault();
   console.log("touchmove");
 }, false); 
+
+
+var zt = new ZingTouch.Region(document.body)
+
+var myElement = document.getElementById('my-div');
+
+zt.bind(display[0], 'tap', function(e){
+    console.log('tap');
+}, false);
 
 var t = new Tink(PIXI, renderer.view);
 
@@ -200,32 +209,30 @@ function detectActions(touches){
   leftGesture = false;
   rightGesture = false;
   upGesture = false;
- for (var i = touches.length - 1; i >= 0; i--) {
-  if(touches[i].clientY < 100){
-    upGesture = true;
-  } else {
-    if(touches[i].clientX < rendererWidth / 2){
+  for (var i = touches.length - 1; i >= 0; i--) {
+    if(touches[i].clientX < rendererWidth / 3){
       leftCostumes();
-     leftGesture = true;
-    } else {
+      leftGesture = true;
+    } else if(touches[i].clientX > rendererWidth * 2 / 3){
       rightCostumes();
-     rightGesture = true;
+      rightGesture = true;
+    } else {
+      upGesture = true;
     }
-  }
- };
+  };
 }
 
 
 
 $(window).on("touchstart", function(ev) {
     var e = ev.originalEvent;
-    console.log(e.touches);
+    //console.log(e.touches);
     detectActions(e.touches);
 });
 
 $(window).on("touchend", function(ev) {
     var e = ev.originalEvent;
-    console.log(e.touches);
+  //  console.log(e.touches);
     detectActions(e.touches);
 });
 
@@ -510,7 +517,11 @@ function play() {
             stage.removeChild(enemies[j].sprite);
             enemies[j].sprite = null;
           } else {
+            power -= 10;
             console.log('Uberfranz perde potenza...');
+            if(power <=0){
+              console.log('lose');
+            }
           }
           weaponCount = 0;
         }
@@ -521,18 +532,45 @@ function play() {
  // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
 //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
-
-//console.log(mainSprite.x + mainSprite.height + ' ' + $(window).height);
+var MAIN_SPRITE_HEIGTH = 48;
 var scrollTop = $(window).scrollTop();
-//console.log("scrollTop " + scrollTop + " x " + mainSprite.y);
-if(mainSprite.y + 70 > scrollTop + $(window).height()){
-    console.log("out of screen - bottom");
-    $(window).scrollTop(rendererHeight - $(window).height());
+if(mainSprite.y + MAIN_SPRITE_HEIGTH * 2 > scrollTop + $(window).height()){
+    //console.log("out of screen - bottom");
+    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH * 6 - $(window).height();
+    scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
+    if(scrollTo > rendererHeight - $(window).height())
+        scrollTo = rendererHeight - $(window).height();
+    $(window).scrollTop(scrollTo);
 } else {
 
-  if(mainSprite.y  < scrollTop ){
-      console.log("out of screen top");
-     $(window).scrollTop(0);
+  if(mainSprite.y - MAIN_SPRITE_HEIGTH < scrollTop ){
+      //console.log("out of screen top");
+      var scrollTo  = mainSprite.y - MAIN_SPRITE_HEIGTH * 3;
+      scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
+      if(scrollTo < 0)
+        scrollTo = 0;
+     $(window).scrollTop(scrollTo);
+  }
+}
+
+var MAIN_SPRITE_WIDTH = 48;
+var scrollLeft = $(window).scrollLeft();
+if(mainSprite.x + MAIN_SPRITE_WIDTH * 2 > scrollLeft + $(window).width()){
+    //console.log("out of screen - right");
+    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH * 6 - $(window).width();
+    scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
+    if(scrollTo > rendererWidth - $(window).width())
+        scrollTo = rendererWidth - $(window).width();
+    $(window).scrollLeft(scrollTo);
+} else {
+
+  if(mainSprite.x - MAIN_SPRITE_HEIGTH < scrollLeft ){
+      //console.log("out of screen left");
+      var scrollTo  = mainSprite.x - MAIN_SPRITE_WIDTH * 3;
+      scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
+      if(scrollTo < 0)
+        scrollTo = 0;
+     $(window).scrollLeft(scrollTo);
   }
 }
 
