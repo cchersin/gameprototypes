@@ -59,11 +59,6 @@ display[0].appendChild(renderer.view);
 //display.width(rendererWidth);
 //display.height(rendererHeight);
 
-document.body.addEventListener('touchmove', function(event) {
-  event.preventDefault();
-  console.log("touchmove");
-}, false); 
-
 
 var t = new Tink(PIXI, renderer.view);
 
@@ -103,7 +98,7 @@ loader
   .add("cinghialeIdle", "images/cinghiale.png")
   //.add("cinghialeBeated", "images/cinghiale.png")
   .add("win", "images/win.png")
-  .add("arrowRight","images/arrow_right.json")
+  .add("punch","images/punch.png")
   .load(setup);
 
   
@@ -198,9 +193,16 @@ var rightCostumes = function(){
 }
 
 function detectActions(touches){
+
+ if(touches.length == 2){
+    upGesture = true;
+  } else { 
+  
   leftGesture = false;
   rightGesture = false;
   upGesture = false;
+
+  
   for (var i = touches.length - 1; i >= 0; i--) {
     if(touches[i].clientX < rendererWidth / 3){
       leftCostumes();
@@ -211,17 +213,24 @@ function detectActions(touches){
     } else {
       upGesture = true;
     }
-  };
+  }
+
+  }
+
 }
 
-var cachedX = -1;
-var cached2 = -1;
+//var cachedX = -1;
+var cachedY = -1;
 
 $(window).on("touchstart", function(ev) {
     var e = ev.originalEvent;
-    //console.log(e.touches);
+    console.log(e.touches);
+  
     detectActions(e.touches);
 
+    cachedY = e.pageY;
+
+/*
     var currX = e.pageX;
     var currY = e.pageY;
 
@@ -229,22 +238,33 @@ $(window).on("touchstart", function(ev) {
     cachedY = currY;
 
     setTimeout(function(){ cachedX=-1; cachedy=-1; }, 200);
-
+*/
 });
 
 $(window).on("touchend", function(ev) {
     var e = ev.originalEvent;
-  //  console.log(e.touches);
+    console.log(e.touches);
     detectActions(e.touches);
 
+    cachedY = -1;
+/*
     var currX = e.pageX;
     var currY = e.pageY;
 
     if((cachedX == currX) && (cachedY == currY)){
       upGesture = true;
       setTimeout(function(){ upGesture = false; }, 200);
-    }
+    } */
 });
+
+document.body.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+
+  if(cachedY != -1 && event.pageY < cachedY)
+    console.log("jump");
+}, false); 
+
+
 
 
 
@@ -307,6 +327,12 @@ function setup() {
   );
   winSprite.x = 180;
   stage.addChild(winSprite);
+
+  punchSprite = new Sprite(
+    resources.punch.texture
+  );
+  punchSprite.x = rendererWidth - 50;
+  stage.addChild(punchSprite);
   
   mainSprite = uberfranzSprite;
 
@@ -433,11 +459,9 @@ function play() {
   }
   // Se sta toccando win allora
 
+
   if(leftArrow.isDown || leftGesture == true){
     moving = true;
-    //mainSprite.anchor.x = 0;
-    //mainSprite.scale.x = 1;
-
     if(yCollision){
       mainSprite.vx += -movementSpeed;
     } else {
@@ -446,17 +470,12 @@ function play() {
   } else {
     if(rightArrow.isDown || rightGesture == true){
         moving = true;
-        //mainSprite.anchor.x = 1;
-        //mainSprite.scale.x = -1;
-   
-     
         if(yCollision){
            mainSprite.vx += movementSpeed;
         } else {
            mainSprite.vx += movementSpeedInAir;
         }
     } else {
-        //mainSprite.anchor.x = 0;
         playerMovementAnimation = 0;
         if(jumped){
           mainSprite.texture = jumpCostume;
