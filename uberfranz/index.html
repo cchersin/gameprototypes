@@ -59,6 +59,11 @@ display[0].appendChild(renderer.view);
 display.width(rendererWidth);
 display.height(rendererHeight);
 
+document.body.addEventListener('touchmove', function(event) {
+  event.preventDefault();
+  console.log("touchmove");
+}, false); 
+
 var t = new Tink(PIXI, renderer.view);
 
 
@@ -522,7 +527,7 @@ var scrollTop = $(window).scrollTop();
 //console.log("scrollTop " + scrollTop + " x " + mainSprite.y);
 if(mainSprite.y + 70 > scrollTop + $(window).height()){
     console.log("out of screen - bottom");
-    $(window).scrollTop(mainSprite.y + 70 - $(window).height());
+    $(window).scrollTop(rendererHeight - $(window).height());
 } else {
 
   if(mainSprite.y  < scrollTop ){
