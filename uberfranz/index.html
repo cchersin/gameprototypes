@@ -67,10 +67,12 @@ var t = new Tink(PIXI, renderer.view);
 var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
-var winSprite;
+var winSprite = null;
+var punchSprite = null;
 var state = null;
 var greenTile = null;
 var weaponCount = 0;
+var weaponPressed = 0;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -204,10 +206,10 @@ function detectActions(touches){
 
   
   for (var i = touches.length - 1; i >= 0; i--) {
-    if(touches[i].clientX < rendererWidth / 3){
+    if(touches[i].clientX < rendererWidth / 3  ){
       leftCostumes();
       leftGesture = true;
-    } else if(touches[i].clientX > rendererWidth * 2 / 3){
+    } else if((touches[i].clientX > rendererWidth * 2 / 3) && touches[i].pageX > 50){
       rightCostumes();
       rightGesture = true;
     } else {
@@ -219,54 +221,21 @@ function detectActions(touches){
 
 }
 
-//var cachedX = -1;
-var cachedY = -1;
-
 $(window).on("touchstart", function(ev) {
     var e = ev.originalEvent;
-    console.log(e.touches);
-  
+    //console.log(e.touches);
     detectActions(e.touches);
-
-    cachedY = e.pageY;
-
-/*
-    var currX = e.pageX;
-    var currY = e.pageY;
-
-    cachedX = currX;
-    cachedY = currY;
-
-    setTimeout(function(){ cachedX=-1; cachedy=-1; }, 200);
-*/
 });
 
 $(window).on("touchend", function(ev) {
     var e = ev.originalEvent;
-    console.log(e.touches);
+    //console.log(e.touches);
     detectActions(e.touches);
-
-    cachedY = -1;
-/*
-    var currX = e.pageX;
-    var currY = e.pageY;
-
-    if((cachedX == currX) && (cachedY == currY)){
-      upGesture = true;
-      setTimeout(function(){ upGesture = false; }, 200);
-    } */
 });
 
 document.body.addEventListener('touchmove', function(event) {
   event.preventDefault();
-
-  if(cachedY != -1 && event.pageY < cachedY)
-    console.log("jump");
 }, false); 
-
-
-
-
 
 
 function setup() {
@@ -333,6 +302,16 @@ function setup() {
   );
   punchSprite.x = rendererWidth - 50;
   stage.addChild(punchSprite);
+  t.makeInteractive(punchSprite);
+
+  punchSprite.press = function() {
+   weaponPressed = true;
+  };
+
+  punchSprite.release = function()  {
+    weaponPressed = false;
+  };
+
   
   mainSprite = uberfranzSprite;
 
@@ -398,6 +377,7 @@ function play() {
   xCollision = false;
   yCollision = false;
 
+ punchSprite.y = $(window).scrollTop();
 
   mainSprite.x += mainSprite.vx;
   if(hitPlatform()){
@@ -486,7 +466,7 @@ function play() {
   }
 
   if(moving){
-    if(weaponCount > 0){
+    if(weaponCount > 0 || weaponPressed){
       mainSprite.texture = weaponCostume;
     } else {
      if(jumped){
@@ -540,7 +520,7 @@ function play() {
 
 	      //check for a collision between the cat and the box
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
-          if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
+          if((weaponCount>0 || weaponPressed) && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
                            || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
             console.log('Cinghiale steso!!!');
             stage.removeChild(enemies[j].sprite);
