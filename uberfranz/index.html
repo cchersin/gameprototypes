@@ -65,14 +65,6 @@ document.body.addEventListener('touchmove', function(event) {
 }, false); 
 
 
-var zt = new ZingTouch.Region(document.body)
-
-var myElement = document.getElementById('my-div');
-
-zt.bind(display[0], 'tap', function(e){
-    console.log('tap');
-}, false);
-
 var t = new Tink(PIXI, renderer.view);
 
 
@@ -222,18 +214,36 @@ function detectActions(touches){
   };
 }
 
-
+var cachedX = -1;
+var cached2 = -1;
 
 $(window).on("touchstart", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
     detectActions(e.touches);
+
+    var currX = e.pageX;
+    var currY = e.pageY;
+
+    cachedX = currX;
+    cachedY = currY;
+
+    setTimeout(function(){ cachedX=-1; cachedy=-1; }, 200);
+
 });
 
 $(window).on("touchend", function(ev) {
     var e = ev.originalEvent;
   //  console.log(e.touches);
     detectActions(e.touches);
+
+    var currX = e.pageX;
+    var currY = e.pageY;
+
+    if((cachedX == currX) && (cachedY == currY)){
+      upGesture = true;
+      setTimeout(function(){ upGesture = false; }, 200);
+    }
 });
 
 
