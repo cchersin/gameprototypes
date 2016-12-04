@@ -18,7 +18,7 @@
 
 .punch_right {
   position: fixed;
-  top: 50px;
+  top: 100px;
   left: 0px;
   z-index: 999;
 }
@@ -49,6 +49,7 @@ if(navigator.userAgent.includes('Silk/')){
   $(document.body).html('Silk browser not suppported');
   return;
 }
+
 
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
@@ -158,7 +159,28 @@ var jumpSound = null;
 var leftGesture = false;
 var rightGesture = false;
 var upGesture = false;
+var animating = false;
 
+function detectmob() { 
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+}
+
+if(!detectmob()){
+  $(".punch_right").hide();
+  $(".punch_left").hide();
+}
 
 
 
@@ -258,11 +280,12 @@ var punch = function(){
     weaponCount++;
     setTimeout(function(){ if( weaponCount > 0 )
                               weaponCount--; }, 500);
-    move(bounce2,function(delta) {
-      //console.log(delta);
+    animation(bounce2,function(delta) {
+      console.log(delta);
         //$("#display").css("left", to*delta + "px");    
         //stage.x = to*delta;
-        stageX = 10*delta;
+        stageX = 10*(delta);
+        //stageX = - 20;
     });
 }
 
@@ -338,7 +361,7 @@ function setup() {
   winSprite = new Sprite(
     resources.win.texture
   );
-  winSprite.x = 180;
+  winSprite.x = 50;
   stage.addChild(winSprite);
 
   /*punchSprite = new Sprite(
@@ -459,12 +482,12 @@ function play() {
 
 
   if(!oldYCollions && yCollision){
-    move(bounce,function(delta) {
+      animation(bounce,function(delta) {
       //console.log(delta);
         //$("#display").css("left", to*delta + "px");    
         //stage.x = to*delta;
         stage.y = 10*delta;
-    });
+      });
   }
 
   if(yCollision){
@@ -488,9 +511,18 @@ function play() {
 
   // Se sta toccando die allora
   if(hitTestRectangle(mainSprite,winSprite)){
-    console.log('win');
+    
+    var message = new PIXI.Text(
+    "Hai completato lo schema!",
+    { font: "32px sans-serif", fill: "white"}
+   );
+
+    message.position.x = 54;
+    message.position.y = 96;
+    stage.addChild(message);
+    stage.removeChild(mainSprite);
   }
-  // Se sta toccando win allora
+  // Se sta toccando win allo
 
 
   if(leftArrow.isDown || leftGesture == true){
@@ -582,7 +614,15 @@ function play() {
             power -= 10;
             console.log('Uberfranz perde potenza...');
             if(power <=0){
-              console.log('lose');
+              var message = new PIXI.Text(
+                "Hai perso!",
+                { font: "32px sans-serif", fill: "white"}
+               );
+
+                message.position.x = 54;
+                message.position.y = 96;
+                stage.addChild(message);
+                stage.removeChild(mainSprite);
             }
           }
           weaponCount = 0;
@@ -644,9 +684,14 @@ if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
 }
 
 function animate(opts) {
-  
-  var start = new Date   
 
+  if(animating)
+    return;
+
+  animating = true;
+
+  var start = new Date   
+  
   var id = setInterval(function() {
     var timePassed = new Date - start
     var progress = timePassed / opts.duration
@@ -658,6 +703,7 @@ function animate(opts) {
     
     if (progress == 1) {
       clearInterval(id)
+      animating = false;
     }
   }, opts.delay || 10)
 }
@@ -670,40 +716,32 @@ var bounce = function(progress) {
     var x = progress * Math.PI;
     var d = Math.sin(x);
 
-    console.log("progress " + progress + " x " + x + " d " + d);
+    // console.log("progress " + progress + " x " + x + " d " + d);
     return d;
-
-    /*var increase = Math.PI * 2 / 100;
-
-    //console.log("progress" + progress);
-      return Math.sin( progress * 100 * increase ) / 2 + 0.5;*/
 };
 
 var bounce2 = function(progress) {
+  console.log('bounch2');
     
     if(progress==1)
       return 0;
+
     var x = progress * Math.PI * 2;
     var d = Math.sin(x);
 
-    console.log("progress " + progress + " x " + x + " d " + d);
+    //console.log("progress " + progress + " x " + x + " d " + d);
     return d;
-
-    /*var increase = Math.PI * 2 / 100;
-
-    //console.log("progress" + progress);
-      return Math.sin( progress * 100 * increase ) / 2 + 0.5;*/
 };
 
-function move(delta,step) {
+function animation(delta,step) {
 
   
   animate({
     delay: 20,
     duration: 500, 
-    delta: bounce,
+    delta: delta,
     step: step
-  })
+  });
   
 
 
