@@ -585,21 +585,23 @@ function play() {
  // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
 //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
+var hBorder = rendererWidth / 6;
+var vBorder = rendererHeight / 6;
+
 var MAIN_SPRITE_HEIGTH = 48;
 var scrollTop = $(window).scrollTop();
-if(mainSprite.y + MAIN_SPRITE_HEIGTH * 2 > scrollTop + $(window).height()){
+if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + $(window).height()){
     //console.log("out of screen - bottom");
-    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH * 6 - $(window).height();
-    scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
+    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + hBorder - $(window).height();
+    //scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererHeight - $(window).height())
         scrollTo = rendererHeight - $(window).height();
     $(window).scrollTop(scrollTo);
 } else {
-
-  if(mainSprite.y - MAIN_SPRITE_HEIGTH < scrollTop ){
+  if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
-      var scrollTo  = mainSprite.y - MAIN_SPRITE_HEIGTH * 3;
-      scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
+      var scrollTo  = mainSprite.y - hBorder;
+      //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollTop(scrollTo);
@@ -608,19 +610,19 @@ if(mainSprite.y + MAIN_SPRITE_HEIGTH * 2 > scrollTop + $(window).height()){
 
 var MAIN_SPRITE_WIDTH = 48;
 var scrollLeft = $(window).scrollLeft();
-if(mainSprite.x + MAIN_SPRITE_WIDTH * 2 > scrollLeft + $(window).width()){
+if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
     //console.log("out of screen - right");
-    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH * 6 - $(window).width();
-    scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
+    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - $(window).width();
+//scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererWidth - $(window).width())
         scrollTo = rendererWidth - $(window).width();
     $(window).scrollLeft(scrollTo);
 } else {
 
-  if(mainSprite.x - MAIN_SPRITE_HEIGTH < scrollLeft ){
+  if(mainSprite.x - hBorder < scrollLeft ){
       //console.log("out of screen left");
-      var scrollTo  = mainSprite.x - MAIN_SPRITE_WIDTH * 3;
-      scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
+      var scrollTo  = mainSprite.x - hBorder;
+      //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollLeft(scrollTo);
