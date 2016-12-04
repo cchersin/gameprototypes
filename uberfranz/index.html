@@ -3,13 +3,33 @@
 <title>Uberfranz</title>
 <head>
 <style>
-div.centre
-/*{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.main {
+  position: relative;
+  height: 100px;
+  width: 100%;
+}
 
-}*/
+.punch_left {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.punch_right {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+.display {
+  position: absolute;
+  height: 100px;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
 </style>
 
 
@@ -22,7 +42,13 @@ div.centre
 
 <script>
 
+
 $(function(){
+
+if(navigator.userAgent.includes('Silk/')){
+  $(document.body).html('Silk browser not suppported');
+  return;
+}
 
 var currLevel = 0;
 var platforms = levels[currLevel].platforms;
@@ -60,6 +86,7 @@ display[0].appendChild(renderer.view);
 //display.height(rendererHeight);
 
 
+
 var t = new Tink(PIXI, renderer.view);
 
 
@@ -68,11 +95,11 @@ var stage = new Container();
 var mainSprite = null;
 var cinghialiSprite = [];
 var winSprite = null;
-var punchSprite = null;
+//var punchSprite = null;
 var state = null;
 var greenTile = null;
 var weaponCount = 0;
-var weaponPressed = 0;
+//var weaponPressed = 0;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -100,7 +127,7 @@ loader
   .add("cinghialeIdle", "images/cinghiale.png")
   //.add("cinghialeBeated", "images/cinghiale.png")
   .add("win", "images/win.png")
-  .add("punch","images/punch.png")
+  //.add("punch","images/punch.png")
   .load(setup);
 
   
@@ -196,7 +223,7 @@ var rightCostumes = function(){
 
 function detectActions(touches){
 
- if(touches.length == 2){
+ if(touches.length == 2){ // TODO se c'è il pungno  no up gesture... 
     upGesture = true;
   } else { 
   
@@ -219,13 +246,13 @@ function detectActions(touches){
 
 }
 
-$(window).on("touchstart", function(ev) {
+$(".display").on("touchstart", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
     detectActions(e.touches);
 });
 
-$(window).on("touchend", function(ev) {
+$(".display").on("touchend", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
     detectActions(e.touches);
@@ -235,6 +262,28 @@ document.body.addEventListener('touchmove', function(event) {
   event.preventDefault();
 }, false); 
 
+var punch = function(){
+  weaponCount++;
+
+    setTimeout(function(){ if( weaponCount > 0 )
+                              weaponCount--; }, 500);
+}
+
+$(".punch_left").click(function() {
+    punch();
+});
+
+$(".punch_right").click(function() {
+   punch();
+  });
+
+$(".punch_left").on("touchstart", function(ev) {
+    punch();
+});
+
+$(".punch_right").on("touchstart", function(ev) {
+    punch();
+});
 
 function setup() {
 
@@ -295,7 +344,7 @@ function setup() {
   winSprite.x = 180;
   stage.addChild(winSprite);
 
-  punchSprite = new Sprite(
+  /*punchSprite = new Sprite(
     resources.punch.texture
   );
   punchSprite.x = rendererWidth - 100;
@@ -308,7 +357,7 @@ function setup() {
 
   punchSprite.release = function()  {
     weaponPressed = false;
-  };
+  };*/
 
   
   mainSprite = uberfranzSprite;
@@ -332,10 +381,7 @@ function setup() {
 
 
   weaponKey.press = function() {
-    weaponCount++;
-
-    setTimeout(function(){ if( weaponCount > 0 )
-                              weaponCount--; }, 500);
+    punch();
   };
 
   left.press = function(){
@@ -375,7 +421,7 @@ function play() {
   xCollision = false;
   yCollision = false;
 
- punchSprite.y = $(window).scrollTop();
+ //punchSprite.y = $(window).scrollTop();
 
   mainSprite.x += mainSprite.vx;
   if(hitPlatform()){
@@ -463,7 +509,7 @@ function play() {
     }
   }
 
-  if(weaponCount > 0 || weaponPressed){
+  if(weaponCount > 0){
       mainSprite.texture = weaponCostume;
   } else {
     if(moving){
@@ -518,7 +564,7 @@ function play() {
 
 	      //check for a collision between the cat and the box
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
-          if((weaponCount>0 || weaponPressed) && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
+          if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
                            || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
             console.log('Cinghiale steso!!!');
             stage.removeChild(enemies[j].sprite);
@@ -592,5 +638,9 @@ if(mainSprite.x + MAIN_SPRITE_WIDTH * 2 > scrollLeft + $(window).width()){
 </head>
 
 <body>
-<div id="display" class="centre"></div>
+<div class="main">
+<div class="punch_left"><img src="images/punch.png"></img></div>
+<div class="punch_right"><img src="images/punch.png"></img></div>
+<div id="display" class="display"></div>
+</div>
 </body>
