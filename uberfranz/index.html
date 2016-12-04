@@ -23,12 +23,33 @@
   z-index: 999;
 }
 
+.healt_bar {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  z-index: 999;
+  height: 5px;
+  width: 150px;
+  background-color: blue;
+}
+
+
+.healt_bar_inner {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  z-index: 999;
+  height: 5px;
+  width: 150px;
+  background-color: red;
+}
+
 .display {
   position: absolute;
   height: 100px;
   width: 100%;
-  top: 0;
-  left: 0;
+  top: 0px;
+  left: 0px;
 }
 </style>
 
@@ -57,6 +78,7 @@ var TILE_SIZE = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
+
 
 ///Aliases
 var Container = PIXI.Container,
@@ -611,8 +633,11 @@ function play() {
             stage.removeChild(enemies[j].sprite);
             enemies[j].sprite = null;
           } else {
-            power -= 10;
-            console.log('Uberfranz perde potenza...');
+            power -= 1;
+            console.log('Uberfranz perde potenza...' + p);
+            var p = power / 100 * $(".healt_bar").width();
+            $(".healt_bar_inner").width(p);
+            $(".healt_bar_inner").css("right", 20 + ( $(".healt_bar").width() - p )+ "px");
             if(power <=0){
               var message = new PIXI.Text(
                 "Hai perso!",
@@ -760,6 +785,7 @@ function animation(delta,step) {
 <div class="main">
 <div class="punch_left"><img src="images/punch.png"></img></div>
 <div class="punch_right"><img src="images/punch.png"></img></div>
+<div class="healt_bar"><div class="healt_bar_inner"></div></div>
 <div id="display" class="display"></div>
 </div>
 </body>
