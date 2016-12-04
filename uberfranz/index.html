@@ -11,15 +11,15 @@
 
 .punch_left {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 100px;
+  right: 0px;
   z-index: 999;
 }
 
 .punch_right {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 50px;
+  left: 0px;
   z-index: 999;
 }
 
@@ -78,6 +78,8 @@ renderer.view.style.display = "block";
 renderer.autoResize = true;
 //renderer.resize(window.innerWidth, window.innerHeight);
 
+
+
 //Add the canvas to the HTML document
 var display = $("#display");
 
@@ -92,6 +94,9 @@ var t = new Tink(PIXI, renderer.view);
 
 //Create a container object called the `stage`
 var stage = new Container();
+
+
+
 var mainSprite = null;
 var cinghialiSprite = [];
 var winSprite = null;
@@ -100,6 +105,7 @@ var state = null;
 var greenTile = null;
 var weaponCount = 0;
 //var weaponPressed = 0;
+var stageX = 0;
 
 //Capture the keyboard arrow keys
   var left = leftArrow,
@@ -188,21 +194,6 @@ function hitPlatform(){
   return false;
 }
 
-/*var myDiv = document.getElementById("myDiv");
- 
- 
-myDiv.addEventListener("touchstart", function() {
- 
-    coloreOriginario = myDiv.style.backgroundColor;
-    myDiv.style.backgroundColor = "red";
-});
- 
- 
-myDiv.addEventListener("touchend", function() {
- 
-    myDiv.style.backgroundColor = coloreOriginario;
-});*/
-
 var leftCostumes = function(){
     idleCostume = resources.uberfranzIdleL.texture;
     run1Costume = resources.uberfranzRun1L.texture;
@@ -263,10 +254,10 @@ document.body.addEventListener('touchmove', function(event) {
 }, false); 
 
 var punch = function(){
-  weaponCount++;
-
+    weaponCount++;
     setTimeout(function(){ if( weaponCount > 0 )
                               weaponCount--; }, 500);
+    move();
 }
 
 $(".punch_left").click(function() {
@@ -415,6 +406,7 @@ function gameLoop() {
 }
 
 function play() {
+  stage.x = stageX;
 
   mainSprite.texture = idleCostume;
   moving = false;
@@ -634,7 +626,65 @@ if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
 
 }
 
+function animate(opts) {
+  
+  var start = new Date   
+
+  var id = setInterval(function() {
+    var timePassed = new Date - start
+    var progress = timePassed / opts.duration
+
+    if (progress > 1) progress = 1
+    
+    var delta = opts.delta(progress)
+    opts.step(delta)
+    
+    if (progress == 1) {
+      clearInterval(id)
+    }
+  }, opts.delay || 10)
+}
+
+function move() {
+  delta = function(progress) {
+    
+    if(progress==1)
+      return 0;
+    var x = progress * Math.PI * 2;
+    var d = Math.sin(x);
+
+    console.log("progress " + progress + " x " + x + " d " + d);
+    return d;
+
+    /*var increase = Math.PI * 2 / 100;
+
+    //console.log("progress" + progress);
+      return Math.sin( progress * 100 * increase ) / 2 + 0.5;*/
+  };
+
+  var to = 10;
+  
+  animate({
+    delay: 20,
+    duration: 500, 
+    delta: delta,
+    step: function(delta) {
+      //console.log(delta);
+        //$("#display").css("left", to*delta + "px");    
+        //stage.x = to*delta;
+        stageX = to*delta;
+    }
+  })
+  
+
+
+}
+
+
+
 });
+
+
 
 </script>
 </head>
