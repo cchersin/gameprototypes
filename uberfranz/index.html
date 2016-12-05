@@ -692,8 +692,8 @@ function play() {
           { font: "64px sans-serif", fill: "white"}
       );
 
-      message.position.x = 20;
-      message.position.y = 20;
+      message.position.x = $(window).scrollLeft() + 20;
+      message.position.y = $(window).scrollTop() + 20;
       stage.addChild(message);
       stage.removeChild(mainSprite);
 
