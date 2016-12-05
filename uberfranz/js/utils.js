@@ -156,7 +156,6 @@ var bounce2 = function(progress) {
 };
 
 function animation(delta,step) {
-
   
   animate({
     delay: 20,
