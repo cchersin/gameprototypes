@@ -23,11 +23,20 @@
   z-index: 999;
 }
 
-.healt_bar {
+.healt_bar_container {
   position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  max-width: 1100px;
+  height: 20px;
+  z-index: 999;
+}
+
+.healt_bar {
+  position: absolute;
   top: 10px;
   right: 20px;
-  z-index: 999;
   height: 5px;
   width: 150px;
   background-color: blue;
@@ -35,10 +44,9 @@
 
 
 .healt_bar_inner {
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  z-index: 999;
+  position: absolute;
+  top: 0px;
+  right: 0px;
   height: 5px;
   width: 150px;
   background-color: red;
@@ -47,10 +55,9 @@
 .display {
   position: absolute;
   height: 100px;
-  width: 100%;
   top: 0px;
   left: 0px;
-}
+ }
 </style>
 
 
@@ -191,6 +198,7 @@ var enemyCollision = false;
 var oldEnemyCollision = false;
 var nextLevel = false;
 
+
 function detectmob() { 
  if( navigator.userAgent.match(/Android/i)
  || navigator.userAgent.match(/webOS/i)
@@ -307,6 +315,9 @@ document.body.addEventListener('touchmove', function(event) {
 }, false); 
 
 var punch = function(){
+    if(nextLevel)
+      return;
+
     punchSound.play();
     weaponCount++;
     setTimeout(function(){ if( weaponCount > 0 )
@@ -399,12 +410,7 @@ function setup() {
   }
 
 
-  doorSprite = new Sprite(
-    resources.win.texture
-  );
-  doorSprite.x = 50;
-  stage.addChild(doorSprite);
-
+  
   winSprite = new PIXI.Graphics();
   winSprite.lineStyle(1, 0xEEEEEE, 1);
   winSprite.beginFill(0xCCCCCC);
@@ -413,6 +419,12 @@ function setup() {
   winSprite.x = 90;
   winSprite.y = 40;
   stage.addChild(winSprite);
+
+  doorSprite = new Sprite(
+    resources.win.texture
+  );
+  doorSprite.x = 50;
+  stage.addChild(doorSprite);
 
   /*punchSprite = new Sprite(
     resources.punch.texture
@@ -751,7 +763,7 @@ if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
 <div class="main">
 <div class="punch_left"><img src="images/punch.png"></img></div>
 <div class="punch_right"><img src="images/punch.png"></img></div>
-<div class="healt_bar"><div class="healt_bar_inner"></div></div>
+<div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="display" class="display"></div>
 </div>
 </body>
