@@ -689,11 +689,11 @@ function play() {
       dieSound.play();
       var message = new PIXI.Text(
           "Game over",
-          { font: "32px sans-serif", fill: "white"}
+          { font: "64px sans-serif", fill: "white"}
       );
 
-      message.position.x = 54;
-      message.position.y = 96;
+      message.position.x = 20;
+      message.position.y = 20;
       stage.addChild(message);
       stage.removeChild(mainSprite);
 
