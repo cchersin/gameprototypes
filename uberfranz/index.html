@@ -131,10 +131,10 @@ var weaponCount = 0;
 var stageX = 0;
 
 //Capture the keyboard arrow keys
-  var left = leftArrow,
-      up = upArrow,
-      right = rightArrow,
-      down = downArrow;
+var left = leftArrow,
+    up = upArrow,
+    right = rightArrow,
+    down = downArrow;
 
 
 loader
@@ -182,6 +182,8 @@ var leftGesture = false;
 var rightGesture = false;
 var upGesture = false;
 var animating = false;
+var enemyCollision = false;
+var oldEnemyCollision = false;
 
 function detectmob() { 
  if( navigator.userAgent.match(/Android/i)
@@ -607,6 +609,9 @@ function play() {
   mainSprite.vy += gravity;
  
   
+  oldEnemyCollision = enemyCollision;
+  enemyCollision = false;
+
   for(var i = 0; i < platforms.length; i++){
     var enemies = platforms[i].enemies;
     if(enemies != null){
@@ -633,27 +638,31 @@ function play() {
             stage.removeChild(enemies[j].sprite);
             enemies[j].sprite = null;
           } else {
-            power -= 1;
-            console.log('Uberfranz perde potenza...' + p);
-            var p = power / 100 * $(".healt_bar").width();
-            $(".healt_bar_inner").width(p);
-            $(".healt_bar_inner").css("right", 20 + ( $(".healt_bar").width() - p )+ "px");
-            if(power <=0){
-              var message = new PIXI.Text(
-                "Hai perso!",
-                { font: "32px sans-serif", fill: "white"}
-               );
-
-                message.position.x = 54;
-                message.position.y = 96;
-                stage.addChild(message);
-                stage.removeChild(mainSprite);
-            }
+            enemyCollision = true; 
           }
           weaponCount = 0;
         }
       }
     } 
+  }
+
+  if(enemyCollision && !oldEnemyCollision){
+    power -= 10;
+    console.log('Uberfranz perde potenza...' + p);
+    var p = power / 100 * $(".healt_bar").width();
+    $(".healt_bar_inner").width(p);
+    $(".healt_bar_inner").css("right", 20 + ( $(".healt_bar").width() - p )+ "px");
+    if(power <=0){
+      var message = new PIXI.Text(
+          "Hai perso!",
+          { font: "32px sans-serif", fill: "white"}
+      );
+
+      message.position.x = 54;
+      message.position.y = 96;
+      stage.addChild(message);
+      stage.removeChild(mainSprite);
+    }
   }
 
  // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
@@ -703,76 +712,7 @@ if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
   }
 }
 
-
-
-
 }
-
-function animate(opts) {
-
-  if(animating)
-    return;
-
-  animating = true;
-
-  var start = new Date   
-  
-  var id = setInterval(function() {
-    var timePassed = new Date - start
-    var progress = timePassed / opts.duration
-
-    if (progress > 1) progress = 1
-    
-    var delta = opts.delta(progress)
-    opts.step(delta)
-    
-    if (progress == 1) {
-      clearInterval(id)
-      animating = false;
-    }
-  }, opts.delay || 10)
-}
-
-
-var bounce = function(progress) {
-    
-    if(progress==1)
-      return 0;
-    var x = progress * Math.PI;
-    var d = Math.sin(x);
-
-    // console.log("progress " + progress + " x " + x + " d " + d);
-    return d;
-};
-
-var bounce2 = function(progress) {
-  console.log('bounch2');
-    
-    if(progress==1)
-      return 0;
-
-    var x = progress * Math.PI * 2;
-    var d = Math.sin(x);
-
-    //console.log("progress " + progress + " x " + x + " d " + d);
-    return d;
-};
-
-function animation(delta,step) {
-
-  
-  animate({
-    delay: 20,
-    duration: 500, 
-    delta: delta,
-    step: step
-  });
-  
-
-
-}
-
-
 
 });
 

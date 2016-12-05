@@ -1,3 +1,6 @@
+//////////////////////////////////
+// KEYBOARD
+//////////////////////////////////
 function keyboard(keyCode) {
   var key = {};
   key.code = keyCode;
@@ -35,7 +38,16 @@ function keyboard(keyCode) {
   return key;
 }
 
+//Capture the keyboard arrow keys
+var leftArrow = keyboard(37),
+    upArrow = keyboard(38),
+    rightArrow = keyboard(39),
+    downArrow = keyboard(40);
 
+
+//////////////////////////////////
+// COLLISIONS
+//////////////////////////////////
 function hitTestRectangle(r1, r2) {
 
   //Define the variables we'll need to calculate
@@ -87,8 +99,70 @@ function hitTestRectangle(r1, r2) {
   return hit;
 };
 
-//Capture the keyboard arrow keys
-  var leftArrow = keyboard(37),
-      upArrow = keyboard(38),
-      rightArrow = keyboard(39),
-      downArrow = keyboard(40);
+
+//////////////////////////////////
+// ANIMATION
+//////////////////////////////////
+var animating = false;
+
+function animate(opts) {
+
+  if(animating)
+    return;
+
+  animating = true;
+
+  var start = new Date   
+  
+  var id = setInterval(function() {
+    var timePassed = new Date - start
+    var progress = timePassed / opts.duration
+
+    if (progress > 1) progress = 1
+    
+    var delta = opts.delta(progress)
+    opts.step(delta)
+    
+    if (progress == 1) {
+      clearInterval(id)
+      animating = false;
+    }
+  }, opts.delay || 10)
+}
+
+
+var bounce = function(progress) {
+    
+    if(progress==1)
+      return 0;
+    var x = progress * Math.PI;
+    var d = Math.sin(x);
+
+    // console.log("progress " + progress + " x " + x + " d " + d);
+    return d;
+};
+
+var bounce2 = function(progress) {
+  console.log('bounch2');
+    
+    if(progress==1)
+      return 0;
+
+    var x = progress * Math.PI * 2;
+    var d = Math.sin(x);
+
+    //console.log("progress " + progress + " x " + x + " d " + d);
+    return d;
+};
+
+function animation(delta,step) {
+
+  
+  animate({
+    delay: 20,
+    duration: 500, 
+    delta: delta,
+    step: step
+  });
+
+}
