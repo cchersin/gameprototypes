@@ -122,6 +122,7 @@ var stage = new Container();
 
 var mainSprite = null;
 var cinghialiSprite = [];
+var doorSprite = null;
 var winSprite = null;
 //var punchSprite = null;
 var state = null;
@@ -181,12 +182,14 @@ var jumpSound = null;
 var enemyHitSound = null;
 var dieSound = null;
 var punchSound = null;
+var powerupSound = null;
+var enterDoorSound = null;
 var leftGesture = false;
 var rightGesture = false;
 var upGesture = false;
-
 var enemyCollision = false;
 var oldEnemyCollision = false;
+var nextLevel = false;
 
 function detectmob() { 
  if( navigator.userAgent.match(/Android/i)
@@ -337,10 +340,12 @@ function setup() {
 
   //Load the sounds
   sounds.load([
-   "sounds/jump.wav",
-   "sounds/enemy_hit.wav",  
+    "sounds/jump.wav",
+    "sounds/enemy_hit.wav",  
     "sounds/die.wav",  
-    "sounds/punch.wav"
+    "sounds/punch.wav",
+    "sounds/enter_door.wav",
+    "sounds/powerup.wav"
    ]);
   sounds.whenLoaded = setupSounds;
 
@@ -349,6 +354,8 @@ function setup() {
     enemyHitSound = sounds["sounds/enemy_hit.wav"];
     dieSound = sounds["sounds/die.wav"];
     punchSound = sounds["sounds/punch.wav"];
+    enterDoorSound = sounds["sounds/enter_door.wav"];
+    powerupSound = sounds["sounds/powerup.wav"];
 
  
   rightCostumes();
@@ -392,10 +399,19 @@ function setup() {
   }
 
 
-  winSprite = new Sprite(
+  doorSprite = new Sprite(
     resources.win.texture
   );
-  winSprite.x = 50;
+  doorSprite.x = 50;
+  stage.addChild(doorSprite);
+
+  winSprite = new PIXI.Graphics();
+  winSprite.lineStyle(1, 0xEEEEEE, 1);
+  winSprite.beginFill(0xCCCCCC);
+  winSprite.drawRect(0, 0, 20, 20);
+  winSprite.endFill();
+  winSprite.x = 90;
+  winSprite.y = 40;
   stage.addChild(winSprite);
 
   /*punchSprite = new Sprite(
@@ -469,6 +485,9 @@ function gameLoop() {
 }
 
 function play() {
+  if(nextLevel)
+    return;
+
   oldYCollions = yCollision;
   stage.x = stageX;
 
@@ -543,20 +562,11 @@ function play() {
     mainSprite.vy = mainSprite.vy * 0.6;
   }
 
-  // Se sta toccando die allora
   if(hitTestRectangle(mainSprite,winSprite)){
-    
-    var message = new PIXI.Text(
-    "Hai completato lo schema!",
-    { font: "32px sans-serif", fill: "white"}
-   );
-
-    message.position.x = 54;
-    message.position.y = 96;
-    stage.addChild(message);
     stage.removeChild(mainSprite);
+    enterDoorSound.play();
+    nextLevel = true;
   }
-  // Se sta toccando win allo
 
 
   if(leftArrow.isDown || leftGesture == true){
@@ -644,7 +654,7 @@ function play() {
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
           if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
                            || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
-            console.log('Cinghiale steso!!!');
+            powerupSound.play();
             stage.removeChild(enemies[j].sprite);
             enemies[j].sprite = null;
           } else {
@@ -674,6 +684,8 @@ function play() {
       message.position.y = 96;
       stage.addChild(message);
       stage.removeChild(mainSprite);
+
+       nextLevel = true; // TODO Game over...
     } else {
       enemyHitSound.play();  
     }
