@@ -77,6 +77,28 @@ if(navigator.userAgent.includes('Silk/')){
   return;
 }
 
+function detectmob() { 
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+}
+
+if(detectmob()){
+  $(".punch_right").show();
+  $(".punch_left").show();
+}
+
+
 var levels = [{
   container:{width:20,height:13},
   mainCharacter:{row:10,col:10},
@@ -147,12 +169,11 @@ display[0].appendChild(renderer.view);
 //display.width(rendererWidth);
 //display.height(rendererHeight);
 
-
+// TODO RESTART!!!!
+// TODO dimesioni sprites 
 
 var t = new Tink(PIXI, renderer.view);
 
-
-//Create a container object called the `stage`
 
 var stage = null;
 var uberfranzSprite = null;
@@ -164,7 +185,6 @@ var winSprite = null;
 var state = null;
 var greenTile = null;
 var weaponCount = 0;
-//var weaponPressed = 0;
 var stageX = 0;
 
 //Capture the keyboard arrow keys
@@ -199,7 +219,6 @@ loader
 
   
 
-
 var movementSpeed = 0.8;
 var movementSpeedInAir = 0.1;
 var gravity = 0.1;
@@ -229,26 +248,7 @@ var enemyCollision = false;
 var oldEnemyCollision = false;
 
 
-function detectmob() { 
- if( navigator.userAgent.match(/Android/i)
- || navigator.userAgent.match(/webOS/i)
- || navigator.userAgent.match(/iPhone/i)
- || navigator.userAgent.match(/iPad/i)
- || navigator.userAgent.match(/iPod/i)
- || navigator.userAgent.match(/BlackBerry/i)
- || navigator.userAgent.match(/Windows Phone/i)
- ){
-    return true;
-  }
- else {
-    return false;
-  }
-}
 
-if(!detectmob()){
-  $(".punch_right").hide();
-  $(".punch_left").hide();
-}
 
 
 
@@ -305,7 +305,7 @@ var rightCostumes = function(){
 
 function detectActions(touches){
 
- if(touches.length == 2){ // TODO se c'è il pungno  no up gesture... 
+ if(touches.length == 2){  
     upGesture = true;
   } else { 
   
@@ -829,8 +829,8 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<div class="punch_left"><img src="images/punch.png"></img></div>
-<div class="punch_right"><img src="images/punch.png"></img></div>
+<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
+<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="display" class="display"></div>
 </div>
