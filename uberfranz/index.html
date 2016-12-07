@@ -127,6 +127,7 @@ var stage = new Container();
 
 
 
+var uberfranzSprite = null;
 var mainSprite = null;
 var cinghialiSprite = [];
 var doorSprite = null;
@@ -143,6 +144,7 @@ var left = leftArrow,
     up = upArrow,
     right = rightArrow,
     down = downArrow;
+var weaponKey = keyboard(65);
 
 
 loader
@@ -165,7 +167,7 @@ loader
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
   //.add("punch","images/punch.png")
-  .load(setup);
+  .load(onSetupImages);
 
   
 
@@ -298,6 +300,7 @@ function detectActions(touches){
 
 }
 
+
 $(".display").on("touchstart", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
@@ -347,7 +350,19 @@ $(".punch_right").on("touchstart", function(ev) {
     punch();
 });
 
-function setup() {
+function onSetupImages() {
+
+  weaponCostume = resources.uberfranzWeaponR.texture;
+  deadCostume = resources.uberfranzDead.texture;
+  /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
+  cinghialeIdle = resources.cinghialeIdle.texture;
+  cinghialeBeated = resources.cinghialeBeated.texture;
+
+  uberfranzSprite = new Sprite(
+    idleCostume
+  );
+
+  rightCostumes();
 
   //Load the sounds
   sounds.load([
@@ -358,9 +373,10 @@ function setup() {
     "sounds/enter_door.wav",
     "sounds/powerup.wav"
    ]);
-  sounds.whenLoaded = setupSounds;
 
-  function setupSounds(){
+  sounds.whenLoaded = onSetupSounds;
+
+  function onSetupSounds(){
     jumpSound = sounds["sounds/jump.wav"];
     enemyHitSound = sounds["sounds/enemy_hit.wav"];
     dieSound = sounds["sounds/die.wav"];
@@ -368,21 +384,16 @@ function setup() {
     enterDoorSound = sounds["sounds/enter_door.wav"];
     powerupSound = sounds["sounds/powerup.wav"];
 
+    setupLevel(0)
+  }
+}
+
+function setupLevel(){
  
-  rightCostumes();
+  uberfranzSprite.texture = idleCostume;
+  rightCostumes();  
+
   
-  weaponCostume = resources.uberfranzWeaponR.texture;
-  deadCostume = resources.uberfranzDead.texture;
-  /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
-  cinghialeIdle = resources.cinghialeIdle.texture;
-  cinghialeBeated = resources.cinghialeBeated.texture;
-
-
-  var uberfranzSprite = new Sprite(
-    idleCostume
-  );
-
-  var weaponKey = keyboard(65);
 
 
   for(var i = 0; i < platforms.length; i++){
@@ -476,9 +487,9 @@ function setup() {
 
   state = play;
   gameLoop();
- }
-
 }
+
+
 
 
 function gameLoop() {
