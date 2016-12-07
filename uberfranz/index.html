@@ -210,11 +210,9 @@ loader
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
   //.add("uberfranzBeatEnemy", "images/uberfranz.png")
-  //.add("uberfranzMaglioDasburgo", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
-  //.add("punch","images/punch.png")
   .load(onSetupImages);
 
   
@@ -227,7 +225,6 @@ var velocityMultiplierLand = 0.8;
 var jumped = false;
 var jumpHeight = 7;
 var runJumpMultipler = 0.2;
-var playerDead = 0;
 var idleCostume = null;
 var moving = false;
 var xCollision = false;
@@ -246,9 +243,6 @@ var rightGesture = false;
 var upGesture = false;
 var enemyCollision = false;
 var oldEnemyCollision = false;
-
-
-
 
 
 
@@ -386,8 +380,6 @@ function onSetupImages() {
     idleCostume
   );
 
-  rightCostumes();
-
   //Load the sounds
   sounds.load([
     "sounds/jump.wav",
@@ -410,13 +402,17 @@ function onSetupImages() {
     powerupSound = sounds["sounds/powerup.wav"];
     winSound = sounds["sounds/win.wav"];
 
-
     setupLevel();
     gameLoop();
   }
 }
 
 function setupLevel(){
+
+  stageX = 0;
+  oldYCollions = false;
+  oldEnemyCollision = false;
+  playerMovementAnimation = 0;
 
   stage = new Container();
 
@@ -483,14 +479,10 @@ function setupLevel(){
   
   mainSprite = uberfranzSprite;
 
- //console.log(levels[currLevel].mainCharacter.col + "-" + levels[currLevel].mainCharacter.row);
-
   mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
   mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE;
   mainSprite.vx = 0;
   mainSprite.vy = 0;
-
-  //console.log(mainSprite.x + "-" + mainSprite.y);
 
   stage.addChild(mainSprite);
 
@@ -760,9 +752,6 @@ function play() {
     }
   }
 
-  // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-  //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-
   var hBorder = rendererWidth / 6;
   var vBorder = rendererHeight / 6;
 
@@ -771,7 +760,6 @@ function play() {
   if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + $(window).height()){
     //console.log("out of screen - bottom");
     var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + hBorder - $(window).height();
-    //scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererHeight - $(window).height())
         scrollTo = rendererHeight - $(window).height();
     $(window).scrollTop(scrollTo);
@@ -779,7 +767,6 @@ function play() {
     if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
       var scrollTo  = mainSprite.y - hBorder;
-      //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollTop(scrollTo);
@@ -791,7 +778,6 @@ function play() {
   if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
     //console.log("out of screen - right");
     var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - $(window).width();
-    //scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererWidth - $(window).width())
         scrollTo = rendererWidth - $(window).width();
     $(window).scrollLeft(scrollTo);
@@ -799,7 +785,6 @@ function play() {
     if(mainSprite.x - hBorder < scrollLeft ){
       //console.log("out of screen left");
       var scrollTo  = mainSprite.x - hBorder;
-      //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollLeft(scrollTo);
