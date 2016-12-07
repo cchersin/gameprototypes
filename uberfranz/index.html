@@ -162,7 +162,7 @@ loader
   //.add("uberfranzBeatEnemy", "images/uberfranz.png")
   //.add("uberfranzMaglioDasburgo", "images/uberfranz.png")
   .add("cinghialeIdle", "images/cinghiale.png")
-  //.add("cinghialeBeated", "images/cinghiale.png")
+  .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
   //.add("punch","images/punch.png")
   .load(setup);
@@ -375,7 +375,7 @@ function setup() {
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
   cinghialeIdle = resources.cinghialeIdle.texture;
-  /*cinghialeBeated = resources.cinghialeBeated.texture; TODO ....*/
+  cinghialeBeated = resources.cinghialeBeated.texture;
 
 
   var uberfranzSprite = new Sprite(
@@ -644,6 +644,19 @@ function play() {
   oldEnemyCollision = enemyCollision;
   enemyCollision = false;
 
+  var enemyBeated = function(enemy){
+
+    powerupSound.play();
+    enemy.sprite.texture = cinghialeBeated;
+    enemy.sprite.vx = 0;
+
+    setTimeout(function(){
+              stage.removeChild(enemy.sprite);
+              enemy.sprite = null;
+            },500);
+    
+  }
+
   for(var i = 0; i < platforms.length; i++){
     var enemies = platforms[i].enemies;
     if(enemies != null){
@@ -662,14 +675,12 @@ function play() {
           enemies[j].sprite.scale.x = -1;
         }
 
-	      //check for a collision between the cat and the box
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
           if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
                            || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
-            powerupSound.play();
-            stage.removeChild(enemies[j].sprite);
-            enemies[j].sprite = null;
-          } else {
+  
+            enemyBeated(enemies[j]);
+        } else {
             enemyCollision = true; 
           }
           weaponCount = 0;
