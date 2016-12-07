@@ -61,7 +61,6 @@
 </style>
 
 
-<script src="js/levels.js"></script>
 <script src="js/pixi.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/tink.js"></script>
@@ -78,9 +77,40 @@ if(navigator.userAgent.includes('Silk/')){
   return;
 }
 
+var levels = [{
+  container:{width:20,height:13},
+  mainCharacter:{row:10,col:10},
+  platforms:[{row:11,col:0, width:20, height:2},
+         {row:0,col:0, width:1, height:11},
+         {row:0,col:19, width:1, height:11},
+             {row:3,col:1, width:3, height:1},
+         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
+         {row:6.8,col:9, width:10, height:1},
+         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]},
+   { container:{width:20,height:13},
+   mainCharacter:{row:10,col:10},
+   platforms:[{row:11,col:0, width:20, height:2},
+         {row:0,col:0, width:1, height:11},
+         {row:0,col:19, width:1, height:11},
+             {row:3,col:1, width:3, height:1},
+         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
+         {row:6.8,col:9, width:10, height:1},
+         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]},
+  { container:{width:20,height:13},
+   mainCharacter:{row:10,col:10},
+   platforms:[{row:11,col:0, width:20, height:2},
+         {row:0,col:0, width:1, height:11},
+         {row:0,col:19, width:1, height:11},
+             {row:3,col:1, width:3, height:1},
+         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
+         {row:6.8,col:9, width:10, height:1},
+         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]}
+];
+
+
 
 var currLevel = 0;
-var platforms = levels[currLevel].platforms;
+var platforms = null; 
 var TILE_SIZE = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
@@ -191,6 +221,7 @@ var dieSound = null;
 var punchSound = null;
 var powerupSound = null;
 var enterDoorSound = null;
+var winSound = null;
 var leftGesture = false;
 var rightGesture = false;
 var upGesture = false;
@@ -364,7 +395,8 @@ function onSetupImages() {
     "sounds/die.wav",  
     "sounds/punch.wav",
     "sounds/enter_door.wav",
-    "sounds/powerup.wav"
+    "sounds/powerup.wav",
+    "sounds/win.wav"
    ]);
 
   sounds.whenLoaded = onSetupSounds;
@@ -376,16 +408,19 @@ function onSetupImages() {
     punchSound = sounds["sounds/punch.wav"];
     enterDoorSound = sounds["sounds/enter_door.wav"];
     powerupSound = sounds["sounds/powerup.wav"];
+    winSound = sounds["sounds/win.wav"];
 
-    setupLevel(0);
+
+    setupLevel();
     gameLoop();
   }
 }
 
-function setupLevel(level){
+function setupLevel(){
 
   stage = new Container();
 
+  platforms = levels[currLevel].platforms;
  
   uberfranzSprite.texture = idleCostume;
   rightCostumes();  
@@ -578,17 +613,14 @@ function play() {
   if(hitTestRectangle(mainSprite,winSprite)){
     stage.removeChild(mainSprite);
     if(currLevel == levels.length -1){
+      winSound.play();
       state = endWin;
-      currLevel++; 
-      setTimeout(function(){
-        setupLevel(currLevel);
-      }, 500);
     } else {
       enterDoorSound.play();
       state = changingLevel;
       currLevel++; 
       setTimeout(function(){
-        setupLevel(currLevel);
+        setupLevel();
       }, 500);
     }
     return;
