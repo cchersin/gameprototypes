@@ -123,10 +123,8 @@ var t = new Tink(PIXI, renderer.view);
 
 
 //Create a container object called the `stage`
-var stage = new Container();
 
-
-
+var stage = null;
 var uberfranzSprite = null;
 var mainSprite = null;
 var cinghialiSprite = [];
@@ -198,7 +196,6 @@ var rightGesture = false;
 var upGesture = false;
 var enemyCollision = false;
 var oldEnemyCollision = false;
-var nextLevel = false;
 
 
 function detectmob() { 
@@ -281,25 +278,21 @@ function detectActions(touches){
     upGesture = true;
   } else { 
   
-  leftGesture = false;
-  rightGesture = false;
-  upGesture = false;
+    leftGesture = false;
+    rightGesture = false;
+    upGesture = false;
 
-  
-  for (var i = touches.length - 1; i >= 0; i--) {
-    if(touches[i].clientX < rendererWidth / 2  ){
-      leftCostumes();
-      leftGesture = true;
-    } else if((touches[i].clientX > rendererWidth / 2 ) && touches[i].pageY > 100){
-      rightCostumes();
-      rightGesture = true;
-    } 
+    for (var i = touches.length - 1; i >= 0; i--) {
+      if(touches[i].clientX < rendererWidth / 2  ){
+        leftCostumes();
+        leftGesture = true;
+      } else if((touches[i].clientX > rendererWidth / 2 ) && touches[i].pageY > 100){
+        rightCostumes();
+        rightGesture = true;
+      } 
+    }
   }
-
-  }
-
 }
-
 
 $(".display").on("touchstart", function(ev) {
     var e = ev.originalEvent;
@@ -318,7 +311,7 @@ document.body.addEventListener('touchmove', function(event) {
 }, false); 
 
 var punch = function(){
-    if(nextLevel)
+    if(state != play)
       return;
 
     punchSound.play();
@@ -384,16 +377,18 @@ function onSetupImages() {
     enterDoorSound = sounds["sounds/enter_door.wav"];
     powerupSound = sounds["sounds/powerup.wav"];
 
-    setupLevel(0)
+    setupLevel(0);
+    gameLoop();
   }
 }
 
-function setupLevel(){
+function setupLevel(level){
+
+  stage = new Container();
+
  
   uberfranzSprite.texture = idleCostume;
   rightCostumes();  
-
-  
 
 
   for(var i = 0; i < platforms.length; i++){
@@ -419,8 +414,6 @@ function setupLevel(){
       }
     }
   }
-
-
   
   winSprite = new PIXI.Graphics();
   winSprite.lineStyle(1, 0xEEEEEE, 1);
@@ -486,7 +479,6 @@ function setupLevel(){
   }
 
   state = play;
-  gameLoop();
 }
 
 
@@ -508,9 +500,7 @@ function gameLoop() {
 }
 
 function play() {
-  if(nextLevel)
-    return;
-
+  
   oldYCollions = yCollision;
   stage.x = stageX;
 
@@ -587,8 +577,21 @@ function play() {
 
   if(hitTestRectangle(mainSprite,winSprite)){
     stage.removeChild(mainSprite);
-    enterDoorSound.play();
-    nextLevel = true;
+    if(currLevel == levels.length -1){
+      state = endWin;
+      currLevel++; 
+      setTimeout(function(){
+        setupLevel(currLevel);
+      }, 500);
+    } else {
+      enterDoorSound.play();
+      state = changingLevel;
+      currLevel++; 
+      setTimeout(function(){
+        setupLevel(currLevel);
+      }, 500);
+    }
+    return;
   }
 
 
@@ -719,60 +722,71 @@ function play() {
       stage.addChild(message);
       stage.removeChild(mainSprite);
 
-       nextLevel = true; // TODO Game over...
+      state = gameOver;
     } else {
       enemyHitSound.play();  
     }
   }
 
- // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-//var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  // var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
-var hBorder = rendererWidth / 6;
-var vBorder = rendererHeight / 6;
+  var hBorder = rendererWidth / 6;
+  var vBorder = rendererHeight / 6;
 
-var MAIN_SPRITE_HEIGTH = 48;
-var scrollTop = $(window).scrollTop();
-if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + $(window).height()){
+  var MAIN_SPRITE_HEIGTH = 48;
+  var scrollTop = $(window).scrollTop();
+  if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + $(window).height()){
     //console.log("out of screen - bottom");
     var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + hBorder - $(window).height();
     //scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererHeight - $(window).height())
         scrollTo = rendererHeight - $(window).height();
     $(window).scrollTop(scrollTo);
-} else {
-  if(mainSprite.y - hBorder < scrollTop ){
+  } else {
+    if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
       var scrollTo  = mainSprite.y - hBorder;
       //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollTop(scrollTo);
+    }
   }
-}
 
-var MAIN_SPRITE_WIDTH = 48;
-var scrollLeft = $(window).scrollLeft();
-if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
+  var MAIN_SPRITE_WIDTH = 48;
+  var scrollLeft = $(window).scrollLeft();
+  if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
     //console.log("out of screen - right");
     var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - $(window).width();
-//scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
+    //scrollTo = Math.ceil(scrollTo / TILE_SIZE) * TILE_SIZE;
     if(scrollTo > rendererWidth - $(window).width())
         scrollTo = rendererWidth - $(window).width();
     $(window).scrollLeft(scrollTo);
-} else {
-
-  if(mainSprite.x - hBorder < scrollLeft ){
+  } else {
+    if(mainSprite.x - hBorder < scrollLeft ){
       //console.log("out of screen left");
       var scrollTo  = mainSprite.x - hBorder;
       //scrollTo = Math.floor(scrollTo / TILE_SIZE) * TILE_SIZE;
       if(scrollTo < 0)
         scrollTo = 0;
      $(window).scrollLeft(scrollTo);
+    }
   }
-}
 
 }
+
+var changingLevel = function(){
+  //
+};
+
+var gameOver = function(){
+  //
+};
+
+var endWin = function(){
+  //
+};
 
 });
 
