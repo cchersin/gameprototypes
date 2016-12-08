@@ -834,6 +834,12 @@ function play() {
       }, 500 );
     } else {
       enemyHitSound.play();  
+      animation(bounce,function(delta) {
+      //console.log(delta);
+        //$("#display").css("left", to*delta + "px");    
+        //stage.x = to*delta;
+        mainSprite.y += -2*delta;
+      });
     }
   }
 
