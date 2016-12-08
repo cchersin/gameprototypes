@@ -9,20 +9,20 @@
   width: 100%;
 }
 
-/*.punch_left {
+.punch_left {
   position: fixed;
   top: 100px;
   right: 0px;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .punch_right {
   position: fixed;
   top: 100px;
   left: 0px;
-  z-index: 999;
+  z-index: 9999;
 }
-*/
+
 .healt_bar_container {
   position: fixed;
   top: 0px;
@@ -40,7 +40,8 @@
   height: 200px;
   width: 100%;
   max-width: 1100px;
-  z-index:9999;
+  z-index:999;
+  /*border: 1px solid blue;*/
  }
 
 .healt_bar {
@@ -103,11 +104,11 @@ function detectmob() {
   }
 }
 
-/*
+
 if(detectmob()){
   $(".punch_right").show();
   $(".punch_left").show();
-}*/
+}
 
 
 var levels = [{
@@ -169,7 +170,7 @@ renderer.backgroundColor = 0x09a6df;
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
 renderer.autoResize = true;
-//renderer.resize(window.innerWidth, window.innerHeight);
+renderer.resize(window.innerWidth, window.innerHeight);
 
 
 
@@ -181,9 +182,9 @@ display[0].appendChild(renderer.view);
 
 var controlLayerRenderer = autoDetectRenderer($('#control_layer').width(), $('#control_layer').height(), 
                                   {antialias: false, transparent: true, resolution: 1});
-//renderer.view.style.position = "absolute";
-//renderer.view.style.display = "block";
-//renderer.autoResize = true;
+//controlLayerRenderer.view.style.position = "absolute";
+//controlLayerRenderer.view.style.display = "block";
+controlLayerRenderer.autoResize = true;
 
 $('#control_layer')[0].appendChild(controlLayerRenderer.view);
 
@@ -203,8 +204,8 @@ var mainSprite = null;
 var cinghialiSprite = [];
 var doorSprite = null;
 var winSprite = null;
-var punchLeftSprite = null;
-var punchRightSprite = null;
+//var punchLeftSprite = null;
+//var punchRightSprite = null;
 var restartSprite = null;
 var state = null;
 var greenTile = null;
@@ -233,7 +234,7 @@ loader
   .add("uberfranzJumpL", "images/uberfranz_jump_l.png")
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
-  .add("punch", "images/punch.png")
+  //.add("punch", "images/punch.png")
   .add("cinghialeIdle", "images/cinghiale.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
@@ -376,7 +377,7 @@ var punch = function(){
     });
 }
 
-/*
+
 $(".punch_left").click(function() {
     punch();
 });
@@ -391,7 +392,7 @@ $(".punch_left").on("touchstart", function(ev) {
 
 $(".punch_right").on("touchstart", function(ev) {
     punch();
-});*/
+});
 
 function onSetupImages() {
 
@@ -462,7 +463,7 @@ function setupControlLayer(){
     state = play;
   };
      
-  if(detectmob()){
+  /*if(detectmob()){
     punchLeftSprite = new Sprite(
       resources.punch.texture
     );
@@ -474,7 +475,7 @@ function setupControlLayer(){
     );
 
     punchRightSprite.y = 100;
-    punchRightSprite.x = $('#control_layer').width() - 100;
+    punchRightSprite.x = document.body.clientWidth - 100;
 
     controlLayerStage.addChild(punchLeftSprite);
     controlLayerStage.addChild(punchRightSprite);
@@ -492,7 +493,7 @@ function setupControlLayer(){
       console.log('press');
       punch();
     };
-  }
+  }*/
 }
 
 function setupLevel(){
@@ -907,8 +908,8 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<!--<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
-<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>-->
+<<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
+<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="control_layer" class="control_layer"></div>
 <div id="display" class="display"></div>
