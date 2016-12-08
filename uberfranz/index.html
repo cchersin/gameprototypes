@@ -9,7 +9,7 @@
   width: 100%;
 }
 
-.punch_left {
+/*.punch_left {
   position: fixed;
   top: 100px;
   right: 0px;
@@ -22,7 +22,7 @@
   left: 0px;
   z-index: 999;
 }
-
+*/
 .healt_bar_container {
   position: fixed;
   top: 0px;
@@ -103,10 +103,11 @@ function detectmob() {
   }
 }
 
+/*
 if(detectmob()){
   $(".punch_right").show();
   $(".punch_left").show();
-}
+}*/
 
 
 var levels = [{
@@ -204,6 +205,7 @@ var doorSprite = null;
 var winSprite = null;
 var punchLeftSprite = null;
 var punchRightSprite = null;
+var restartSprite = null;
 var state = null;
 var greenTile = null;
 var weaponCount = 0;
@@ -374,6 +376,7 @@ var punch = function(){
     });
 }
 
+/*
 $(".punch_left").click(function() {
     punch();
 });
@@ -388,7 +391,7 @@ $(".punch_left").on("touchstart", function(ev) {
 
 $(".punch_right").on("touchstart", function(ev) {
     punch();
-});
+});*/
 
 function onSetupImages() {
 
@@ -431,43 +434,73 @@ function onSetupImages() {
 }
 
 function setupControlLayer(){
-  punchLeftSprite = new Sprite(
-    resources.punch.texture
-  );
-  punchLeftSprite.y = 100;
-  punchLeftSprite.x = 0;
-
-  punchRightSprite = new Sprite(
-    resources.punch.texture
-  );
-
-  punchRightSprite.y = 100;
-  punchRightSprite.x = $('#control_layer').width() - 100;
 
   controlLayerStage = new Container();
-  controlLayerStage.addChild(punchLeftSprite);
-  controlLayerStage.addChild(punchRightSprite);
+  
 
   var pointer = t.makePointer();
   pointer.visible=true;
   pointer.x=0;
   pointer.y=0;
 
-  t.makeInteractive(punchLeftSprite);
-  t.makeInteractive(punchRightSprite);
+  restartSprite = new PIXI.Text(
+          "Restart",
+          { font: "64px sans-serif", fill: "white"}
+      );
 
-  punchLeftSprite.press = function() {
-    console.log('press');
-   punch();
-  };
+  restartSprite.position.x = 100;
+  restartSprite.position.y = 100;
+  restartSprite.visible = false;
+  controlLayerStage.addChild(restartSprite);
 
-  punchRightSprite.press = function()  {
-    console.log('press');
-    punch();
+  t.makeInteractive(restartSprite);
+
+  restartSprite.press = function() {
+    restartSprite.visible = false;
+    currLevel = 0;
+    setupLevel();
+    state = play;
   };
+     
+  if(detectmob()){
+    punchLeftSprite = new Sprite(
+      resources.punch.texture
+    );
+    punchLeftSprite.y = 100;
+    punchLeftSprite.x = 0;
+
+    punchRightSprite = new Sprite(
+      resources.punch.texture
+    );
+
+    punchRightSprite.y = 100;
+    punchRightSprite.x = $('#control_layer').width() - 100;
+
+    controlLayerStage.addChild(punchLeftSprite);
+    controlLayerStage.addChild(punchRightSprite);
+
+  
+    t.makeInteractive(punchLeftSprite);
+    t.makeInteractive(punchRightSprite);
+
+    punchLeftSprite.press = function() {
+      console.log('press');
+     punch();
+    };
+
+    punchRightSprite.press = function()  {
+      console.log('press');
+      punch();
+    };
+  }
 }
 
 function setupLevel(){
+
+  if(currLevel==0){
+    power = 100;
+    $(".healt_bar_inner").width($(".healt_bar").width());
+  }
 
   stageX = 0;
   oldYCollions = false;
@@ -652,6 +685,10 @@ function play() {
     if(currLevel == levels.length -1){
       winSound.play();
       state = endWin;
+      setTimeout(function(){
+        restartSprite.visible = true;
+      }, 500);
+      
     } else {
       enterDoorSound.play();
       state = changingLevel;
@@ -792,6 +829,9 @@ function play() {
       stage.removeChild(mainSprite);
 
       state = gameOver;
+      setTimeout(function(){
+        restartSprite.visible = true;
+      }, 500 );
     } else {
       enemyHitSound.play();  
     }
