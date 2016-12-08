@@ -35,6 +35,25 @@ var Tink = (function () {
     this.Texture = this.PIXI.Texture;
   }
 
+
+ function cumulativeOffset(el)
+ {
+  var x = 0;
+  var y = 0;
+  var cur = (el) ? el : this;
+  do
+  {
+    if (cur.nodeName.toLowerCase != 'td')
+    {
+      x += cur.offsetLeft;
+      y += cur.offsetTop;
+    }
+  }
+  while ((cur = cur.offsetParent) && cur.nodeName.toLowerCase() != 'body'); 
+
+  return { left: x, top: y };
+ }
+
   //`makeDraggable` lets you make a drag-and-drop sprite by pushing it
   //into the `draggableSprites` array
 
@@ -228,8 +247,8 @@ var Tink = (function () {
 
           //Find the pointer’s x and y position (for mouse).
           //Subtract the element's top and left offset from the browser window
-          this._x = event.pageX - element.offsetLeft;
-          this._y = event.pageY - element.offsetTop;
+          this._x = event.clientX - cumulativeOffset(element).left;
+          this._y = event.clientY - cumulativeOffset(element).top;
 
           //Prevent the event's default behavior
           event.preventDefault();
@@ -240,8 +259,8 @@ var Tink = (function () {
           var element = event.target;
 
           //Find the touch point's x and y position
-          this._x = event.targetTouches[0].pageX - element.offsetLeft;
-          this._y = event.targetTouches[0].pageY - element.offsetTop;
+          this._x = event.targetTouches[0].clientX - cumulativeOffset(element).left;
+          this._y = event.targetTouches[0].clientY - cumulativeOffset(element).top;
           event.preventDefault();
         },
 
@@ -266,8 +285,8 @@ var Tink = (function () {
           var element = event.target;
 
           //Find the touch point's x and y position
-          this._x = event.targetTouches[0].pageX - element.offsetLeft;
-          this._y = event.targetTouches[0].pageY - element.offsetTop;
+          this._x = event.targetTouches[0].clientX - cumulativeOffset(element).left;
+          this._y = event.targetTouches[0].clientY - cumulativeOffset(element).top;
 
           //Set the down states
           this.isDown = true;

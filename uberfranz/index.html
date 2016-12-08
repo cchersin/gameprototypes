@@ -33,6 +33,17 @@
   z-index: 999;
 }
 
+.control_layer {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 500px;
+  width: 100%;
+  max-width: 1100px;
+  z-index:9999;
+  border:1px solid blue;
+}
+
 .healt_bar {
   position: absolute;
   top: 10px;
@@ -153,7 +164,7 @@ var rendererHeight = levels[currLevel].container.height*TILE_SIZE;
 //Create the renderer
 var renderer = autoDetectRenderer(rendererWidth, rendererHeight, 
                                   {antialias: false, transparent: false, resolution: 1});
-renderer.backgroundColor = 0x061639;
+renderer.backgroundColor = 0x09a6df;
 
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
@@ -166,22 +177,34 @@ renderer.autoResize = true;
 var display = $("#display");
 
 display[0].appendChild(renderer.view);
+
+
+var controlLayerRenderer = autoDetectRenderer($('#control_layer').width(), $('#control_layer').height(), 
+                                  {antialias: false, transparent: true, resolution: 1});
+//renderer.view.style.position = "absolute";
+//renderer.view.style.display = "block";
+//renderer.autoResize = true;
+
+$('#control_layer')[0].appendChild(controlLayerRenderer.view);
+
 //display.width(rendererWidth);
 //display.height(rendererHeight);
 
 // TODO RESTART!!!!
 // TODO dimesioni sprites 
 
-var t = new Tink(PIXI, renderer.view);
+var t = new Tink(PIXI, controlLayerRenderer.view);
 
 
 var stage = null;
+var controlLayerStage = null;
 var uberfranzSprite = null;
 var mainSprite = null;
 var cinghialiSprite = [];
 var doorSprite = null;
 var winSprite = null;
-//var punchSprite = null;
+var punchLeftSprite = null;
+var punchRightSprite = null;
 var state = null;
 var greenTile = null;
 var weaponCount = 0;
@@ -209,7 +232,7 @@ loader
   .add("uberfranzJumpL", "images/uberfranz_jump_l.png")
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
-  //.add("uberfranzBeatEnemy", "images/uberfranz.png")
+  .add("punch", "images/punch.png")
   .add("cinghialeIdle", "images/cinghiale.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
@@ -403,8 +426,46 @@ function onSetupImages() {
     winSound = sounds["sounds/win.wav"];
 
     setupLevel();
+    setupControlLayer();
     gameLoop();
   }
+}
+
+function setupControlLayer(){
+  punchLeftSprite = new Sprite(
+    resources.punch.texture
+  );
+  punchLeftSprite.y = 100;
+  punchLeftSprite.x = 0;
+
+  punchRightSprite = new Sprite(
+    resources.punch.texture
+  );
+
+  punchRightSprite.y = 100;
+  punchRightSprite.x = $('#control_layer').width() - 100;
+
+  controlLayerStage = new Container();
+  controlLayerStage.addChild(punchLeftSprite);
+  controlLayerStage.addChild(punchRightSprite);
+
+  var pointer = t.makePointer();
+  pointer.visible=true;
+  pointer.x=0;
+  pointer.y=0;
+
+  t.makeInteractive(punchLeftSprite);
+  t.makeInteractive(punchRightSprite);
+
+  punchLeftSprite.press = function() {
+    console.log('press');
+   punch();
+  };
+
+  punchRightSprite.press = function()  {
+    console.log('press');
+    punch();
+  };
 }
 
 function setupLevel(){
@@ -461,20 +522,7 @@ function setupLevel(){
   doorSprite.x = 50;
   stage.addChild(doorSprite);
 
-  /*punchSprite = new Sprite(
-    resources.punch.texture
-  );
-  punchSprite.x = rendererWidth - 100;
-  stage.addChild(punchSprite);
-  t.makeInteractive(punchSprite);
-
-  punchSprite.press = function() {
-   weaponPressed = true;
-  };
-
-  punchSprite.release = function()  {
-    weaponPressed = false;
-  };*/
+  
 
   
   mainSprite = uberfranzSprite;
@@ -487,10 +535,7 @@ function setupLevel(){
   stage.addChild(mainSprite);
 
 
-  var pointer = t.makePointer();
-  pointer.visible=true;
-  pointer.x=0;
-  pointer.y=0;
+  
 
 
   weaponKey.press = function() {
@@ -524,6 +569,7 @@ function gameLoop() {
 
   //Render the stage to see the animation
   renderer.render(stage);
+  controlLayerRenderer.render(controlLayerStage);
 }
 
 function play() {
@@ -814,9 +860,10 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
-<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
+<!--<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
+<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>-->
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+<div id="control_layer" class="control_layer"></div>
 <div id="display" class="display"></div>
 </div>
 </body>
