@@ -247,8 +247,8 @@ var Tink = (function () {
 
           //Find the pointer’s x and y position (for mouse).
           //Subtract the element's top and left offset from the browser window
-          this._x = event.clientX - cumulativeOffset(element).left;
-          this._y = event.clientY - cumulativeOffset(element).top;
+          this._x = event.clientX; //- cumulativeOffset(element).left;
+          this._y = event.clientY; // - cumulativeOffset(element).top;
 
           //Prevent the event's default behavior
           event.preventDefault();
@@ -259,8 +259,8 @@ var Tink = (function () {
           var element = event.target;
 
           //Find the touch point's x and y position
-          this._x = event.targetTouches[0].clientX - cumulativeOffset(element).left;
-          this._y = event.targetTouches[0].clientY - cumulativeOffset(element).top;
+          this._x = event.targetTouches[0].clientX; // - cumulativeOffset(element).left;
+          this._y = event.targetTouches[0].clientY; // - cumulativeOffset(element).top;
           event.preventDefault();
         },
 
@@ -285,8 +285,8 @@ var Tink = (function () {
           var element = event.target;
 
           //Find the touch point's x and y position
-          this._x = event.targetTouches[0].clientX - cumulativeOffset(element).left;
-          this._y = event.targetTouches[0].clientY - cumulativeOffset(element).top;
+          this._x = event.targetTouches[0].clientX; // - cumulativeOffset(element).left;
+          this._y = event.targetTouches[0].clientY; // - cumulativeOffset(element).top;
 
           //Set the down states
           this.isDown = true;
