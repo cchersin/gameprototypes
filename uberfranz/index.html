@@ -1,12 +1,15 @@
 <!doctype html>
 <meta charset="utf-8">
+<!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />-->
 <title>Uberfranz</title>
 <head>
 <style>
 .main {
   position: relative;
-  height: 100px;
-  width: 100%;
+  /*height: 100px;
+  width: 100%;*/
+  overflow: hidden;
+  border: 1px solid blue;
 }
 
 .punch_left {
@@ -83,6 +86,8 @@
 
 $(function(){
 
+var main = $('.main');
+
 if(navigator.userAgent.includes('Silk/')){
   $(document.body).html('Silk browser not suppported');
   return;
@@ -108,7 +113,22 @@ function detectmob() {
 if(detectmob()){
   $(".punch_right").show();
   $(".punch_left").show();
+
+   
 }
+
+var fitToWindow = function(){
+  var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  main.width(window_width);
+  main.height(window_height);
+};
+
+fitToWindow();
+
+$(window).resize(function(){
+  fitToWindow();
+});
 
 
 var levels = [{
@@ -170,8 +190,7 @@ renderer.backgroundColor = 0x09a6df;
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
 renderer.autoResize = true;
-renderer.resize(window.innerWidth, window.innerHeight);
-
+//renderer.resize(window.innerWidth, window.innerHeight);
 
 
 //Add the canvas to the HTML document
@@ -322,7 +341,12 @@ var rightCostumes = function(){
     weaponCostume = resources.uberfranzWeaponR.texture;
 }
 
+var lastTap = 0;
+var lastTapX = 0;
+var lastTapY = 0;
 function detectActions(touches){
+
+  
 
  if(touches.length == 2){  
     upGesture = true;
@@ -332,11 +356,14 @@ function detectActions(touches){
     rightGesture = false;
     upGesture = false;
 
+   var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  
+
     for (var i = touches.length - 1; i >= 0; i--) {
-      if(touches[i].clientX < rendererWidth / 2  ){
+      if(touches[i].clientX < window_width / 2  ){
         leftCostumes();
         leftGesture = true;
-      } else if((touches[i].clientX > rendererWidth / 2 ) && touches[i].pageY > 100){
+      } else if((touches[i].clientX > window_width / 2 ) && touches[i].clientY > 100){
         rightCostumes();
         rightGesture = true;
       } 
@@ -347,12 +374,33 @@ function detectActions(touches){
 $(".main").on("touchstart", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
+
+    /*var currentTime = new Date().getTime();
+  var tapLength = currentTime - lastTap;
+  lastTap = currentTime;
+  var deltaY = Math.abs(lastTapX - (e.touches.length > 0 ? e.touches[0].clientX : 0));
+  var deltaX = Math.abs(lastTapY - (e.touches.length > 0 ? e.touches[0].clientY : 0));
+  lastTapX = e.touches.length > 0 ? e.touches[0].clientX : 0;
+  lastTapY = e.touches.length > 0 ? e.touches[0].clientY : 0;
+
+  console.log("LATS" + lastTapX + ' - ' + lastTapY);
+  console.log(deltaX + ' - ' + deltaY);
+
+  if(e.touches.length == 1 && deltaX < 10 && deltaY < 10 && tapLength < 500 && tapLength > 0) {
+    punch();
+    return;
+  } */
+    
+
     detectActions(e.touches);
 });
 
 $(".main").on("touchend", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
+    
+  
+  
     detectActions(e.touches);
 });
 
@@ -846,44 +894,52 @@ function play() {
     }
   }
 
-  var hBorder = rendererWidth / 6;
-  var vBorder = rendererHeight / 6;
+  var window_width = main.width(); //Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  var window_height = main.height(); //Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
+
+  var MAIN_SPRITE_WIDTH = 48;
   var MAIN_SPRITE_HEIGTH = 48;
-  var scrollTop = $(window).scrollTop();
-  if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + $(window).height()){
+  var hBorder = MAIN_SPRITE_WIDTH; //rendererWidth / 10;
+  var vBorder = MAIN_SPRITE_HEIGTH; //rendererHeight / 10;
+
+//setTimeout(function(){  
+
+  var scrollTop = main.scrollTop();
+  if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + window_height){
     //console.log("out of screen - bottom");
-    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + hBorder - $(window).height();
-    if(scrollTo > rendererHeight - $(window).height())
-        scrollTo = rendererHeight - $(window).height();
-    $(window).scrollTop(scrollTo);
+    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder*2 - window_height;
+    if(scrollTo > rendererHeight - window_height)
+        scrollTo = rendererHeight - window_height;
+    main.scrollTop(scrollTo);
   } else {
     if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
-      var scrollTo  = mainSprite.y - hBorder;
+      var scrollTo  = mainSprite.y - vBorder*2;
       if(scrollTo < 0)
         scrollTo = 0;
-     $(window).scrollTop(scrollTo);
+    main.scrollTop(scrollTo);
     }
   }
 
-  var MAIN_SPRITE_WIDTH = 48;
-  var scrollLeft = $(window).scrollLeft();
-  if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + $(window).width()){
+  
+  var scrollLeft = main.scrollLeft();
+  if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + window_width){
     //console.log("out of screen - right");
-    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - $(window).width();
-    if(scrollTo > rendererWidth - $(window).width())
-        scrollTo = rendererWidth - $(window).width();
-    $(window).scrollLeft(scrollTo);
+    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - window_width;
+    if(scrollTo > rendererWidth - window_width)
+        scrollTo = rendererWidth - window_width;
+    main.scrollLeft(scrollTo);
   } else {
     if(mainSprite.x - hBorder < scrollLeft ){
       //console.log("out of screen left");
       var scrollTo  = mainSprite.x - hBorder;
       if(scrollTo < 0)
         scrollTo = 0;
-     $(window).scrollLeft(scrollTo);
+     main.scrollLeft(scrollTo);
     }
   }
+//},0);
 
 }
 
@@ -899,6 +955,20 @@ var endWin = function(){
   //
 };
 
+/*
+window.document.addEventListener('orientationchange', function() {
+  var iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/g);
+  var viewportmeta = document.querySelector('meta[name="viewport"]');
+  if (iOS && viewportmeta) {
+    if (viewportmeta.content.match(/width=device-width/)) {
+      viewportmeta.content = viewportmeta.content.replace(/width=[^,]+/, 'width=1');
+    }
+    viewportmeta.content = viewportmeta.content.replace(/width=[^,]+/, 'width=' + window.innerWidth);
+  }
+  // If you want to hide the address bar on orientation change, uncomment the next line
+  // window.scrollTo(0, 0);
+}, false);*/
+
 });
 
 
@@ -908,7 +978,7 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
+<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="control_layer" class="control_layer"></div>
