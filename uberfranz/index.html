@@ -113,15 +113,15 @@ function detectmob() {
 if(detectmob()){
   $(".punch_right").show();
   $(".punch_left").show();
-
-   
 }
 
 var fitToWindow = function(){
-  var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-  var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   main.width(window_width);
   main.height(window_height);
+
+     //$('.punch_right').html(window_height);
 };
 
 fitToWindow();
@@ -130,9 +130,14 @@ $(window).resize(function(){
   fitToWindow();
 });
 
+// Listen for orientation changes
+window.addEventListener("orientationchange", function() {
+  fitToWindow();
+}, false);
+
 
 var levels = [{
-  container:{width:20,height:13},
+  container:{width:20,height:14},
   mainCharacter:{row:10,col:10},
   platforms:[{row:11,col:0, width:20, height:2},
          {row:0,col:0, width:1, height:11},
@@ -894,28 +899,31 @@ function play() {
     }
   }
 
-  var window_width = main.width(); //Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-  var window_height = main.height(); //Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  var main_width = main.width(); //Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  var main_height = main.height(); //Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
 
   var MAIN_SPRITE_WIDTH = 48;
   var MAIN_SPRITE_HEIGTH = 48;
-  var hBorder = MAIN_SPRITE_WIDTH; //rendererWidth / 10;
-  var vBorder = MAIN_SPRITE_HEIGTH; //rendererHeight / 10;
+  var hBorder = 200;
+  var vBorder = 200;
 
 //setTimeout(function(){  
 
   var scrollTop = main.scrollTop();
-  if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + window_height){
+  if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + main_height){
     //console.log("out of screen - bottom");
-    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder*2 - window_height;
-    if(scrollTo > rendererHeight - window_height)
-        scrollTo = rendererHeight - window_height;
+    //$('.punch_left').html('out of screen');
+    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder - main_height;
+    if(scrollTo > rendererHeight - main_height)
+        scrollTo = rendererHeight - main_height;
+
+       //$('.punch_left').html('out of screen ' + scrollTo);
     main.scrollTop(scrollTo);
   } else {
     if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
-      var scrollTo  = mainSprite.y - vBorder*2;
+      var scrollTo  = mainSprite.y - vBorder;
       if(scrollTo < 0)
         scrollTo = 0;
     main.scrollTop(scrollTo);
@@ -924,11 +932,11 @@ function play() {
 
   
   var scrollLeft = main.scrollLeft();
-  if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + window_width){
+  if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + main_width){
     //console.log("out of screen - right");
-    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - window_width;
-    if(scrollTo > rendererWidth - window_width)
-        scrollTo = rendererWidth - window_width;
+    var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - main_width;
+    if(scrollTo > rendererWidth - main_width)
+        scrollTo = rendererWidth - main_width;
     main.scrollLeft(scrollTo);
   } else {
     if(mainSprite.x - hBorder < scrollLeft ){
