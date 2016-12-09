@@ -19,13 +19,15 @@
   z-index: 9999;
 }
 
-.start {
+.start_button {
   position: fixed;
-  top: 100px;
-  left: 100px;
+  top: 0px;
+  left: 0px;
+  max-width: 1100px;
   z-index: 9999;
-  font-size: 64px;
 }
+
+
 
 .punch_right {
   position: fixed;
@@ -117,10 +119,13 @@ function detectmob() {
   }
 }
 
+var spriteScale = 1;
+
 
 if(detectmob()){
   $(".punch_right").show();
   $(".punch_left").show();
+  spriteScale = 1.5;
 }
 
 var fitToWindow = function(){
@@ -129,7 +134,8 @@ var fitToWindow = function(){
   main.width(window_width);
   main.height(window_height);
 
-     //$('.punch_right').html(window_height);
+  $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
+  $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2) + "px");
 };
 
 fitToWindow();
@@ -154,28 +160,24 @@ var levels = [{
          {row:0,col:19, width:1, height:17},
          {row:3.5,col:11, width:8, height:1},
          {row:6,col:7, width:4, height:1},
-         {row:7.5,col:2, width:2, height:1},
+         {row:7.5,col:1, width:3, height:1},
+         {row:10,col:1, width:10, height:1, enemies : [{col:1}]},
+         {row:11.8,col:13, width:6, height:1},
+         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
+   {
+  container:{width:20,height:20},
+  mainCharacter:{row:17,col:10},
+  //mainCharacter:{row:7.5,col:3},
+  win:{row:4,col:17},
+  platforms:[{row:17,col:0, width:20, height:3},
+         {row:0,col:0, width:1, height:17},
+         {row:0,col:19, width:1, height:17},
+         {row:3.5,col:11, width:8, height:1},
+         {row:6,col:7, width:4, height:1},
+         {row:7.5,col:1, width:3, height:1},
          {row:10,col:1, width:9, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1},
-         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
-   { container:{width:20,height:13},
-   mainCharacter:{row:10,col:10},
-   platforms:[{row:11,col:0, width:20, height:2},
-         {row:0,col:0, width:1, height:11},
-         {row:0,col:19, width:1, height:11},
-             {row:3,col:1, width:3, height:1},
-         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
-         {row:6.8,col:9, width:10, height:1},
-         {row:8.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
-  { container:{width:20,height:13},
-   mainCharacter:{row:10,col:10},
-   platforms:[{row:11,col:0, width:20, height:2},
-         {row:0,col:0, width:1, height:11},
-         {row:0,col:19, width:1, height:11},
-             {row:3,col:1, width:3, height:1},
-         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
-         {row:6.8,col:9, width:10, height:1},
-         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]}
+         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]}
 ];
 
 
@@ -186,7 +188,6 @@ var TILE_SIZE = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
-var spriteScale = 1.5;
 
 
 ///Aliases
@@ -458,15 +459,17 @@ $(".punch_right").on("touchstart", function(ev) {
     punch();
 });
 
-$(".start").on("click", function(ev) {
+$(".start_button").on("click", function(ev) {
+    $(".start_button").hide();
+    currLevel = 0;
+    setupLevel();
     state = play;
-    $(".start").hide();
     punch();
 });
 
-$(".start").on("touchstart", function(ev) {
+$(".start_button").on("touchstart", function(ev) {
     state = play;
-    $(".start").hide();
+    $(".start_button").hide();
     punch();
 });
 
@@ -529,7 +532,7 @@ function setupControlLayer(){
   pointer.x=0;
   pointer.y=0;
 
-  restartSprite = new PIXI.Text(
+  /*restartSprite = new PIXI.Text(
           "Restart",
           { font: "64px sans-serif", fill: "white"}
       );
@@ -546,7 +549,7 @@ function setupControlLayer(){
     currLevel = 0;
     setupLevel();
     state = play;
-  };
+  };*/
      
   /*if(detectmob()){
     punchLeftSprite = new Sprite(
@@ -779,7 +782,8 @@ function play() {
       winSound.play();
       state = endWin;
       setTimeout(function(){
-        restartSprite.visible = true;
+        $(".start_button").show();
+        //restartSprite.visible = true;
       }, 500);
       
     } else {
@@ -919,7 +923,7 @@ function play() {
 
       message.position.x = $(window).scrollLeft() + 20;
       message.position.y = $(window).scrollTop() + 20;
-      stage.addChild(message);
+      controlLayerStage.addChild(message);
       stage.removeChild(mainSprite);
 
       state = gameOver;
@@ -1024,7 +1028,7 @@ window.document.addEventListener('orientationchange', function() {
 
 <body>
 <div class="main">
-<div class="start">START</div>
+<img src="images/play.jpeg" class="start_button"></img>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
