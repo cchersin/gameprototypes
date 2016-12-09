@@ -154,16 +154,16 @@ var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
   //mainCharacter:{row:7.5,col:3},
-  win:{row:4.2,col:15},
+  win:{row:3.2,col:15},
   platforms:[{row:17,col:0, width:20, height:3},
          {row:0,col:0, width:1, height:21},
          {row:0,col:19, width:1, height:21},
-         {row:3.5,col:11, width:8, height:1},
-         {row:6,col:7, width:4, height:1},
-         {row:7.5,col:1, width:3, height:1},
-         {row:10,col:1, width:10, height:1, enemies : [{col:1}]},
-         {row:11.8,col:13, width:6, height:1},
-         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
+         {row:2.5,col:11, width:8, height:1},
+         {row:5,col:7, width:4, height:1},
+         {row:6.5,col:1, width:3, height:1},
+         {row:9,col:1, width:10, height:1, enemies : [{col:1}]},
+         {row:10.8,col:13, width:6, height:1},
+         {row:14,col:5, width:14, height:1, enemies : [{col:1}]}]},
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
@@ -184,8 +184,8 @@ var levels = [{
 
 var currLevel = 0;
 var platforms = null; 
-var TILE_SIZE_H = 60;
-var TILE_SIZE_V = 55;
+var TILE_SIZE_H = 60 * spriteScale;
+var TILE_SIZE_V = 45 * spriteScale;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
@@ -289,7 +289,7 @@ var gravity = 0.1;
 var velocityMultiplier = 0.96;
 var velocityMultiplierLand = 0.8;
 var jumped = false;
-var jumpHeight = 7;
+var jumpHeight = 7 * spriteScale;
 var runJumpMultipler = 0.2;
 var idleCostume = null;
 var moving = false;
@@ -318,16 +318,22 @@ var cinghialeBeated = null;
 
 function createPlatformSprite(row,col,width,height,tileTexture){
 
+// ParticleContainer
   var platform = new Container();
+  var platform0 = new PIXI.ParticleContainer();
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
        var tile = new Sprite(resources.tile.texture);
+       tile.scale.x = spriteScale;
+       tile.scale.y = spriteScale;
        tile.x = CONTROL_BUTTON_WIDTH + i * TILE_SIZE_H;
-       tile.y = j * (TILE_SIZE_V - 10) + 10;
-       platform.addChild(tile);
+       tile.y = j * TILE_SIZE_V;
+       platform0.addChild(tile);
     }
   }
+
+  platform.addChild(platform0);
 
   var border1 = new PIXI.Graphics();
   border1.lineStyle(1, 0x6b6060, 1);
@@ -347,7 +353,6 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   border2.y = 5;
   platform.addChild(border2);
 
-       
 
   platform.x = col * TILE_SIZE_H;
   platform.y = row * TILE_SIZE_V;
