@@ -916,19 +916,19 @@ function play() {
     $(".healt_bar_inner").css("right", 20 + ( $(".healt_bar").width() - p )+ "px");
     if(power <=0){
       dieSound.play();
-      var message = new PIXI.Text(
+      /*var message = new PIXI.Text(
           "Game over",
           { font: "64px sans-serif", fill: "white"}
       );
 
       message.position.x = $(window).scrollLeft() + 20;
       message.position.y = $(window).scrollTop() + 20;
-      controlLayerStage.addChild(message);
+      controlLayerStage.addChild(message);*/
       stage.removeChild(mainSprite);
 
       state = gameOver;
       setTimeout(function(){
-        restartSprite.visible = true;
+        $('.start_button').show();
       }, 500 );
     } else {
       enemyHitSound.play();  
