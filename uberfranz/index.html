@@ -353,7 +353,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
 // ParticleContainer
   var platform = new Container();
-  /*var platform0 = new PIXI.ParticleContainer();
+  var platform0 = new PIXI.ParticleContainer(100,{rotation:false,alpha:false,scale:false,uvs:false});
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
@@ -364,9 +364,9 @@ function createPlatformSprite(row,col,width,height,tileTexture){
        tile.y = j * TILE_SIZE_V;
        platform0.addChild(tile);
     }
-  }*/
+  }
 
-  var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture,width * TILE_SIZE_H,height*TILE_SIZE_V);
+  /*var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture,width * TILE_SIZE_H,height*TILE_SIZE_V);*/
 
   platform.addChild(platform0);
 
