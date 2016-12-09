@@ -664,9 +664,10 @@ function setupLevel(){
   platforms = levels[currLevel].platforms;
   clouds = levels[currLevel].clouds;
   signs = levels[currLevel].signs;
- 
-  uberfranzSprite.texture = idleCostume;
+  
   rightCostumes();  
+  
+  uberfranzSprite.texture = idleCostume;
 
   for(var i = 0; i < clouds.length; i++){
     clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
