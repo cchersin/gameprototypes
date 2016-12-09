@@ -137,15 +137,19 @@ window.addEventListener("orientationchange", function() {
 
 
 var levels = [{
-  container:{width:20,height:14},
-  mainCharacter:{row:10,col:10},
-  platforms:[{row:11,col:0, width:20, height:2},
-         {row:0,col:0, width:1, height:11},
-         {row:0,col:19, width:1, height:11},
-             {row:3,col:1, width:3, height:1},
-         {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
-         {row:6.8,col:9, width:10, height:1},
-         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]},
+  container:{width:20,height:20},
+  //mainCharacter:{row:17,col:10},
+  mainCharacter:{row:7.5,col:3},
+  win:{row:4,col:17},
+  platforms:[{row:17,col:0, width:20, height:3},
+         {row:0,col:0, width:1, height:17},
+         {row:0,col:19, width:1, height:17},
+         {row:3.5,col:11, width:8, height:1},
+         {row:6,col:7, width:4, height:1},
+         {row:7.5,col:2, width:2, height:1},
+         {row:10,col:1, width:9, height:1, enemies : [{col:1},{col:3}]},
+         {row:11.8,col:12, width:7, height:1},
+         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
    { container:{width:20,height:13},
    mainCharacter:{row:10,col:10},
    platforms:[{row:11,col:0, width:20, height:2},
@@ -154,7 +158,7 @@ var levels = [{
              {row:3,col:1, width:3, height:1},
          {row:5,col:1, width:6, height:1, enemies : [{col:1},{col:3}]},
          {row:6.8,col:9, width:10, height:1},
-         {row:9,col:5, width:14, height:1, enemies : [{col:1}]}]},
+         {row:8.5,col:5, width:14, height:1, enemies : [{col:1}]}]},
   { container:{width:20,height:13},
    mainCharacter:{row:10,col:10},
    platforms:[{row:11,col:0, width:20, height:2},
@@ -174,6 +178,7 @@ var TILE_SIZE = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
+var spriteScale = 1.5;
 
 
 ///Aliases
@@ -455,6 +460,8 @@ function onSetupImages() {
   cinghialeIdle = resources.cinghialeIdle.texture;
   cinghialeBeated = resources.cinghialeBeated.texture;
 
+  rightCostumes();
+
   uberfranzSprite = new Sprite(
     idleCostume
   );
@@ -583,6 +590,9 @@ function setupLevel(){
          resources.cinghialeIdle.texture
        );
 
+       cinghialeSprite.scale.x = spriteScale;
+       cinghialeSprite.scale.y = spriteScale;
+
        cinghialeSprite.x = TILE_SIZE * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
        cinghialeSprite.y = (TILE_SIZE * platforms[i].row) - cinghialeSprite.height;
        cinghialeSprite.vx = -1;
@@ -595,32 +605,39 @@ function setupLevel(){
     }
   }
   
-  winSprite = new PIXI.Graphics();
+  /*winSprite = new PIXI.Graphics();
   winSprite.lineStyle(1, 0xEEEEEE, 1);
   winSprite.beginFill(0xCCCCCC);
   winSprite.drawRect(0, 0, 20, 20);
   winSprite.endFill();
-  winSprite.x = 90;
-  winSprite.y = 40;
-  stage.addChild(winSprite);
+  winSprite.x = levels[currLevel].win.col * TILE_SIZE;
+  winSprite.y = levels[currLevel].win.row * TILE_SIZE - winSprite.height;
+  stage.addChild(winSprite);*/
 
   doorSprite = new Sprite(
     resources.win.texture
   );
-  doorSprite.x = 50;
+  doorSprite.x = levels[currLevel].win.col * TILE_SIZE;
+  doorSprite.y = levels[currLevel].win.row * TILE_SIZE - doorSprite.height;
   stage.addChild(doorSprite);
+  winSprite = doorSprite;
 
   
 
   
   mainSprite = uberfranzSprite;
 
-  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
-  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE;
-  mainSprite.vx = 0;
-  mainSprite.vy = 0;
-
   stage.addChild(mainSprite);
+
+   mainSprite.vx = 0;
+  mainSprite.vy = 0;
+  mainSprite.scale.x = spriteScale;
+  mainSprite.scale.y = spriteScale;
+  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
+  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE - mainSprite.height;
+ 
+
+
 
 
   
@@ -903,8 +920,8 @@ function play() {
   var main_height = main.height(); //Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
 
-  var MAIN_SPRITE_WIDTH = 48;
-  var MAIN_SPRITE_HEIGTH = 48;
+  var MAIN_SPRITE_WIDTH = mainSprite.width;
+  var MAIN_SPRITE_HEIGTH = mainSprite.height;
   var hBorder = 200;
   var vBorder = 200;
 
