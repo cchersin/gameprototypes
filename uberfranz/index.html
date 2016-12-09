@@ -184,7 +184,8 @@ var levels = [{
 
 var currLevel = 0;
 var platforms = null; 
-var TILE_SIZE = 55;
+var TILE_SIZE_H = 60;
+var TILE_SIZE_V = 55;
 var CONTROL_BUTTON_WIDTH = 0;
 var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
@@ -198,8 +199,8 @@ var Container = PIXI.Container,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle;
 
-var rendererWidth = levels[currLevel].container.width*TILE_SIZE+CONTROL_BUTTON_WIDTH*2;
-var rendererHeight = levels[currLevel].container.height*TILE_SIZE;
+var rendererWidth = levels[currLevel].container.width*TILE_SIZE_H+CONTROL_BUTTON_WIDTH*2;
+var rendererHeight = levels[currLevel].container.height*TILE_SIZE_V;
 
 //Create the renderer
 var renderer = autoDetectRenderer(rendererWidth, rendererHeight, 
@@ -277,6 +278,7 @@ loader
   .add("cinghialeIdleR", "images/cinghiale_r.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
+  .add("tile", "images/tile.png")
   .load(onSetupImages);
 
   
@@ -320,20 +322,35 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
-       //var tile = new Sprite(tileTexture);
-       var tile = new PIXI.Graphics();
-       tile.lineStyle(1, 0xEEEEEE, 1);
-       tile.beginFill(0xCCCCCC);
-       tile.drawRect(0, 0, TILE_SIZE -2, TILE_SIZE-2);
-       tile.endFill();
-       tile.x = CONTROL_BUTTON_WIDTH + i * TILE_SIZE;
-       tile.y = j * TILE_SIZE;
+       var tile = new Sprite(resources.tile.texture);
+       tile.x = CONTROL_BUTTON_WIDTH + i * TILE_SIZE_H;
+       tile.y = j * (TILE_SIZE_V - 10) + 10;
        platform.addChild(tile);
     }
   }
 
-  platform.x = col * TILE_SIZE;
-  platform.y = row * TILE_SIZE;
+  var border1 = new PIXI.Graphics();
+  border1.lineStyle(1, 0x6b6060, 1);
+  border1.beginFill(0x6b6060);
+  border1.drawRect(0, 0, TILE_SIZE_H * width -2, 5);
+  border1.endFill();
+  border1.x = 0;
+  border1.y = 0;
+  platform.addChild(border1);
+
+  var border2 = new PIXI.Graphics();
+  border2.lineStyle(1, 0x181512, 1);
+  border2.beginFill(0x181512);
+  border2.drawRect(0, 0, TILE_SIZE_H * width -2, 5);
+  border2.endFill();
+  border2.x = 0;
+  border2.y = 5;
+  platform.addChild(border2);
+
+       
+
+  platform.x = col * TILE_SIZE_H;
+  platform.y = row * TILE_SIZE_V;
 
   return platform;
 }
@@ -627,8 +644,8 @@ function setupLevel(){
        cinghialeSprite.scale.x = spriteScale;
        cinghialeSprite.scale.y = spriteScale;
 
-       cinghialeSprite.x = TILE_SIZE * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
-       cinghialeSprite.y = (TILE_SIZE * platforms[i].row) - cinghialeSprite.height;
+       cinghialeSprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
+       cinghialeSprite.y = (TILE_SIZE_V * platforms[i].row) - cinghialeSprite.height;
        cinghialeSprite.vx = 1;
        cinghialeSprite.vy = 0;
 
@@ -651,8 +668,8 @@ function setupLevel(){
   doorSprite = new Sprite(
     resources.win.texture
   );
-  doorSprite.x = levels[currLevel].win.col * TILE_SIZE;
-  doorSprite.y = levels[currLevel].win.row * TILE_SIZE - doorSprite.height;
+  doorSprite.x = levels[currLevel].win.col * TILE_SIZE_H;
+  doorSprite.y = levels[currLevel].win.row * TILE_SIZE_V - doorSprite.height;
   stage.addChild(doorSprite);
   winSprite = doorSprite;
 
@@ -667,8 +684,8 @@ function setupLevel(){
   mainSprite.vy = 0;
   mainSprite.scale.x = spriteScale;
   mainSprite.scale.y = spriteScale;
-  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
-  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE - mainSprite.height;
+  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE_H;
+  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
 
   
 
@@ -891,10 +908,10 @@ function play() {
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
         enemies[j].sprite.y += enemies[j].sprite.vy; 
 
-        if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
+        if(enemies[j].sprite.x > TILE_SIZE_H * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = -1;
           enemies[j].sprite.texture = cinghialeIdleL;
-        } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
+        } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
           enemies[j].sprite.texture = cinghialeIdleR;
         }
