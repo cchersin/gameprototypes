@@ -353,7 +353,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
 // ParticleContainer
   var platform = new Container();
-  var platform0 = new PIXI.ParticleContainer();
+  /*var platform0 = new PIXI.ParticleContainer();
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
@@ -364,7 +364,9 @@ function createPlatformSprite(row,col,width,height,tileTexture){
        tile.y = j * TILE_SIZE_V;
        platform0.addChild(tile);
     }
-  }
+  }*/
+
+  var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture,width * TILE_SIZE_H,height*TILE_SIZE_V);
 
   platform.addChild(platform0);
 
@@ -519,18 +521,20 @@ $(".punch_right").on("touchstart", function(ev) {
     punch();
 });
 
-$(".start_button").on("click", function(ev) {
-    $(".start_button").hide();
+function start(){
+  $(".start_button").hide();
     currLevel = 0;
     setupLevel();
     state = play;
     punch();
+}
+
+$(".start_button").on("click", function(ev) {
+    start();
 });
 
 $(".start_button").on("touchstart", function(ev) {
-    state = play;
-    $(".start_button").hide();
-    punch();
+    start();
 });
 
 
@@ -650,7 +654,7 @@ function setupLevel(){
   if(currLevel==0){
     power = 100;
     $(".healt_bar_inner").width($(".healt_bar").width());
-    $(".healt_bar_inner").css("right", 20);
+    $(".healt_bar_inner").css("right",0);
     
   }
 
@@ -988,7 +992,7 @@ function play() {
     //console.log('Uberfranz perde potenza...' + p);
     var p = power / 100 * $(".healt_bar").width();
     $(".healt_bar_inner").width(p);
-    $(".healt_bar_inner").css("right", 20 + ( $(".healt_bar").width() - p )+ "px");
+    $(".healt_bar_inner").css("right", ( $(".healt_bar").width() - p )+ "px");
     if(power <=0){
       dieSound.play();
       /*var message = new PIXI.Text(
