@@ -9,7 +9,7 @@
   /*height: 100px;
   width: 100%;*/
   overflow: hidden;
-  border: 1px solid blue;
+  /*border: 1px solid blue;*/
 }
 
 .punch_left {
@@ -17,6 +17,14 @@
   top: 100px;
   right: 0px;
   z-index: 9999;
+}
+
+.start {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  z-index: 9999;
+  font-size: 64px;
 }
 
 .punch_right {
@@ -49,11 +57,11 @@
 
 .healt_bar {
   position: absolute;
-  top: 10px;
+  top: 20px;
   right: 20px;
-  height: 5px;
+  height: 10px;
   width: 150px;
-  background-color: blue;
+  background-color: red;
 }
 
 
@@ -61,9 +69,9 @@
   position: absolute;
   top: 0px;
   right: 0px;
-  height: 5px;
+  height: 10px;
   width: 150px;
-  background-color: red;
+  background-color: blue;
 }
 
 .display {
@@ -74,12 +82,12 @@
  }
 </style>
 
-
+<script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/pixi.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/tink.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/jquery-3.1.1.min.js"></script>
+
 
 <script>
 
@@ -138,8 +146,8 @@ window.addEventListener("orientationchange", function() {
 
 var levels = [{
   container:{width:20,height:20},
-  //mainCharacter:{row:17,col:10},
-  mainCharacter:{row:7.5,col:3},
+  mainCharacter:{row:17,col:10},
+  //mainCharacter:{row:7.5,col:3},
   win:{row:4,col:17},
   platforms:[{row:17,col:0, width:20, height:3},
          {row:0,col:0, width:1, height:17},
@@ -356,8 +364,6 @@ var lastTapX = 0;
 var lastTapY = 0;
 function detectActions(touches){
 
-  
-
  if(touches.length == 2){  
     upGesture = true;
   } else { 
@@ -385,21 +391,21 @@ $(".main").on("touchstart", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
 
-    /*var currentTime = new Date().getTime();
-  var tapLength = currentTime - lastTap;
-  lastTap = currentTime;
-  var deltaY = Math.abs(lastTapX - (e.touches.length > 0 ? e.touches[0].clientX : 0));
-  var deltaX = Math.abs(lastTapY - (e.touches.length > 0 ? e.touches[0].clientY : 0));
-  lastTapX = e.touches.length > 0 ? e.touches[0].clientX : 0;
-  lastTapY = e.touches.length > 0 ? e.touches[0].clientY : 0;
+/*    var currentTime = new Date().getTime();
+    var tapLength = currentTime - lastTap;
+    lastTap = currentTime;
+    var deltaY = Math.abs(lastTapX - (e.touches.length > 0 ? e.touches[0].clientX : 0));
+    var deltaX = Math.abs(lastTapY - (e.touches.length > 0 ? e.touches[0].clientY : 0));
+    lastTapX = e.touches.length > 0 ? e.touches[0].clientX : 0;
+    lastTapY = e.touches.length > 0 ? e.touches[0].clientY : 0;
 
-  console.log("LATS" + lastTapX + ' - ' + lastTapY);
-  console.log(deltaX + ' - ' + deltaY);
+    console.log("LAST" + lastTapX + ' - ' + lastTapY);
+    console.log(deltaX + ' - ' + deltaY);
 
-  if(e.touches.length == 1 && deltaX < 10 && deltaY < 10 && tapLength < 500 && tapLength > 0) {
-    punch();
-    return;
-  } */
+    if(e.touches.length == 1 && deltaX < 10 && deltaY < 10 && tapLength < 750 && tapLength > 0) {
+      punch();
+      return;
+    }*/ 
     
 
     detectActions(e.touches);
@@ -419,7 +425,7 @@ document.body.addEventListener('touchmove', function(event) {
 }, false); 
 
 var punch = function(){
-    if(state != play)
+   if(state != play)
       return;
 
     punchSound.play();
@@ -441,8 +447,8 @@ $(".punch_left").click(function() {
 });
 
 $(".punch_right").click(function() {
-   punch();
-  });
+    punch();
+});
 
 $(".punch_left").on("touchstart", function(ev) {
     punch();
@@ -451,6 +457,19 @@ $(".punch_left").on("touchstart", function(ev) {
 $(".punch_right").on("touchstart", function(ev) {
     punch();
 });
+
+$(".start").on("click", function(ev) {
+    state = play;
+    $(".start").hide();
+    punch();
+});
+
+$(".start").on("touchstart", function(ev) {
+    state = play;
+    $(".start").hide();
+    punch();
+});
+
 
 function onSetupImages() {
 
@@ -479,7 +498,10 @@ function onSetupImages() {
 
   sounds.whenLoaded = onSetupSounds;
 
-  function onSetupSounds(){
+
+}
+
+function onSetupSounds(){
     jumpSound = sounds["sounds/jump.wav"];
     enemyHitSound = sounds["sounds/enemy_hit.wav"];
     dieSound = sounds["sounds/die.wav"];
@@ -488,11 +510,14 @@ function onSetupImages() {
     powerupSound = sounds["sounds/powerup.wav"];
     winSound = sounds["sounds/win.wav"];
 
+    
+    state = endWin;
     setupLevel();
     setupControlLayer();
+
+    
     gameLoop();
-  }
-}
+};
 
 function setupControlLayer(){
 
@@ -635,10 +660,6 @@ function setupLevel(){
   mainSprite.scale.y = spriteScale;
   mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE;
   mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE - mainSprite.height;
- 
-
-
-
 
   
 
@@ -655,7 +676,6 @@ function setupLevel(){
      rightCostumes();
   }
 
-  state = play;
 }
 
 
@@ -768,6 +788,7 @@ function play() {
       currLevel++; 
       setTimeout(function(){
         setupLevel();
+        state = play;
       }, 500);
     }
     return;
@@ -1003,6 +1024,7 @@ window.document.addEventListener('orientationchange', function() {
 
 <body>
 <div class="main">
+<div class="start">START</div>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
