@@ -163,7 +163,8 @@ var levels = [{
          {row:6.5,col:1, width:3, height:1},
          {row:9,col:1, width:10, height:1, enemies : [{col:1}]},
          {row:10.8,col:13, width:6, height:1},
-         {row:14,col:5, width:14, height:1, enemies : [{col:1}]}]},
+         {row:14,col:5, width:14, height:1, enemies : [{col:1}]}],
+         clouds : [{row:12,col:2}]},
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
@@ -177,7 +178,8 @@ var levels = [{
          {row:7.5,col:1, width:3, height:1},
          {row:10,col:1, width:9, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1},
-         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}]}
+         {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}],
+         clouds : [{row:14,col:5}]}
 ];
 
 
@@ -279,6 +281,7 @@ loader
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
   .add("tile", "images/tile.png")
+  .add("cloud", "images/cloud.png")
   .load(onSetupImages);
 
   
@@ -315,6 +318,17 @@ var cinghialeBeated = null;
 
 
 
+function createCloud(row,col){
+
+  var cloud = new Sprite(resources.cloud.texture);
+  cloud.scale.x = spriteScale;
+  cloud.scale.y = spriteScale;
+
+  cloud.x = col * TILE_SIZE_H;
+  cloud.y = row * TILE_SIZE_V;
+  
+  return cloud;
+}
 
 function createPlatformSprite(row,col,width,height,tileTexture){
 
@@ -629,9 +643,16 @@ function setupLevel(){
   stage = new Container();
 
   platforms = levels[currLevel].platforms;
+  clouds = levels[currLevel].clouds;
  
   uberfranzSprite.texture = idleCostume;
   rightCostumes();  
+
+   for(var i = 0; i < clouds.length; i++){
+    clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
+    stage.addChild(clouds[i].sprite);
+  }
+
 
 
   for(var i = 0; i < platforms.length; i++){
