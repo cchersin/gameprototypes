@@ -164,7 +164,9 @@ var levels = [{
          {row:9,col:1, width:10, height:1, enemies : [{col:1}]},
          {row:10.8,col:13, width:6, height:1},
          {row:14,col:5, width:14, height:1, enemies : [{col:1}]}],
-         clouds : [{row:12,col:2}]},
+         clouds : [{row:12,col:2}],
+         signs : [{row:17,col:8,direction:'l'}]
+       },
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
@@ -179,7 +181,9 @@ var levels = [{
          {row:10,col:1, width:9, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1},
          {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}],
-         clouds : [{row:14,col:5}]}
+         clouds : [{row:14,col:5}],
+         signs : [{row:17,col:8,direction:'l'}]
+       }
 ];
 
 
@@ -280,8 +284,11 @@ loader
   .add("cinghialeIdleR", "images/cinghiale_r.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
+  .add("sign_l", "images/sign_l.png")
+  .add("sign_r", "images/sign_r.png")
   .add("tile", "images/tile.png")
   .add("cloud", "images/cloud.png")
+  
   .load(onSetupImages);
 
   
@@ -328,6 +335,18 @@ function createCloud(row,col){
   cloud.y = row * TILE_SIZE_V;
   
   return cloud;
+}
+
+function createSign(row,col,direction){
+
+  var sign = new Sprite(direction == 'l' ? resources.sign_l.texture : resources.sign_r.texture);
+  sign.scale.x = spriteScale;
+  sign.scale.y = spriteScale
+
+  sign.x = col * TILE_SIZE_H ;
+  sign.y = row * TILE_SIZE_V - sign.height;
+   
+  return sign;
 }
 
 function createPlatformSprite(row,col,width,height,tileTexture){
@@ -644,13 +663,19 @@ function setupLevel(){
 
   platforms = levels[currLevel].platforms;
   clouds = levels[currLevel].clouds;
+  signs = levels[currLevel].signs;
  
   uberfranzSprite.texture = idleCostume;
   rightCostumes();  
 
-   for(var i = 0; i < clouds.length; i++){
+  for(var i = 0; i < clouds.length; i++){
     clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
     stage.addChild(clouds[i].sprite);
+  }
+
+ for(var i = 0; i < signs.length; i++){
+    signs[i].sprite = createSign(signs[i].row, signs[i].col,signs[i].direction);
+    stage.addChild(signs[i].sprite);
   }
 
 
