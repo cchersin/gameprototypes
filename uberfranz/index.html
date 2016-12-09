@@ -154,7 +154,7 @@ var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
   //mainCharacter:{row:7.5,col:3},
-  win:{row:4,col:17},
+  win:{row:4.2,col:15},
   platforms:[{row:17,col:0, width:20, height:3},
          {row:0,col:0, width:1, height:17},
          {row:0,col:19, width:1, height:17},
@@ -168,7 +168,7 @@ var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
   //mainCharacter:{row:7.5,col:3},
-  win:{row:4,col:17},
+   win:{row:4.2,col:15},
   platforms:[{row:17,col:0, width:20, height:3},
          {row:0,col:0, width:1, height:17},
          {row:0,col:19, width:1, height:17},
@@ -273,7 +273,8 @@ loader
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
   //.add("punch", "images/punch.png")
-  .add("cinghialeIdle", "images/cinghiale.png")
+  .add("cinghialeIdleL", "images/cinghiale_l.png")
+  .add("cinghialeIdleR", "images/cinghiale_r.png")
   .add("cinghialeBeated", "images/cinghiale_beated.png")
   .add("win", "images/win.png")
   .load(onSetupImages);
@@ -306,6 +307,10 @@ var rightGesture = false;
 var upGesture = false;
 var enemyCollision = false;
 var oldEnemyCollision = false;
+var cinghialeIdleL = null;
+var cinghialeIdleR = null;
+var cinghialeBeated = null;
+
 
 
 
@@ -479,7 +484,8 @@ function onSetupImages() {
   weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
-  cinghialeIdle = resources.cinghialeIdle.texture;
+  cinghialeIdleL = resources.cinghialeIdleL.texture;
+  cinghialeIdleR = resources.cinghialeIdleR.texture;
   cinghialeBeated = resources.cinghialeBeated.texture;
 
   rightCostumes();
@@ -615,7 +621,7 @@ function setupLevel(){
 
       for(var j = 0; j < enemies.length; j++ ){
        var cinghialeSprite = new Sprite(
-         resources.cinghialeIdle.texture
+         resources.cinghialeIdleR.texture
        );
 
        cinghialeSprite.scale.x = spriteScale;
@@ -623,7 +629,7 @@ function setupLevel(){
 
        cinghialeSprite.x = TILE_SIZE * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
        cinghialeSprite.y = (TILE_SIZE * platforms[i].row) - cinghialeSprite.height;
-       cinghialeSprite.vx = -1;
+       cinghialeSprite.vx = 1;
        cinghialeSprite.vy = 0;
 
        stage.addChild(cinghialeSprite);
@@ -887,10 +893,10 @@ function play() {
 
         if(enemies[j].sprite.x > TILE_SIZE * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = -1;
-          enemies[j].sprite.scale.x = 1;
-        } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col + 1) + CONTROL_BUTTON_WIDTH){
+          enemies[j].sprite.texture = cinghialeIdleL;
+        } else if(enemies[j].sprite.x < TILE_SIZE * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
-          enemies[j].sprite.scale.x = -1;
+          enemies[j].sprite.texture = cinghialeIdleR;
         }
 
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
