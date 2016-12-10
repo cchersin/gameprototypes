@@ -369,8 +369,8 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
 
   var borderLeft = new PIXI.Graphics();
-  borderLeft.lineStyle(1, 0x6b6060, 1);
-  borderLeft.beginFill(0x6b6060);
+  borderLeft.lineStyle(1, 0xaca3a2, 1);
+  borderLeft.beginFill(0xaca3a2);
   borderLeft.drawRect(0, 0, 1, height * TILE_SIZE_V);
   borderLeft.endFill();
   borderLeft.x = 0;
@@ -378,8 +378,8 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   platform.addChild(borderLeft);
 
   var borderRight = new PIXI.Graphics();
-  borderRight.lineStyle(1, 0x6b6060, 1);
-  borderRight.beginFill(0x6b6060);
+  borderRight.lineStyle(1, 0xaca3a2, 1);
+  borderRight.beginFill(0xaca3a2);
   borderRight.drawRect(0, 0, 1, height * TILE_SIZE_V);
   borderRight.endFill();
   borderRight.x = width * TILE_SIZE_H;
