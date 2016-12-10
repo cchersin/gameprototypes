@@ -130,6 +130,9 @@ function animate(opts) {
   }, opts.delay || 10)
 }
 
+var linear = function(progress) {
+    return progress;
+};
 
 var bounce = function(progress) {
     

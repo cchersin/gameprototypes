@@ -520,9 +520,8 @@ $(".punch_right").on("touchstart", function(event) {
 
 function start(){
   $(".start_button").hide();
-    currLevel = 0;
-    changeLevel(currLevel);
     state = play;
+    changeLevel(0);
     punch();
 }
 
@@ -580,9 +579,10 @@ function onSetupSounds(){
     for(var i = 0; i < levels.length; i++ ){
       levels[i].scene = setupLevel(i);
       levels[i].scene.visible = false;
+      levels[i].scene.x = i * renderer.width;
       stage.addChild(levels[i].scene);
     }
-    levels[currLevel].scene.visible = true;
+    //levels[currLevel].scene.visible = true;
    
 
     /*var pointer = t.makePointer();
@@ -702,7 +702,11 @@ right.press = function(){
     rightCostumes();
 }
 
-function changeLevel(currLevel){
+function changeLevel(newLevel){
+
+  var oldLevel = currLevel;
+  currLevel = newLevel;
+
   if(currLevel==0){
     power = 100;
     $(".healt_bar_inner").width($(".healt_bar").width());
@@ -710,10 +714,7 @@ function changeLevel(currLevel){
     
   }
 
-  for(var i = 0; i < levels.length; i++ ){
-      levels[i].scene.visible = false;
-  }
-  levels[currLevel].scene.visible = true;
+  
 
   var mainSprite = levels[currLevel].mainCharacter.sprite;
   rightCostumes();  
@@ -742,6 +743,15 @@ function changeLevel(currLevel){
       }
     }
   }
+
+  for(var i = 0; i < levels.length; i++ ){
+      levels[i].scene.visible = false;
+  }
+  levels[currLevel].scene.visible = true;
+
+  animation(linear,function(delta) {
+      levels[currLevel].scene.x = levels[currLevel].scene.width - levels[currLevel].scene.width * delta;
+  });
 
 }
 
@@ -851,9 +861,8 @@ function play() {
     } else {
       enterDoorSound.play();
       state = changingLevel;
-      currLevel++; 
       setTimeout(function(){
-        changeLevel(currLevel);
+        changeLevel(currLevel+1);
         state = play;
       }, 500);
     }
