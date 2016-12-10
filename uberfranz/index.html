@@ -505,20 +505,24 @@ var punch = function(){
 }
 
 
-$(".punch_left").click(function() {
+$(".punch_left").click(function(event) {
     punch();
+    event.stopPropagation();
 });
 
-$(".punch_right").click(function() {
+$(".punch_right").click(function(event) {
     punch();
+    event.stopPropagation();
 });
 
-$(".punch_left").on("touchstart", function(ev) {
+$(".punch_left").on("touchstart", function(event) {
     punch();
+    event.stopPropagation();
 });
 
-$(".punch_right").on("touchstart", function(ev) {
+$(".punch_right").on("touchstart", function(event) {
     punch();
+    event.stopPropagation();
 });
 
 function start(){
