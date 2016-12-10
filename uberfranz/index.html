@@ -23,7 +23,7 @@
   position: fixed;
   top: 0px;
   left: 0px;
-  max-width: 1100px;
+  max-width: 1200px;
   z-index: 9999;
 }
 
@@ -31,7 +31,7 @@
   position: fixed;
   top: 0px;
   left: 0px;
-  max-width: 1100px;
+  max-width: 1200px;
   z-index: 9999;
 }
 
@@ -125,8 +125,12 @@ if(detectmob()){
 var fitToWindow = function(){
   var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
   main.width(window_width);
   main.height(window_height);
+
+  if(window_width > rendererWidth)
+    window_width = rendererWidth;
 
   $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
   $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2) + "px");
@@ -1077,7 +1081,7 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<img src="images/play.jpeg" class="start_button" style="display:none;"></img>
+<img src="images/play.png" class="start_button" style="display:none;"></img>
 <img src="images/squares.gif" class="loading" ></img>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
