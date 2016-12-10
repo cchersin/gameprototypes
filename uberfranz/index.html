@@ -953,7 +953,7 @@ function play() {
     var enemies = platforms[i].enemies;
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
-        if(enemies[j].sprite.visible == false)
+        if(enemies[j].sprite.visible == false || enemies[j].sprite.vx == 0)
           continue;
 
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
@@ -972,9 +972,9 @@ function play() {
                            || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
   
             enemyBeated(enemies[j]);
-        } else {
+          } else {
             enemyCollision = true; 
-        }
+          }
           weaponCount = 0;
         }
       }
