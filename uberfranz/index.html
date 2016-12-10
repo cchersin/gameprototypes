@@ -538,7 +538,7 @@ $(".punch_right").on("touchstart", function(event) {
 function start(){
   $(".start_button").hide();
     currLevel = 0;
-    setupLevel();
+    stage = setupLevel(currLevel);
     state = play;
     punch();
 }
@@ -594,7 +594,7 @@ function onSetupSounds(){
 
     
     state = endWin;
-    setupLevel();
+    stage = setupLevel(currLevel);
     setupControlLayer();
 
     
@@ -665,9 +665,9 @@ function setupControlLayer(){
   }*/
 }
 
-function setupLevel(){
+function setupLevel(level){
 
-  if(currLevel==0){
+  if(level==0){
     power = 100;
     $(".healt_bar_inner").width($(".healt_bar").width());
     $(".healt_bar_inner").css("right",0);
@@ -679,11 +679,11 @@ function setupLevel(){
   oldEnemyCollision = false;
   playerMovementAnimation = 0;
 
-  stage = new Container();
+  var scene = new Container();
 
-  platforms = levels[currLevel].platforms;
-  clouds = levels[currLevel].clouds;
-  signs = levels[currLevel].signs;
+  platforms = levels[level].platforms;
+  clouds = levels[level].clouds;
+  signs = levels[level].signs;
   
   rightCostumes();  
   
@@ -691,19 +691,19 @@ function setupLevel(){
 
   for(var i = 0; i < clouds.length; i++){
     clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
-    stage.addChild(clouds[i].sprite);
+    scene.addChild(clouds[i].sprite);
   }
 
  for(var i = 0; i < signs.length; i++){
     signs[i].sprite = createSign(signs[i].row, signs[i].col,signs[i].direction);
-    stage.addChild(signs[i].sprite);
+    scene.addChild(signs[i].sprite);
   }
 
 
 
   for(var i = 0; i < platforms.length; i++){
     platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height,null);
-    stage.addChild(platforms[i].sprite);
+    scene.addChild(platforms[i].sprite);
 
     if(platforms[i].enemies != null){
       var enemies = platforms[i].enemies;
@@ -721,7 +721,7 @@ function setupLevel(){
        cinghialeSprite.vx = 1;
        cinghialeSprite.vy = 0;
 
-       stage.addChild(cinghialeSprite);
+       scene.addChild(cinghialeSprite);
 
        enemies[j].sprite = cinghialeSprite;
       }
@@ -733,16 +733,16 @@ function setupLevel(){
   winSprite.beginFill(0xCCCCCC);
   winSprite.drawRect(0, 0, 20, 20);
   winSprite.endFill();
-  winSprite.x = levels[currLevel].win.col * TILE_SIZE;
-  winSprite.y = levels[currLevel].win.row * TILE_SIZE - winSprite.height;
-  stage.addChild(winSprite);*/
+  winSprite.x = levels[level].win.col * TILE_SIZE;
+  winSprite.y = levels[level].win.row * TILE_SIZE - winSprite.height;
+  scene.addChild(winSprite);*/
 
   doorSprite = new Sprite(
     resources.win.texture
   );
-  doorSprite.x = levels[currLevel].win.col * TILE_SIZE_H;
-  doorSprite.y = levels[currLevel].win.row * TILE_SIZE_V - doorSprite.height;
-  stage.addChild(doorSprite);
+  doorSprite.x = levels[level].win.col * TILE_SIZE_H;
+  doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
+  scene.addChild(doorSprite);
   winSprite = doorSprite;
 
   
@@ -750,14 +750,14 @@ function setupLevel(){
   
   mainSprite = uberfranzSprite;
 
-  stage.addChild(mainSprite);
+  scene.addChild(mainSprite);
 
    mainSprite.vx = 0;
   mainSprite.vy = 0;
   mainSprite.scale.x = spriteScale;
   mainSprite.scale.y = spriteScale;
-  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE_H;
-  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
+  mainSprite.x = levels[level].mainCharacter.col * TILE_SIZE_H;
+  mainSprite.y = levels[level].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
 
   
 
@@ -774,6 +774,7 @@ function setupLevel(){
      rightCostumes();
   }
 
+ return scene;
 }
 
 
@@ -886,7 +887,7 @@ function play() {
       state = changingLevel;
       currLevel++; 
       setTimeout(function(){
-        setupLevel();
+        stage = setupLevel(currLevel);
         state = play;
       }, 500);
     }
