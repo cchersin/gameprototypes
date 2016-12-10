@@ -792,7 +792,7 @@ function play() {
  //punchSprite.y = $(window).scrollTop();
 
   mainSprite.x += mainSprite.vx;
-  if(hitPlatform()){
+  if(hitPlatform() || mainSprite.x <= TILE_SIZE_H || (mainSprite.x + mainSprite.width) >= TILE_SIZE_H * (levels[currLevel].container.width -1)){
     xCollision = true;
   }
   if(xCollision){
