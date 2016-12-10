@@ -53,17 +53,6 @@
   z-index: 999;
 }
 
-.control_layer {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  height: 200px;
-  width: 100%;
-  max-width: 1100px;
-  z-index:999;
-  /*border: 1px solid blue;*/
- }
-
 .healt_bar {
   position: absolute;
   top: 20px;
@@ -179,7 +168,7 @@ var levels = [{
        },
    {
   container:{width:20,height:20},
-  mainCharacter:{row:17,col:10},
+  mainCharacter:{row:17,col:5},
   //mainCharacter:{row:7.5,col:3},
    win:{row:4.2,col:15},
   platforms:[{row:17,col:0, width:20, height:3},
@@ -192,14 +181,13 @@ var levels = [{
          {row:11.8,col:12, width:7, height:1},
          {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}],
          clouds : [{row:14,col:5}],
-         signs : [{row:17,col:8,direction:'l'}]
+         signs : []
        }
 ];
 
 
 
 var currLevel = 0;
-var platforms = null; 
 var TILE_SIZE_H = 60 * spriteScale;
 var TILE_SIZE_V = 45 * spriteScale;
 var CONTROL_BUTTON_WIDTH = 0;
@@ -234,36 +222,17 @@ var display = $("#display");
 
 display[0].appendChild(renderer.view);
 
-
-var controlLayerRenderer = autoDetectRenderer($('#control_layer').width(), $('#control_layer').height(), 
-                                  {antialias: false, transparent: true, resolution: 1});
-//controlLayerRenderer.view.style.position = "absolute";
-//controlLayerRenderer.view.style.display = "block";
-controlLayerRenderer.autoResize = true;
-
-$('#control_layer')[0].appendChild(controlLayerRenderer.view);
-
 //display.width(rendererWidth);
 //display.height(rendererHeight);
 
 // TODO RESTART!!!!
 // TODO dimesioni sprites 
 
-var t = new Tink(PIXI, controlLayerRenderer.view);
+//var t = new Tink(PIXI, controlLayerRenderer.view);
 
 
 var stage = null;
-var controlLayerStage = null;
-var uberfranzSprite = null;
-var mainSprite = null;
-var cinghialiSprite = [];
-var doorSprite = null;
-var winSprite = null;
-//var punchLeftSprite = null;
-//var punchRightSprite = null;
-var restartSprite = null;
 var state = null;
-var greenTile = null;
 var weaponCount = 0;
 var stageX = 0;
 
@@ -399,6 +368,26 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   platform.addChild(border2);
 
 
+  var borderLeft = new PIXI.Graphics();
+  borderLeft.lineStyle(1, 0x6b6060, 1);
+  borderLeft.beginFill(0x6b6060);
+  borderLeft.drawRect(0, 0, 1, height * TILE_SIZE_V);
+  borderLeft.endFill();
+  borderLeft.x = 0;
+  borderLeft.y = 0;
+  platform.addChild(borderLeft);
+
+  var borderRight = new PIXI.Graphics();
+  borderRight.lineStyle(1, 0x6b6060, 1);
+  borderRight.beginFill(0x6b6060);
+  borderRight.drawRect(0, 0, 1, height * TILE_SIZE_V);
+  borderRight.endFill();
+  borderRight.x = width * TILE_SIZE_H;
+  borderRight.y = 0;
+  platform.addChild(borderRight);
+  
+
+
   platform.x = col * TILE_SIZE_H;
   platform.y = row * TILE_SIZE_V;
 
@@ -406,8 +395,8 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 }
 
 function hitPlatform(){
-  for(var i= 0; i < platforms.length; i++){
-   if(hitTestRectangle(mainSprite,platforms[i].sprite))
+  for(var i= 0; i < levels[currLevel].platforms.length; i++){
+   if(hitTestRectangle(levels[currLevel].mainCharacter.sprite,levels[currLevel].platforms[i].sprite))
     return true;
   }
 
@@ -487,8 +476,6 @@ $(".main").on("touchstart", function(ev) {
 $(".main").on("touchend", function(ev) {
     var e = ev.originalEvent;
     //console.log(e.touches);
-    
-  
   
     detectActions(e.touches);
 });
@@ -506,11 +493,7 @@ var punch = function(){
     setTimeout(function(){ if( weaponCount > 0 )
                               weaponCount--; }, 500);
     animation(bounce2,function(delta) {
-      console.log(delta);
-        //$("#display").css("left", to*delta + "px");    
-        //stage.x = to*delta;
-        stageX = 10*(delta);
-        //stageX = - 20;
+      stageX = 10*(delta);
     });
 }
 
@@ -538,17 +521,19 @@ $(".punch_right").on("touchstart", function(event) {
 function start(){
   $(".start_button").hide();
     currLevel = 0;
-    stage = setupLevel(currLevel);
+    changeLevel(currLevel);
     state = play;
     punch();
 }
 
-$(".start_button").on("click", function(ev) {
+$(".start_button").on("click", function(event) {
     start();
+    event.stopPropagation();
 });
 
-$(".start_button").on("touchstart", function(ev) {
+$(".start_button").on("touchstart", function(event) {
     start();
+    event.stopPropagation();
 });
 
 
@@ -563,10 +548,7 @@ function onSetupImages() {
 
   rightCostumes();
 
-  uberfranzSprite = new Sprite(
-    idleCostume
-  );
-
+  
   //Load the sounds
   sounds.load([
     "sounds/jump.wav",
@@ -592,87 +574,34 @@ function onSetupSounds(){
     powerupSound = sounds["sounds/powerup.wav"];
     winSound = sounds["sounds/win.wav"];
 
-    
+    stage = new Container();
     state = endWin;
-    stage = setupLevel(currLevel);
-    setupControlLayer();
 
-    
+    for(var i = 0; i < levels.length; i++ ){
+      levels[i].scene = setupLevel(i);
+      levels[i].scene.visible = false;
+      stage.addChild(levels[i].scene);
+    }
+    levels[currLevel].scene.visible = true;
+   
+
+    /*var pointer = t.makePointer();
+    pointer.visible=true;
+    pointer.x=0;
+    pointer.y=0;*/
+
     $('.loading').hide();
     $('.start_button').show();
+
+    
+
     gameLoop();
 };
 
-function setupControlLayer(){
-
-  controlLayerStage = new Container();
-  
-
-  var pointer = t.makePointer();
-  pointer.visible=true;
-  pointer.x=0;
-  pointer.y=0;
-
-  /*restartSprite = new PIXI.Text(
-          "Restart",
-          { font: "64px sans-serif", fill: "white"}
-      );
-
-  restartSprite.position.x = 100;
-  restartSprite.position.y = 100;
-  restartSprite.visible = false;
-  controlLayerStage.addChild(restartSprite);
-
-  t.makeInteractive(restartSprite);
-
-  restartSprite.press = function() {
-    restartSprite.visible = false;
-    currLevel = 0;
-    setupLevel();
-    state = play;
-  };*/
-     
-  /*if(detectmob()){
-    punchLeftSprite = new Sprite(
-      resources.punch.texture
-    );
-    punchLeftSprite.y = 100;
-    punchLeftSprite.x = 0;
-
-    punchRightSprite = new Sprite(
-      resources.punch.texture
-    );
-
-    punchRightSprite.y = 100;
-    punchRightSprite.x = document.body.clientWidth - 100;
-
-    controlLayerStage.addChild(punchLeftSprite);
-    controlLayerStage.addChild(punchRightSprite);
-
-  
-    t.makeInteractive(punchLeftSprite);
-    t.makeInteractive(punchRightSprite);
-
-    punchLeftSprite.press = function() {
-      console.log('press');
-     punch();
-    };
-
-    punchRightSprite.press = function()  {
-      console.log('press');
-      punch();
-    };
-  }*/
-}
 
 function setupLevel(level){
 
-  if(level==0){
-    power = 100;
-    $(".healt_bar_inner").width($(".healt_bar").width());
-    $(".healt_bar_inner").css("right",0);
-    
-  }
+ 
 
   stageX = 0;
   oldYCollions = false;
@@ -681,13 +610,10 @@ function setupLevel(level){
 
   var scene = new Container();
 
-  platforms = levels[level].platforms;
-  clouds = levels[level].clouds;
-  signs = levels[level].signs;
+  var platforms = levels[level].platforms;
+  var clouds = levels[level].clouds;
+  var signs = levels[level].signs;
   
-  rightCostumes();  
-  
-  uberfranzSprite.texture = idleCostume;
 
   for(var i = 0; i < clouds.length; i++){
     clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
@@ -727,57 +653,97 @@ function setupLevel(level){
       }
     }
   }
-  
-  /*winSprite = new PIXI.Graphics();
-  winSprite.lineStyle(1, 0xEEEEEE, 1);
-  winSprite.beginFill(0xCCCCCC);
-  winSprite.drawRect(0, 0, 20, 20);
-  winSprite.endFill();
-  winSprite.x = levels[level].win.col * TILE_SIZE;
-  winSprite.y = levels[level].win.row * TILE_SIZE - winSprite.height;
-  scene.addChild(winSprite);*/
 
-  doorSprite = new Sprite(
+  
+
+  var doorSprite = new Sprite(
     resources.win.texture
   );
   doorSprite.x = levels[level].win.col * TILE_SIZE_H;
   doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
+
   scene.addChild(doorSprite);
-  winSprite = doorSprite;
-
+  levels[level].win.sprite = doorSprite;
   
+  var mainSprite = new Sprite(
+    idleCostume
+  );
 
+  rightCostumes();  
   
-  mainSprite = uberfranzSprite;
+  mainSprite.texture = idleCostume;
+
+  levels[level].mainCharacter.sprite = mainSprite;
 
   scene.addChild(mainSprite);
 
-   mainSprite.vx = 0;
+  mainSprite.vx = 0;
   mainSprite.vy = 0;
   mainSprite.scale.x = spriteScale;
   mainSprite.scale.y = spriteScale;
   mainSprite.x = levels[level].mainCharacter.col * TILE_SIZE_H;
   mainSprite.y = levels[level].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
 
-  
 
 
-  weaponKey.press = function() {
-    punch();
-  };
 
-  left.press = function(){
-    leftCostumes();
-  }
-
-  right.press = function(){
-     rightCostumes();
-  }
-
- return scene;
+  return scene;
 }
 
+weaponKey.press = function() {
+  punch();
+};
 
+left.press = function(){
+  leftCostumes();
+}
+
+right.press = function(){
+    rightCostumes();
+}
+
+function changeLevel(currLevel){
+  if(currLevel==0){
+    power = 100;
+    $(".healt_bar_inner").width($(".healt_bar").width());
+    $(".healt_bar_inner").css("right",0);
+    
+  }
+
+  for(var i = 0; i < levels.length; i++ ){
+      levels[i].scene.visible = false;
+  }
+  levels[currLevel].scene.visible = true;
+
+  var mainSprite = levels[currLevel].mainCharacter.sprite;
+  rightCostumes();  
+  
+  mainSprite.texture = idleCostume;
+
+  mainSprite.visible = true;
+  mainSprite.vx = 0;
+  mainSprite.vy = 0;
+  mainSprite.x = levels[currLevel].mainCharacter.col * TILE_SIZE_H;
+  mainSprite.y = levels[currLevel].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
+
+
+ var platforms = levels[currLevel].platforms;
+
+ for(var i = 0; i < platforms.length; i++){
+    var enemies = platforms[i].enemies;
+    if(enemies != null){
+      for(var j = 0; j < enemies.length; j++){
+        enemies[j].sprite.visible = true;
+        enemies[j].sprite.texture = resources.cinghialeIdleR.texture;
+        enemies[j].sprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
+        enemies[j].sprite.y = (TILE_SIZE_V * platforms[i].row) - enemies[j].sprite.height;
+        enemies[j].sprite.vx = 1;
+        enemies[j].sprite.vy = 0;
+      }
+    }
+  }
+
+}
 
 
 function gameLoop() {
@@ -789,14 +755,18 @@ function gameLoop() {
   state();
 
   //Update Tink
-  t.update();
+  //t.update();
 
   //Render the stage to see the animation
   renderer.render(stage);
-  controlLayerRenderer.render(controlLayerStage);
 }
 
 function play() {
+
+  var platforms = levels[currLevel].platforms;
+  var mainSprite = levels[currLevel].mainCharacter.sprite;
+
+
   
   oldYCollions = yCollision;
   stage.x = stageX;
@@ -809,7 +779,7 @@ function play() {
  //punchSprite.y = $(window).scrollTop();
 
   mainSprite.x += mainSprite.vx;
-  if(hitPlatform() || mainSprite.x <= TILE_SIZE_H || (mainSprite.x + mainSprite.width) >= TILE_SIZE_H * (levels[currLevel].container.width -1)){
+  if(hitPlatform() /*|| mainSprite.x <= TILE_SIZE_H || (mainSprite.x + mainSprite.width) >= TILE_SIZE_H * (levels[currLevel].container.width -1)*/){
     xCollision = true;
   }
   if(xCollision){
@@ -846,9 +816,6 @@ function play() {
 
   if(!oldYCollions && yCollision){
       animation(bounce,function(delta) {
-      //console.log(delta);
-        //$("#display").css("left", to*delta + "px");    
-        //stage.x = to*delta;
         stage.y = 10*delta;
       });
   }
@@ -872,14 +839,13 @@ function play() {
     mainSprite.vy = mainSprite.vy * 0.6;
   }
 
-  if(hitTestRectangle(mainSprite,winSprite)){
-    stage.removeChild(mainSprite);
+  if(hitTestRectangle(mainSprite,levels[currLevel].win.sprite)){
+    mainSprite.visible = false;
     if(currLevel == levels.length -1){
       winSound.play();
       state = endWin;
       setTimeout(function(){
         $(".start_button").show();
-        //restartSprite.visible = true;
       }, 500);
       
     } else {
@@ -887,7 +853,7 @@ function play() {
       state = changingLevel;
       currLevel++; 
       setTimeout(function(){
-        stage = setupLevel(currLevel);
+        changeLevel(currLevel);
         state = play;
       }, 500);
     }
@@ -965,8 +931,7 @@ function play() {
     enemy.sprite.vx = 0;
 
     setTimeout(function(){
-              stage.removeChild(enemy.sprite);
-              enemy.sprite = null;
+              enemy.sprite.visible = false;
             },500);
     
   }
@@ -975,7 +940,7 @@ function play() {
     var enemies = platforms[i].enemies;
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
-        if(enemies[j].sprite == null)
+        if(enemies[j].sprite.visible == false)
           continue;
 
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
@@ -996,7 +961,7 @@ function play() {
             enemyBeated(enemies[j]);
         } else {
             enemyCollision = true; 
-          }
+        }
           weaponCount = 0;
         }
       }
@@ -1006,21 +971,12 @@ function play() {
   if(enemyCollision && !oldEnemyCollision){
     power -= 10;
     
-    //console.log('Uberfranz perde potenza...' + p);
     var p = power / 100 * $(".healt_bar").width();
     $(".healt_bar_inner").width(p);
     $(".healt_bar_inner").css("right", ( $(".healt_bar").width() - p )+ "px");
     if(power <=0){
       dieSound.play();
-      /*var message = new PIXI.Text(
-          "Game over",
-          { font: "64px sans-serif", fill: "white"}
-      );
-
-      message.position.x = $(window).scrollLeft() + 20;
-      message.position.y = $(window).scrollTop() + 20;
-      controlLayerStage.addChild(message);*/
-      stage.removeChild(mainSprite);
+      mainSprite.visible=false;
 
       state = gameOver;
       setTimeout(function(){
@@ -1029,9 +985,6 @@ function play() {
     } else {
       enemyHitSound.play();  
       animation(bounce,function(delta) {
-      //console.log(delta);
-        //$("#display").css("left", to*delta + "px");    
-        //stage.x = to*delta;
         mainSprite.y += -2*delta;
       });
     }
@@ -1045,8 +998,6 @@ function play() {
   var MAIN_SPRITE_HEIGTH = mainSprite.height;
   var hBorder = 200;
   var vBorder = 200;
-
-//setTimeout(function(){  
 
   var scrollTop = main.scrollTop();
   if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + main_height){
@@ -1085,7 +1036,6 @@ function play() {
      main.scrollLeft(scrollTo);
     }
   }
-//},0);
 
 }
 
@@ -1101,19 +1051,6 @@ var endWin = function(){
   //
 };
 
-/*
-window.document.addEventListener('orientationchange', function() {
-  var iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/g);
-  var viewportmeta = document.querySelector('meta[name="viewport"]');
-  if (iOS && viewportmeta) {
-    if (viewportmeta.content.match(/width=device-width/)) {
-      viewportmeta.content = viewportmeta.content.replace(/width=[^,]+/, 'width=1');
-    }
-    viewportmeta.content = viewportmeta.content.replace(/width=[^,]+/, 'width=' + window.innerWidth);
-  }
-  // If you want to hide the address bar on orientation change, uncomment the next line
-  // window.scrollTo(0, 0);
-}, false);*/
 
 });
 
@@ -1129,7 +1066,6 @@ window.document.addEventListener('orientationchange', function() {
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
-<div id="control_layer" class="control_layer"></div>
 <div id="display" class="display"></div>
 </div>
 </body>
