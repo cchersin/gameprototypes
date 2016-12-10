@@ -861,7 +861,7 @@ function play() {
       state = endWin;
       setTimeout(function(){
         $(".start_button").show();
-      }, 500);
+      }, 2000);
       
     } else {
       enterDoorSound.play();
@@ -997,7 +997,7 @@ function play() {
       state = gameOver;
       setTimeout(function(){
         $('.start_button').show();
-      }, 500 );
+      }, 2000 );
     } else {
       enemyHitSound.play();  
       animation(bounce,function(delta) {
