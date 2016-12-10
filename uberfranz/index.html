@@ -119,8 +119,6 @@ var spriteScale = 1;
 
 
 if(detectmob()){
-  $(".punch_right").show();
-  $(".punch_left").show();
   spriteScale = 1.5;
 }
 
@@ -520,9 +518,15 @@ $(".punch_right").on("touchstart", function(event) {
 
 function start(){
   $(".start_button").hide();
-    state = play;
-    changeLevel(0);
-    punch();
+  if(detectmob()){
+    $(".punch_right").show();
+    $(".punch_left").show();
+  }
+  $(".healt_bar_container").show();
+
+  state = play;
+  changeLevel(0);
+  punch();
 }
 
 $(".start_button").on("click", function(event) {
@@ -1074,7 +1078,7 @@ var endWin = function(){
 <img src="images/squares.gif" class="loading" ></img>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-<div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+<div class="healt_bar_container" style="display:none"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="display" class="display"></div>
 </div>
 </body>
