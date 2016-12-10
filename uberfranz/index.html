@@ -27,6 +27,13 @@
   z-index: 9999;
 }
 
+.loading {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  max-width: 1100px;
+  z-index: 9999;
+}
 
 
 .punch_right {
@@ -136,6 +143,9 @@ var fitToWindow = function(){
 
   $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
   $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2) + "px");
+
+  $(".loading").css("left", ((window_width - $(".loading").width()) / 2) + "px");
+  $(".loading").css("top", ((window_height - $(".loading").height()) / 2) + "px");
 };
 
 fitToWindow();
@@ -588,6 +598,8 @@ function onSetupSounds(){
     setupControlLayer();
 
     
+    $('.loading').hide();
+    $('.start_button').show();
     gameLoop();
 };
 
@@ -1111,7 +1123,8 @@ window.document.addEventListener('orientationchange', function() {
 
 <body>
 <div class="main">
-<img src="images/play.jpeg" class="start_button"></img>
+<img src="images/play.jpeg" class="start_button" style="display:none;"></img>
+<img src="images/squares.gif" class="loading" ></img>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
