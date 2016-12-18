@@ -158,10 +158,27 @@ var bounce2 = function(progress) {
     return d;
 };
 
-function animation(delta,step) {
+var bounce3 = function(progress) {
+  for(var a = 0, b = 1, result; 1; a += b, b /= 2) {
+    if (progress >= (7 - 4 * a) / 11) {
+      return -Math.pow((11 - 6 * a - 11 * progress) / 4, 2) + Math.pow(b, 2);
+    }
+  }
+}
+ 
+var makeEaseOut = function(delta) { 
+  return function(progress) {
+    return 1 - delta(1 - progress)
+  }
+}
+
+
+function animation(delta,step,delay) {
   
+  delay = delay != null ? delay : 20;
+
   animate({
-    delay: 20,
+    delay: delay,
     duration: 500, 
     delta: delta,
     step: step

@@ -27,13 +27,22 @@
   z-index: 9999;
 }
 
-.loading {
+.logo {
   position: fixed;
   top: 0px;
   left: 0px;
   max-width: 1200px;
   z-index: 9999;
 }
+
+/*
+.loading {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  max-width: 1200px;
+  z-index: 9999;
+}*/
 
 
 .punch_right {
@@ -133,13 +142,21 @@ var fitToWindow = function(){
     window_width = rendererWidth;
 
   $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
-  $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2) + "px");
+  $(".start_button").css("top", ((window_height - $(".start_button").height()) * 3/4) + "px");
 
-  $(".loading").css("left", ((window_width - $(".loading").width()) / 2) + "px");
-  $(".loading").css("top", ((window_height - $(".loading").height()) / 2) + "px");
+  var h = (window_width-100) * $(".logo").height()  / $(".logo").width();
+  $(".logo").width(window_width-100);
+  $(".logo").height(h);
+
+  $(".logo").css("left", ((window_width - $(".logo").width()) / 2) + "px");
+  $(".logo").css("top", ((window_height - $(".logo").height()) / 2) + "px");
+
+  /*$(".loading").css("left", ((window_width - $(".loading").width()) / 2) + "px");
+  $(".loading").css("top", ((window_height - $(".loading").height()) * 2) + "px");*/
 };
 
 fitToWindow();
+$('.logo').show();
 
 $(window).resize(function(){
   fitToWindow();
@@ -521,6 +538,7 @@ $(".punch_right").on("touchstart", function(event) {
 });
 
 function start(){
+  $(".logo").hide();
   $(".start_button").hide();
   if(detectmob()){
     $(".punch_right").show();
@@ -598,8 +616,16 @@ function onSetupSounds(){
     pointer.x=0;
     pointer.y=0;*/
 
-    $('.loading').hide();
+    //$('.loading').hide();
     $('.start_button').show();
+
+    $(".start_button").css("top", "0px");
+
+    var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    animation(makeEaseOut(bounce3),function(delta) {
+        $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
+    }, 50);
 
     
 
@@ -1081,8 +1107,9 @@ var endWin = function(){
 
 <body>
 <div class="main">
+<img src="images/logo.png" class="logo" style="display:none;"></img>
 <img src="images/play.png" class="start_button" style="display:none;"></img>
-<img src="images/squares.gif" class="loading" ></img>
+<!--<img src="images/squares.gif" class="loading" ></img>-->
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container" style="display:none"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
