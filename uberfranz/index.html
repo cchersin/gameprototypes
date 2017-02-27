@@ -630,30 +630,36 @@ function onSetupSounds(){
     }
 
 
-    var welcomeMsg = "Ecco el giogheto del nostro eroe Uberfranz. <br/>Per moverte usa le frece: a destra per 'ndar a destra, a sinistra per 'ndar a sinistra, in alto per saltar, la 'A' per usar al maglio d'Asburgo contro i cinghiai. <br/>Te devi zercar de uscir dala porta in alto. <br/>Ma adesso....";
+    var welcomeMsg = "Ecco el giogheto del nostro eroe Uberfranz.-Per moverte usa le frece:-a destra per 'ndar a destra-a sinistra per 'ndar a sinistra-in alto per saltar-la 'A' per usar al maglio d'Asburgo contro i cinghiai.-Te devi zercar de uscir dala porta in alto.-Ma adesso....";
   var welcomeMsgIdx = 0;
   typeSound.loop = true;
   typeSound.playbackRate = 0.8;
   typeSound.play();
   var welcomeMsgAnimation = setInterval(function(){ 
-    $(".splash").html(welcomeMsg.substr(0,welcomeMsgIdx));
+
+    var m = welcomeMsg.substr(0,welcomeMsgIdx);
+
+    m = m.replace(new RegExp("-", 'g'), "<br/>");
+
+    $(".splash").html(m);
     welcomeMsgIdx++;
    
     if(welcomeMsgIdx >= welcomeMsg.length){
       clearInterval(welcomeMsgAnimation);
       typeSound.pause();
 
-      $('.start_button').show();
-
-      $(".start_button").css("top", "0px");
-
-      var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
+     
       setTimeout(function(){
+         $('.start_button').show();
+
+        $(".start_button").css("top", "0px");
+
+        var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
         animation(makeEaseOut(bounce3),function(delta) {
           $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
-        }, 50);
-      }, 200);
+        }, 70);
+      }, 800);
     }
   }, 30);
     //levels[currLevel].scene.visible = true;
