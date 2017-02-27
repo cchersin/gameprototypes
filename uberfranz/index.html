@@ -25,7 +25,7 @@ body {
 }
 
 .start_button {
-  position: fixed;
+  position: absolute;
   top: 0px;
   left: 0px;
   max-width: 1200px;
@@ -94,6 +94,7 @@ body {
  }
 
 @font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
+@font-face { font-family: Title; src: url('fonts/title.ttf'); } 
 </style>
 
 <script src="js/jquery-3.1.1.min.js"></script>
@@ -140,17 +141,23 @@ if(detectmob()){
 
 
 
-var fitToWindow = function(){
-  var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-  var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
+var fitToWindow = function(){
+
+  var window_width = 0;
+  var window_height = 0;
+  
   if(detectmob()){
-    main.width(window_width);
-    main.height(window_height);
+    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
   } else {
-    main.width(800);
-    main.height(600);
+    window_width = 800;
+    window_height = 600;
   }
+
+  main.width(window_width);
+  main.height(window_height);
 
   if(window_width > rendererWidth)
     window_width = rendererWidth;
@@ -637,38 +644,44 @@ function onSetupSounds(){
     }
 
 
-    var welcomeMsg = "Eco     qua  el  giogheto  del  nostro  eroe  Uberfranz.-Per  moverte  usa  le  frece:-a  destra  per  'ndar  a  destra-a  sinistra per  'ndar  a  sinistra-in  alto  per  saltar-la  'A'  per  usar  al  maglio  d'Asburgo  contro  i  cinghiai.-Te  devi  zercar  de  uscir  dala porta  in  alto.-Ma  adesso....";
-  var welcomeMsgIdx = 0;
-  typeSound.loop = true;
-  typeSound.playbackRate = 0.8;
-  typeSound.play();
-  var welcomeMsgAnimation = setInterval(function(){ 
+    var welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  Überfranz.-Per  moverte  usa  le  frece:-a  destra  per  'ndar  a  destra-a  sinistra per  'ndar  a  sinistra-in  alto  per  saltar-la  'A'  per  usar  el  maglio  d'Asburgo  contro  i  cinghiai.-Te  devi  zercar  de  uscir  dala porta  in  alto.-Ma  adeso....";
+    var welcomeMsgIdx = 0;
+    typeSound.loop = true;
+    typeSound.playbackRate = 0.8;
+    typeSound.play();
+    var welcomeMsgAnimation = setInterval(function(){ 
 
-    var m = welcomeMsg.substr(0,welcomeMsgIdx);
+      var m = welcomeMsg.substr(0,welcomeMsgIdx);
 
-    m = m.replace(new RegExp("-", 'g'), "<br//>");
+      m = m.replace(new RegExp("-", 'g'), "<br//>");
 
-    $(".splash_msg").html(m);
-    welcomeMsgIdx++;
-   
-    if(welcomeMsgIdx >= welcomeMsg.length){
-      clearInterval(welcomeMsgAnimation);
-      typeSound.pause();
-
+      $(".splash_msg").html(m);
+      welcomeMsgIdx++;
      
-      setTimeout(function(){
-         $('.start_button').show();
+      if(welcomeMsgIdx >= welcomeMsg.length){
+        clearInterval(welcomeMsgAnimation);
+        typeSound.pause();
 
-        $(".start_button").css("top", "0px");
+       
+        setTimeout(function(){
+          $('.start_button').show();
 
-        var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+          $(".start_button").css("top", "0px");
 
-        animation(makeEaseOut(bounce3),function(delta) {
-          $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
-        }, 70);
-      }, 800);
-    }
-  }, 30);
+          var window_height = 0;
+    
+          if(detectmob()){
+            window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+          } else {
+            window_height = 600;
+          }
+
+          animation(makeEaseOut(bounce3),function(delta) {
+            $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*2.5/4) + "px");
+            }, 70);
+        }, 800);
+      }
+    }, 30);
     //levels[currLevel].scene.visible = true;
    
 
@@ -1161,14 +1174,16 @@ var endWin = function(){
 <body>
 <div class="main" >
 <div class="splash" style="display:none; padding:20px">
-<div style="font-family: Pixel, sans-serif; font-size:30px; color:yellow;">Überfranz</div>
+<div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div>
 <div style="font-family: Pixel, sans-serif; font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
 </div>
-<img src="images/play.png" class="start_button" style="display:none;"></img>
-<!--<img src="images/squares.gif" class="loading" ></img>-->
+<img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
+
+<!--<img src="images/zoga.png" class="start_button" style="display:none;"></img>-->
+<div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-<div class="healt_bar_container" style="display:none"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+<div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:10px; color:white;">Morbin</span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="display" class="display" style="display:none;"></div>
 </div>
 </body>
