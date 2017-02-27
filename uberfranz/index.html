@@ -4,6 +4,9 @@
 <title>Uberfranz</title>
 <head>
 <style>
+body {
+  background-color: #09a6df;
+}
 .main {
   position: relative;
   /*height: 100px;
@@ -27,13 +30,13 @@
   z-index: 9999;
 }
 
-.logo {
+/*.logo {
   position: fixed;
   top: 0px;
   left: 0px;
   max-width: 1200px;
   z-index: 9999;
-}
+}*/
 
 /*
 .loading {
@@ -87,6 +90,8 @@
   top: 0px;
   left: 0px;
  }
+
+@font-face { font-family: Arcade; src: url('fonts/ARCADECLASSIC.TTF'); } 
 </style>
 
 <script src="js/jquery-3.1.1.min.js"></script>
@@ -131,6 +136,8 @@ if(detectmob()){
   spriteScale = 1.5;
 }
 
+
+
 var fitToWindow = function(){
   var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
   var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -144,19 +151,27 @@ var fitToWindow = function(){
   $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
   $(".start_button").css("top", ((window_height - $(".start_button").height()) * 3/4) + "px");
 
-  var h = (window_width-100) * $(".logo").height()  / $(".logo").width();
-  $(".logo").width(window_width-100);
+  var w = Math.ceil(window_width / 237) * 237;
+  var h = w / 237 * 89;
+  /*$(".logo").width(w);
   $(".logo").height(h);
 
-  $(".logo").css("left", ((window_width - $(".logo").width()) / 2) + "px");
-  $(".logo").css("top", ((window_height - $(".logo").height()) / 2) + "px");
+  $(".logo").css("left", ((window_width - w) / 2) + "px");
+  $(".logo").css("top", ((window_height - h) / 2) + "px");*/
+
+  /*if($(".display").width() < window_width)
+     $(".display").css("left", ((window_width - $(".display").width()) / 2) + "px");*/
+ 
 
   /*$(".loading").css("left", ((window_width - $(".loading").width()) / 2) + "px");
   $(".loading").css("top", ((window_height - $(".loading").height()) * 2) + "px");*/
 };
 
 fitToWindow();
-$('.logo').show();
+//$('.logo').show();
+$('.splash').show();
+
+
 
 $(window).resize(function(){
   fitToWindow();
@@ -311,6 +326,7 @@ var dieSound = null;
 var punchSound = null;
 var powerupSound = null;
 var enterDoorSound = null;
+var typeSound = null;
 var winSound = null;
 var leftGesture = false;
 var rightGesture = false;
@@ -538,8 +554,10 @@ $(".punch_right").on("touchstart", function(event) {
 });
 
 function start(){
-  $(".logo").hide();
+  //$(".logo").hide();
+  $(".splash").hide();
   $(".start_button").hide();
+   $(".display").show();
   if(detectmob()){
     $(".punch_right").show();
     $(".punch_left").show();
@@ -582,7 +600,8 @@ function onSetupImages() {
     "sounds/punch.wav",
     "sounds/enter_door.wav",
     "sounds/powerup.wav",
-    "sounds/win.wav"
+    "sounds/win.wav",
+    "sounds/type.wav"
    ]);
 
   sounds.whenLoaded = onSetupSounds;
@@ -598,6 +617,7 @@ function onSetupSounds(){
     enterDoorSound = sounds["sounds/enter_door.wav"];
     powerupSound = sounds["sounds/powerup.wav"];
     winSound = sounds["sounds/win.wav"];
+    typeSound = sounds["sounds/type.wav"];
 
     stage = new Container();
     state = endWin;
@@ -608,6 +628,34 @@ function onSetupSounds(){
       levels[i].scene.x = i * renderer.width;
       stage.addChild(levels[i].scene);
     }
+
+
+    var welcomeMsg = "Ecco el giogheto del nostro eroe Uberfranz. <br/>Per moverte usa le frece: a destra per 'ndar a destra, a sinistra per 'ndar a sinistra, in alto per saltar, la 'A' per usar al maglio d'Asburgo contro i cinghiai. <br/>Te devi zercar de uscir dala porta in alto. <br/>Ma adesso....";
+  var welcomeMsgIdx = 0;
+  typeSound.loop = true;
+  typeSound.playbackRate = 0.8;
+  typeSound.play();
+  var welcomeMsgAnimation = setInterval(function(){ 
+    $(".splash").html(welcomeMsg.substr(0,welcomeMsgIdx));
+    welcomeMsgIdx++;
+   
+    if(welcomeMsgIdx >= welcomeMsg.length){
+      clearInterval(welcomeMsgAnimation);
+      typeSound.pause();
+
+      $('.start_button').show();
+
+      $(".start_button").css("top", "0px");
+
+      var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+      setTimeout(function(){
+        animation(makeEaseOut(bounce3),function(delta) {
+          $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
+        }, 50);
+      }, 200);
+    }
+  }, 30);
     //levels[currLevel].scene.visible = true;
    
 
@@ -617,15 +665,7 @@ function onSetupSounds(){
     pointer.y=0;*/
 
     //$('.loading').hide();
-    $('.start_button').show();
-
-    $(".start_button").css("top", "0px");
-
-    var window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-    animation(makeEaseOut(bounce3),function(delta) {
-        $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
-    }, 50);
+    
 
     
 
@@ -1107,12 +1147,12 @@ var endWin = function(){
 
 <body>
 <div class="main">
-<img src="images/logo.png" class="logo" style="display:none;"></img>
+<span style="font-family: Arcade, sans-serif;" class="splash" style="display:none;"></span>
 <img src="images/play.png" class="start_button" style="display:none;"></img>
 <!--<img src="images/squares.gif" class="loading" ></img>-->
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
 <div class="healt_bar_container" style="display:none"><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
-<div id="display" class="display"></div>
+<div id="display" class="display" style="display:none;"></div>
 </div>
 </body>
