@@ -62,16 +62,24 @@ body {
   top: 0px;
   left: 0px;
   right: 0px;
-  max-width: 1100px;
+  max-width: 800px;
   height: 20px;
   z-index: 999;
+  margin: auto;
+}
+
+.healt_bar_title {
+  position: absolute;
+  top: 20px;
+  right: 180px;
+  height: 10px;
 }
 
 .healt_bar {
   position: absolute;
-  top: 20px;
+  top: 21px;
   right: 20px;
-  height: 10px;
+  height: 15px;
   width: 150px;
   background-color: red;
 }
@@ -81,7 +89,7 @@ body {
   position: absolute;
   top: 0px;
   right: 0px;
-  height: 10px;
+  height: 15px;
   width: 150px;
   background-color: blue;
 }
@@ -137,7 +145,10 @@ var spriteScale = 1;
 
 if(detectmob()){
   spriteScale = 1.5;
-}
+} /*else {
+  $('.healt_bar_container').css("position", "absolute");
+}*/
+
 
 
 
@@ -644,7 +655,8 @@ function onSetupSounds(){
     }
 
 
-    var welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
+    var welcomeMsg ="ciao";
+    /*var welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";*/
     var welcomeMsgIdx = 0;
     typeSound.loop = true;
     typeSound.playbackRate = 0.8;
@@ -658,7 +670,7 @@ function onSetupSounds(){
       $(".splash_msg").html(m);
       welcomeMsgIdx++;
      
-      if(welcomeMsgIdx >= welcomeMsg.length){
+      if(welcomeMsgIdx > welcomeMsg.length){
         clearInterval(welcomeMsgAnimation);
         typeSound.pause();
 
@@ -1183,7 +1195,7 @@ var endWin = function(){
 <div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
 <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
 <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-<div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:10px; color:white;">Morbin</span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+<div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:white;" class="healt_bar_title">Morbin</span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
 <div id="display" class="display" style="display:none;"></div>
 </div>
 </body>
