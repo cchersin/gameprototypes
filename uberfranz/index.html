@@ -1117,8 +1117,8 @@ function play() {
         if(window_width > rendererWidth)
           window_width = rendererWidth;
 
-        $(".start_button").css("left", ((window_width - $(".start_button").width() / 2 /*+$('.main').scrollLeft()*/)) + "px");
-        $(".start_button").css("top", ((window_height - $(".start_button").height() * 3/4 /*+ $('.main').scrollTop()*/)) + "px");
+        $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2 + $('.main').scrollLeft()) + "px");
+        $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2 + $('.main').scrollTop()) + "px");
 
         $('.start_button').show();
       }, 2000 );
