@@ -28,7 +28,7 @@ body {
   position: absolute;
   top: 0px;
   left: 0px;
-  max-width: 1200px;
+  max-width: 800px;
   z-index: 9999;
 }
 
@@ -71,17 +71,17 @@ body {
 .healt_bar_title {
   position: absolute;
   top: 20px;
-  right: 180px;
+  right: 230px;
   height: 10px;
 }
 
 .healt_bar {
   position: absolute;
   top: 21px;
-  right: 20px;
+  right: 70px;
   height: 15px;
   width: 150px;
-  background-color: red;
+  background-color: #e5101b;
 }
 
 
@@ -91,7 +91,7 @@ body {
   right: 0px;
   height: 15px;
   width: 150px;
-  background-color: blue;
+  background-color: #03779d;
 }
 
 .display {
@@ -176,9 +176,9 @@ var fitToWindow = function(){
   $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2) + "px");
   $(".start_button").css("top", ((window_height - $(".start_button").height()) * 3/4) + "px");
 
-  var w = Math.ceil(window_width / 237) * 237;
+  /*var w = Math.ceil(window_width / 237) * 237;
   var h = w / 237 * 89;
-  /*$(".logo").width(w);
+  $(".logo").width(w);
   $(".logo").height(h);
 
   $(".logo").css("left", ((window_width - w) / 2) + "px");
@@ -1104,6 +1104,22 @@ function play() {
 
       state = gameOver;
       setTimeout(function(){
+        var window_width = 0;
+        var window_height = 0;
+  
+        if(detectmob()){
+          window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+          window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        } else {  
+          window_width = 800;
+          window_height = 600;
+        }
+        if(window_width > rendererWidth)
+          window_width = rendererWidth;
+
+        $(".start_button").css("left", ((window_width - $(".start_button").width() / 2 /*+$('.main').scrollLeft()*/)) + "px");
+        $(".start_button").css("top", ((window_height - $(".start_button").height() * 3/4 /*+ $('.main').scrollTop()*/)) + "px");
+
         $('.start_button').show();
       }, 2000 );
     } else {
@@ -1185,17 +1201,16 @@ var endWin = function(){
 
 <body>
 <div class="main" >
-<div class="splash" style="display:none; padding:20px">
-<div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div>
-<div style="font-family: Pixel, sans-serif; font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
-</div>
-<img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
-
-<!--<img src="images/zoga.png" class="start_button" style="display:none;"></img>-->
-<div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
-<div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
-<div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-<div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:white;" class="healt_bar_title">Morbin</span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
-<div id="display" class="display" style="display:none;"></div>
+  <div class="splash" style="display:none; padding:20px">
+    <div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div>
+    <div style="font-family: Pixel, sans-serif; font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
+    <img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
+  </div>
+  <!--<img src="images/zoga.png" class="start_button" style="display:none;"></img>-->
+  <div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
+  <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
+  <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
+  <div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:white;" class="healt_bar_title">Morbin</span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+  <div id="display" class="display" style="display:none;"></div>
 </div>
 </body>
