@@ -634,6 +634,61 @@ function onSetupImages() {
 
 }
 
+function getWindowSize(){
+  var window_width = 0;
+  var window_height = 0;
+  
+  if(detectmob()){
+    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  } else {  
+    window_width = 800;
+    window_height = 600;
+  }
+
+  if(window_width > rendererWidth)
+    window_width = rendererWidth;
+
+  return {
+    width : window_width,
+    height : window_height
+  };
+}
+
+function messageAnimation(msg){
+    var msgIdx = 0;
+    typeSound.loop = true;
+    typeSound.playbackRate = 0.8;
+    typeSound.play();
+    var msgAnimation = setInterval(function(){ 
+
+      var m = msg.substr(0,msgIdx);
+
+      m = m.replace(new RegExp("-", 'g'), "<br//>");
+
+      $(".splash_msg").html(m);
+      msgIdx++;
+     
+      if(msgIdx > msg.length){
+        clearInterval(msgAnimation);
+        typeSound.pause();
+
+       
+        setTimeout(function(){
+          $('.start_button').show();
+
+          $(".start_button").css("top", "0px");
+          var windowSize = getWindowSize();
+
+          animation(makeEaseOut(bounce3),function(delta) {
+            $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())*3/4) + "px");
+            }, 70);
+        }, 800);
+      }
+    }, 30);
+}
+
+
 function onSetupSounds(){
     jumpSound = sounds["sounds/jump.wav"];
     enemyHitSound = sounds["sounds/enemy_hit.wav"];
@@ -656,44 +711,9 @@ function onSetupSounds(){
 
 
     var welcomeMsg ="ciao";
-    /*var welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";*/
-    var welcomeMsgIdx = 0;
-    typeSound.loop = true;
-    typeSound.playbackRate = 0.8;
-    typeSound.play();
-    var welcomeMsgAnimation = setInterval(function(){ 
+    welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
 
-      var m = welcomeMsg.substr(0,welcomeMsgIdx);
-
-      m = m.replace(new RegExp("-", 'g'), "<br//>");
-
-      $(".splash_msg").html(m);
-      welcomeMsgIdx++;
-     
-      if(welcomeMsgIdx > welcomeMsg.length){
-        clearInterval(welcomeMsgAnimation);
-        typeSound.pause();
-
-       
-        setTimeout(function(){
-          $('.start_button').show();
-
-          $(".start_button").css("top", "0px");
-
-          var window_height = 0;
-    
-          if(detectmob()){
-            window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-          } else {
-            window_height = 600;
-          }
-
-          animation(makeEaseOut(bounce3),function(delta) {
-            $(".start_button").css("top", (delta * (window_height- $(".start_button").height())*3/4) + "px");
-            }, 70);
-        }, 800);
-      }
-    }, 30);
+    messageAnimation(welcomeMsg);
     //levels[currLevel].scene.visible = true;
    
 
@@ -968,7 +988,13 @@ function play() {
       winSound.play();
       state = endWin;
       setTimeout(function(){
-        $(".start_button").show();
+        $(".display").hide();  
+        $(".healt_bar_container").hide();
+        $(".splash").show();
+
+        var winMsg = "Mitico!!  Te  ga  vinto!!!!! ------ NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
+        messageAnimation(winMsg);
+       
       }, 2000);
       
     } else {
@@ -1104,22 +1130,10 @@ function play() {
 
       state = gameOver;
       setTimeout(function(){
-        var window_width = 0;
-        var window_height = 0;
-  
-        if(detectmob()){
-          window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-          window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        } else {  
-          window_width = 800;
-          window_height = 600;
-        }
-        if(window_width > rendererWidth)
-          window_width = rendererWidth;
+        var windowSize = getWindowSize();
 
-        $(".start_button").css("left", ((window_width - $(".start_button").width()) / 2 + $('.main').scrollLeft()) + "px");
-        $(".start_button").css("top", ((window_height - $(".start_button").height()) / 2 + $('.main').scrollTop()) + "px");
-
+        $(".start_button").css("left", ((windowSize.width - $(".start_button").width()) / 2 + $('.main').scrollLeft()) + "px");
+        $(".start_button").css("top", ((windowSize.height - $(".start_button").height()) / 2 + $('.main').scrollTop()) + "px");
         $('.start_button').show();
       }, 2000 );
     } else {
