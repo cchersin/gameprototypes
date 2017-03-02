@@ -180,20 +180,20 @@ var levels = [{
        },
    {
   container:{width:20,height:20},
-  mainCharacter:{row:17,col:5},
+  mainCharacter:{row:17,col:10},
   //mainCharacter:{row:7.5,col:3},
    win:{row:4.2,col:15},
-  platforms:[{row:17,col:0, width:20, height:3},
+  platforms:[{row:17,col:0, width:20, height:3, enemies : [{col:5}]},
          {row:0,col:0, width:1, height:21},
          {row:0,col:19, width:1, height:21},
-         {row:3.5,col:11, width:8, height:1},
+         {row:3.5,col:11, width:8, height:1, enemies : [{col:1}]},
          {row:6,col:7, width:4, height:1},
          {row:7.5,col:1, width:3, height:1},
          {row:10,col:1, width:9, height:1, enemies : [{col:1},{col:3}]},
-         {row:11.8,col:12, width:7, height:1},
+         {row:11.8,col:12, width:7, height:1, enemies : [{col:1}]},
          {row:14.5,col:5, width:14, height:1, enemies : [{col:1}]}],
-         clouds : [{row:14,col:5}],
-         signs : []
+         clouds : [{row:12,col:2}],
+         signs : [{row:17,col:8,direction:'l'}]
        }
 ];
 
