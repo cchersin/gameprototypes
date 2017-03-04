@@ -4,6 +4,11 @@
 <title>Uberfranz</title>
 <head>
 <style>
+
+@font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
+@font-face { font-family: Title; src: url('fonts/title.ttf'); } 
+
+
 body {
   background-color: #6b6060;
 }
@@ -100,12 +105,39 @@ body {
   color: #fff100;
 }
 
-.credit:visited {
+.credits:visited {
   color: #fff100;
 }
 
-@font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
-@font-face { font-family: Title; src: url('fonts/title.ttf'); } 
+.skip_div {
+  padding: 2px 5px 3px 5px;
+  border: 3px solid white;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+ }
+
+.skip_div:hover {
+  cursor: hand;
+}
+
+.skip {
+  font-family: Pixel, sans-serif; 
+  font-size:10px; 
+  color:#fff100;
+}
+
+.skip:hover {
+  color: white;
+}
+
+.credits:hover {
+  color: white;
+  cursor: hand;
+}
+
+
+
 </style>
 
 <script src="js/jquery-3.1.1.min.js"></script>
@@ -568,6 +600,27 @@ $(".start_button").on("touchstart", function(event) {
     event.stopPropagation();
 });
 
+$(".skip_div").on("click", function(event) {
+    if(msgAnimation!=null){
+      clearInterval(msgAnimation);
+      typeSound.pause();
+    }
+
+    start();
+    event.stopPropagation();
+});
+
+$(".skip_div").on("touchstart", function(event) {
+    if(msgAnimation!=null){
+      clearInterval(msgAnimation);
+      typeSound.pause();
+    }
+
+    start();
+    event.stopPropagation();
+});
+
+
 
 function onSetupImages() {
 
@@ -616,12 +669,14 @@ function getWindowSize(){
   };
 }
 
+var msgAnimation = null;
+
 function messageAnimation(msg){
     var msgIdx = 0;
     typeSound.loop = true;
     typeSound.playbackRate = 0.8;
     typeSound.play();
-    var msgAnimation = setInterval(function(){ 
+    msgAnimation = setInterval(function(){ 
 
       var m = msg.substr(0,msgIdx);
 
@@ -1229,8 +1284,8 @@ var endWin = function(){
 <body>
 <div class="main" >
   <div class="splash" style="display:none; padding:20px">
-    <a href="https://it-it.facebook.com/AsburgicoUberFranz/"><div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div></a>
-    <div style="font-family: Pixel, sans-serif; font-size:9px; color:#dddadb; margin-bottom:30px">
+    <div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><a class="credits" href="https://it-it.facebook.com/AsburgicoUberFranz/"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</a></div>
+    <div style="font-family: Pixel, sans-serif; font-size:10px; color:#dddadb; margin-bottom:30px">
       Überfranz è un personaggio ideato da <a class="credits" href="https://it-it.facebook.com/luca.vergerio.5/">Luca Vergerio</a> e <a  class="credits" href="https://it-it.facebook.com/giulio.riosa/">Giulio Riosa</a>
     </div>
          
@@ -1240,6 +1295,7 @@ var endWin = function(){
   </div>
    <div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }">ZOGA</div></div>
+  <div class="skip_div"/><a class="skip" href="#">Go capì, molime! >></a></div>
   <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
   <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
   <div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:#fff100;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
