@@ -92,6 +92,18 @@ body {
   left: 0px;
  }
 
+ a {
+  text-decoration: none;
+}
+
+.credits {
+  color: #fff100;
+}
+
+.credit:visited {
+  color: #fff100;
+}
+
 @font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
 @font-face { font-family: Title; src: url('fonts/title.ttf'); } 
 </style>
@@ -1217,7 +1229,12 @@ var endWin = function(){
 <body>
 <div class="main" >
   <div class="splash" style="display:none; padding:20px">
-    <div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div>
+    <a href="https://it-it.facebook.com/AsburgicoUberFranz/"><div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</div></a>
+    <div style="font-family: Pixel, sans-serif; font-size:9px; color:#dddadb; margin-bottom:30px">
+      Überfranz è un personaggio ideato da <a class="credits" href="https://it-it.facebook.com/luca.vergerio.5/">Luca Vergerio</a> e <a  class="credits" href="https://it-it.facebook.com/giulio.riosa/">Giulio Riosa</a>
+    </div>
+         
+
     <div style="font-family: Pixel, sans-serif; font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
     <img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
   </div>
