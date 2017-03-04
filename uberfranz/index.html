@@ -114,21 +114,6 @@ if(navigator.userAgent.includes('Silk/')){
   return;
 }
 
-function detectmob() { 
- if( navigator.userAgent.match(/Android/i)
- || navigator.userAgent.match(/webOS/i)
- || navigator.userAgent.match(/iPhone/i)
- || navigator.userAgent.match(/iPad/i)
- || navigator.userAgent.match(/iPod/i)
- || navigator.userAgent.match(/BlackBerry/i)
- || navigator.userAgent.match(/Windows Phone/i)
- ){
-    return true;
-  }
- else {
-    return false;
-  }
-}
 
 var isMobile = detectmob();
 
@@ -284,9 +269,15 @@ loader
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
   //.add("punch", "images/punch.png")
-  .add("cinghialeIdleL", "images/cinghiale_l.png")
-  .add("cinghialeIdleR", "images/cinghiale_r.png")
-  .add("cinghialeBeated", "images/cinghiale_beated.png")
+  .add("cinghialeRun0L", "images/cinghiale_l.png")
+  .add("cinghialeRun0R", "images/cinghiale_r.png")
+  .add("cinghialeRun1L", "images/cinghiale_1_l.png")
+  .add("cinghialeRun1R", "images/cinghiale_1_r.png")
+  .add("cinghialeRun2L", "images/cinghiale_2_l.png")
+  .add("cinghialeRun2R", "images/cinghiale_2_r.png")
+  .add("cinghialeRun3L", "images/cinghiale_3_l.png")
+  .add("cinghialeRun3R", "images/cinghiale_3_r.png")
+  .add("cinghialeBeatedR", "images/cinghiale_beated_r.png")
   .add("win", "images/win.png")
   .add("sign_l", "images/sign_l.png")
   .add("sign_r", "images/sign_r.png")
@@ -324,8 +315,8 @@ var rightGesture = false;
 var upGesture = false;
 var enemyCollision = false;
 var oldEnemyCollision = false;
-var cinghialeIdleL = null;
-var cinghialeIdleR = null;
+var cinghialeRunL = null;
+var cinghialeRunR = null;
 var cinghialeBeated = null;
 
 
@@ -575,9 +566,9 @@ function onSetupImages() {
   weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
-  cinghialeIdleL = resources.cinghialeIdleL.texture;
-  cinghialeIdleR = resources.cinghialeIdleR.texture;
-  cinghialeBeated = resources.cinghialeBeated.texture;
+  cinghialeRunL = resources.cinghialeRun0L.texture;
+  cinghialeRunR = resources.cinghialeRun0R.texture;
+  cinghialeBeated = resources.cinghialeBeatedR.texture;
 
   rightCostumes();
 
@@ -733,7 +724,7 @@ function setupLevel(level){
 
       for(var j = 0; j < enemies.length; j++ ){
        var cinghialeSprite = new Sprite(
-         resources.cinghialeIdleR.texture
+         resources.cinghialeRun0R.texture
        );
 
        cinghialeSprite.scale.x = spriteScale;
@@ -833,7 +824,7 @@ function changeLevel(newLevel){
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
         enemies[j].sprite.visible = true;
-        enemies[j].sprite.texture = resources.cinghialeIdleR.texture;
+        enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
         enemies[j].sprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
         enemies[j].sprite.y = (TILE_SIZE_V * platforms[i].row) - enemies[j].sprite.height;
         enemies[j].sprite.vx = 1;
@@ -1063,10 +1054,10 @@ function play() {
 
         if(enemies[j].sprite.x > TILE_SIZE_H * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = -1;
-          enemies[j].sprite.texture = cinghialeIdleL;
+          enemies[j].sprite.texture = cinghialeRunL;
         } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
-          enemies[j].sprite.texture = cinghialeIdleR;
+          enemies[j].sprite.texture = cinghialeRunR;
         }
 
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
