@@ -161,8 +161,7 @@ window.addEventListener("orientationchange", function() {
 var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:12},
-
-  win:{row:2.5,col:17},
+  win:{row:2.5,col:18.15},
   platforms:[{row:17,col:0, width:20, height:3},
          {row:0,col:0, width:1, height:21},
          {row:0,col:19, width:1, height:21},
@@ -178,17 +177,16 @@ var levels = [{
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
-  //mainCharacter:{row:7.5,col:3},
-   win:{row:3.5,col:18},
+  win:{row:3.5,col:18.15},
   platforms:[{row:17,col:0, width:20, height:3, enemies : [{col:5},{col:12}]},
          {row:0,col:0, width:1, height:21},
          {row:0,col:19, width:1, height:21},
          {row:3.5,col:11, width:8, height:1},
-         {row:6,col:7, width:4, height:1},
+         {row:6,col:7, width:4, height:1, enemies : [{col:2}]},
          {row:7.5,col:1, width:3, height:1},
          {row:10,col:3, width:6, height:1, enemies : [{col:1},{col:3}]},
-         {row:11.8,col:12, width:7, height:1, enemies : [{col:1}]},
-         {row:14.5,col:5, width:9, height:1, enemies : [{col:1}]}],
+         {row:11.8,col:12, width:7, height:1, enemies : [{col:1},{col:5}]},
+         {row:14.5,col:5, width:7, height:1, enemies : [{col:1}]}],
          clouds : [{row:12,col:2}, {row:6,col:12}],
          signs : [{row:17,col:8,direction:'l'}]
        }
@@ -1033,6 +1031,9 @@ function play() {
       enemy.sprite.texture =  resources.cinghialeBeatedL.texture;
 
     enemy.sprite.vx = 0;
+
+    if(power <= 98)
+      power += 2;
 
     setTimeout(function(){
               enemy.sprite.visible = false;
