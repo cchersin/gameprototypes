@@ -278,6 +278,7 @@ loader
   .add("cinghialeRun3L", "images/cinghiale_3_l.png")
   .add("cinghialeRun3R", "images/cinghiale_3_r.png")
   .add("cinghialeBeatedR", "images/cinghiale_beated_r.png")
+  .add("cinghialeBeatedL", "images/cinghiale_beated_l.png")
   .add("win", "images/win.png")
   .add("sign_l", "images/sign_l.png")
   .add("sign_r", "images/sign_r.png")
@@ -315,9 +316,7 @@ var rightGesture = false;
 var upGesture = false;
 var enemyCollision = false;
 var oldEnemyCollision = false;
-var cinghialeRunL = null;
-var cinghialeRunR = null;
-var cinghialeBeated = null;
+
 
 
 
@@ -566,10 +565,7 @@ function onSetupImages() {
   weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
   /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
-  cinghialeRunL = resources.cinghialeRun0L.texture;
-  cinghialeRunR = resources.cinghialeRun0R.texture;
-  cinghialeBeated = resources.cinghialeBeatedR.texture;
-
+ 
   rightCostumes();
 
   
@@ -1033,7 +1029,12 @@ function play() {
   var enemyBeated = function(enemy){
 
     powerupSound.play();
-    enemy.sprite.texture = cinghialeBeated;
+
+    if( enemy.sprite.vx > 0)
+      enemy.sprite.texture =  resources.cinghialeBeatedR.texture;
+    else
+      enemy.sprite.texture =  resources.cinghialeBeatedL.texture;
+
     enemy.sprite.vx = 0;
 
     setTimeout(function(){
@@ -1068,7 +1069,7 @@ function play() {
 
         if(enemies[j].sprite.x > TILE_SIZE_H * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = -1;
-          enemies[j].sprite.texture = cinghialeRunL;
+          enemies[j].sprite.texture = resources.cinghialeRun0L.texture;
         } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
           enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
