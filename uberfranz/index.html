@@ -1042,6 +1042,20 @@ function play() {
     
   }
 
+  /*playerMovementAnimation += Math.abs(mainSprite.vx * 1);
+            if(playerMovementAnimation < 20){
+              mainSprite.texture = run1Costume;
+             } else if(playerMovementAnimation < 40){
+              mainSprite.texture = run2Costume;
+            } else if(playerMovementAnimation < 60){
+              mainSprite.texture = run3Costume;
+            } else if(playerMovementAnimation < 80){
+              mainSprite.texture = run2Costume;
+            } else {
+               playerMovementAnimation += -80;
+               mainSprite.texture = run1Costume;
+            }*/
+
   for(var i = 0; i < platforms.length; i++){
     var enemies = platforms[i].enemies;
     if(enemies != null){
@@ -1057,7 +1071,36 @@ function play() {
           enemies[j].sprite.texture = cinghialeRunL;
         } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
           enemies[j].sprite.vx = 1;
-          enemies[j].sprite.texture = cinghialeRunR;
+          enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
+        } else {
+          enemies[j].sprite.movementAnimation += Math.abs(enemies[j].sprite.vx * 1);
+          if(enemies[j].sprite.movementAnimation < 20)
+            if(enemies[j].sprite.vx > 0)
+              enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
+            else
+              enemies[j].sprite.texture = resources.cinghialeRun0L.texture;
+          else if(enemies[j].sprite.movementAnimation < 40)
+             if(enemies[j].sprite.vx > 0)
+               enemies[j].sprite.texture = resources.cinghialeRun2R.texture;
+             else
+               enemies[j].sprite.texture = resources.cinghialeRun2L.texture;
+          else if(enemies[j].sprite.movementAnimation < 60)
+             if(enemies[j].sprite.vx > 0)
+               enemies[j].sprite.texture = resources.cinghialeRun1R.texture;
+             else
+               enemies[j].sprite.texture = resources.cinghialeRun1L.texture;
+          else if(enemies[j].sprite.movementAnimation < 80)
+             if(enemies[j].sprite.vx > 0)
+               enemies[j].sprite.texture = resources.cinghialeRun3R.texture;
+             else
+               enemies[j].sprite.texture = resources.cinghialeRun3L.texture;
+          else {
+            enemies[j].sprite.movementAnimation = 0;
+            if(enemies[j].sprite.vx > 0)
+              enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
+            else
+              enemies[j].sprite.texture = resources.cinghialeRun0L.texture;
+          }
         }
 
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
