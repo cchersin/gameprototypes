@@ -162,10 +162,11 @@ window.addEventListener("orientationchange", function() {
 var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:12},
-  win:{row:2.5,col:18.15},
-  platforms:[{row:17,col:1, width:18, height:3},
-         {row:0,col:0, width:1, height:23},
-         {row:0,col:19, width:1, height:23},
+
+  win:{row:2.5,col:17},
+  platforms:[{row:17,col:0, width:20, height:3},
+         {row:0,col:0, width:1, height:21},
+         {row:0,col:19, width:1, height:21},
          {row:2.5,col:11, width:8, height:1},
          {row:4.5,col:8, width:2, height:1},
          {row:6.5,col:4, width:3, height:1},
@@ -178,16 +179,17 @@ var levels = [{
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
-  win:{row:3.5,col:18.15},
-  platforms:[{row:17,col:1, width:18, height:3, enemies : [{col:5},{col:12}]},
-         {row:0,col:0, width:1, height:23},
-         {row:0,col:19, width:1, height:23},
+  //mainCharacter:{row:7.5,col:3},
+   win:{row:3.5,col:18},
+  platforms:[{row:17,col:0, width:20, height:3, enemies : [{col:5},{col:12}]},
+         {row:0,col:0, width:1, height:21},
+         {row:0,col:19, width:1, height:21},
          {row:3.5,col:11, width:8, height:1},
          {row:6,col:7, width:4, height:1, enemies : [{col:2}]},
          {row:7.5,col:1, width:3, height:1},
          {row:10,col:3, width:6, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1, enemies : [{col:1},{col:5}]},
-         {row:14.5,col:5, width:7, height:1, enemies : [{col:1}]}],
+         {row:14.5,col:5, width:9, height:1, enemies : [{col:1}]}],
          clouds : [{row:12,col:2}, {row:6,col:12}],
          signs : [{row:17,col:8,direction:'l'}]
        }
@@ -658,7 +660,7 @@ function onSetupSounds(){
     }
 
 
-    //var welcomeMsg ="ciao";
+    var welcomeMsg ="ciao";
     welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
 
     messageAnimation(welcomeMsg);
@@ -1033,8 +1035,8 @@ function play() {
 
     enemy.sprite.vx = 0;
 
-    if(power <= 98)
-      power += 2;
+    if(power <= 95)
+      power += 5;
 
     setTimeout(function(){
               enemy.sprite.visible = false;
@@ -1220,10 +1222,12 @@ var endWin = function(){
     <div style="font-family: Pixel, sans-serif; font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
     <img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
   </div>
-   <div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
+   <div style="font-family: Pixel, sans-serif; font-size:80px; color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}">ZOGA</div></div>
   <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
   <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-  <div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:#fff100; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;" class="healt_bar_title">Morbin</span><span style="font-family: Pixel, sans-serif; font-size:10px; color:white;" class="healt_bar_msg"></span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
+  <div class="healt_bar_container" style="display:none"><span style="font-family: Pixel, sans-serif; font-size:14px; color:#fff100;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}" class="healt_bar_title">Morbin</span><span style="font-family: Pixel, sans-serif; font-size:10px; color:white;" class="healt_bar_msg"></span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
   <div id="display" class="display" style="display:none;"></div>
 </div>
 </body>
