@@ -3,15 +3,33 @@
 <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />-->
 <title>Uberfranz</title>
 <head>
-<style>
+<style type="text/css">
 
 @font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
 @font-face { font-family: Title; src: url('fonts/title.ttf'); } 
 
 
+#warning-message { display: none; }
+@media only screen and (orientation:portrait){
+    .main { display:none; }
+    #warning-message { display:block; }
+}
+@media only screen and (orientation:landscape){
+    #warning-message { display:none; }
+}
+
+
 body {
   background-color: #6b6060;
   font-family: Pixel, sans-serif;
+}
+
+#warning-message  {
+  background-color: #09a6df;
+  font-family: Pixel, sans-serif;
+  font-size: 80px;
+  margin: auto;
+  padding: 20px;
 }
 
 div {
@@ -192,6 +210,50 @@ if(isMobile){
   $(".credits_div").css("font-size", "14px");
   $(".splash_cloud").css("left", 750);
   $(".skip").css("font-size","14px"); 
+  $(".healt_bar_title").css("font-size","18px");
+  $(".healt_bar_msg").css("font-size","16px");
+  $(".healt_bar_container").css("max-width", "3000px");
+  $(".healt_bar_msg").css("right", "110px");
+  $(".healt_bar_msg").css("top", "20px");
+  $(".healt_bar").css("height", "18px");
+  $(".healt_bar_inner").css("height", "18px");
+
+/*.healt_bar_container {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  max-width: 800px;
+  height: 20px;
+  z-index: 999;
+  margin: auto;
+}
+
+.healt_bar_title {
+  position: absolute;
+  top: 20px;
+  right: 230px;
+  height: 10px;
+}
+
+.healt_bar_msg {
+  position: absolute;
+  top: 23px;
+  right: 140px;
+  height: 10px;
+  z-index: 5;
+}
+
+.healt_bar {
+  position: absolute;
+  top: 21px;
+  right: 70px;
+  height: 15px;
+  width: 150px;
+  background-color: #e5101b;
+  border: 1px solid white;
+}*/
+
   $(".splash_msg").css("font-size","25px"); 
 }
 
@@ -1293,6 +1355,9 @@ var endWin = function(){
 </head>
 
 <body>
+<div id="warning-message">
+    Gira el telefonin....
+</div>
 <div class="main" >
   <div class="splash" style="display:none; padding:20px">
     <div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><a class="credits" href="https://it-it.facebook.com/AsburgicoUberFranz/"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</a></div>
@@ -1308,7 +1373,7 @@ var endWin = function(){
   <div class="skip_div"/><a class="skip" href="#">Go capì, molime! >></a></div>
   <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
   <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
-  <div class="healt_bar_container" style="display:none"><span style="font-size:14px; color:#fff100;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  <div class="healt_bar_container" style="display:none"><span class="healt_bar_title" style="font-size:14px; color:#fff100;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }" class="healt_bar_title">Morbin</span><span style="font-size:10px; color:white;" class="healt_bar_msg"></span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
   <div id="display" class="display" style="display:none;"></div>
 </div>
