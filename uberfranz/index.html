@@ -24,8 +24,6 @@ span {
 
 .main {
   position: relative;
-  /*height: 100px;
-  width: 100%;*/
   overflow: hidden;
   border:3px solid #5cc8f1;
   margin:auto;
@@ -187,9 +185,15 @@ var setHealtMgs = function(idx){
 
 if(isMobile){
   spriteScale = 1.5;
-} /*else {
-  $('.healt_bar_container').css("position", "absolute");
-}*/
+  main.css("border", "0px");
+  main.css("padding", "10px 0px 10px 0px");
+  $("body").css("margin", "0px");
+  $(".credits_div").css("margin", "10px 0px 0px 0px");
+  $(".credits_div").css("font-size", "14px");
+  $(".splash_cloud").css("left", 750);
+  $(".skip").css("font-size","14px"); 
+  $(".splash_msg").css("font-size","25px"); 
+}
 
 
 var fitToWindow = function(){
@@ -710,7 +714,11 @@ function messageAnimation(msg){
           var windowSize = getWindowSize();
 
           animation(makeEaseOut(bounce3),function(delta) {
-            $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())*3/4) + "px");
+            if(isMobile){
+              $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())/2) + "px");
+            } else {
+              $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())*3/4) + "px");
+            }
             }, 70);
         }, 800);
       }
@@ -739,8 +747,14 @@ function onSetupSounds(){
     }
 
 
-    var welcomeMsg ="ciao";
-    welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
+    var welcomeMsg ="";
+
+    if(isMobile){
+      welcomeMsg ="Toca  a  destra  per andar  a  destra,  toca  a  sinistra  per  andar  a   sinistra,  toca   in  alto  per  saltar,  toca co  do  dedi  per  tirar  pugnoni...";
+    }
+    else {
+       welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
+   }
 
     messageAnimation(welcomeMsg);
     //levels[currLevel].scene.visible = true;
@@ -1282,13 +1296,13 @@ var endWin = function(){
 <div class="main" >
   <div class="splash" style="display:none; padding:20px">
     <div style="font-family: Title, sans-serif; font-size:40px; color:#fff100;"><a class="credits" href="https://it-it.facebook.com/AsburgicoUberFranz/"><img src="images/uberfranz_idle_r.png" style="margin-right:10px"/>Überfranz</a></div>
-    <div style="font-size:10px; color:#dddadb; margin-bottom:30px">
+    <div class="credits_div" style="font-size:10px; color:#dddadb; margin-bottom:30px">
       Überfranz è un personaggio ideato da <a class="credits" href="https://it-it.facebook.com/luca.vergerio.5/">Luca Vergerio</a> e <a  class="credits" href="https://it-it.facebook.com/giulio.riosa/">Giulio Riosa</a>
     </div>
          
 
     <div style="font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
-    <img src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
+    <img class="splash_cloud" src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
   </div>
    <div style="font-size:80px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
   <div class="skip_div"/><a class="skip" href="#">Go capì, molime! >></a></div>
