@@ -1120,28 +1120,14 @@ function play() {
 
     enemy.sprite.vx = 0;
 
-    if(power <= 95)
-      power += 5;
+    if(power <= 98)
+      power += 2;
 
     setTimeout(function(){
               enemy.sprite.visible = false;
             },500);
     
   }
-
-  /*playerMovementAnimation += Math.abs(mainSprite.vx * 1);
-            if(playerMovementAnimation < 20){
-              mainSprite.texture = run1Costume;
-             } else if(playerMovementAnimation < 40){
-              mainSprite.texture = run2Costume;
-            } else if(playerMovementAnimation < 60){
-              mainSprite.texture = run3Costume;
-            } else if(playerMovementAnimation < 80){
-              mainSprite.texture = run2Costume;
-            } else {
-               playerMovementAnimation += -80;
-               mainSprite.texture = run1Costume;
-            }*/
 
   for(var i = 0; i < platforms.length; i++){
     var enemies = platforms[i].enemies;
@@ -1226,8 +1212,8 @@ function play() {
     }
   }
 
-  var main_width = main.width(); //Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-  var main_height = main.height(); //Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  var main_width = main.width(); 
+  var main_height = main.height(); 
 
 
   var MAIN_SPRITE_WIDTH = mainSprite.width;
@@ -1237,13 +1223,10 @@ function play() {
 
   var scrollTop = main.scrollTop();
   if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + main_height){
-    //console.log("out of screen - bottom");
-    //$('.punch_left').html('out of screen');
-    var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder - main_height;
+       var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder - main_height;
     if(scrollTo > rendererHeight - main_height)
         scrollTo = rendererHeight - main_height;
 
-       //$('.punch_left').html('out of screen ' + scrollTo);
     main.scrollTop(scrollTo);
   } else {
     if(mainSprite.y - hBorder < scrollTop ){
