@@ -217,43 +217,6 @@ if(isMobile){
   $(".healt_bar_msg").css("top", "20px");
   $(".healt_bar").css("height", "18px");
   $(".healt_bar_inner").css("height", "18px");
-
-/*.healt_bar_container {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  max-width: 800px;
-  height: 20px;
-  z-index: 999;
-  margin: auto;
-}
-
-.healt_bar_title {
-  position: absolute;
-  top: 20px;
-  right: 230px;
-  height: 10px;
-}
-
-.healt_bar_msg {
-  position: absolute;
-  top: 23px;
-  right: 140px;
-  height: 10px;
-  z-index: 5;
-}
-
-.healt_bar {
-  position: absolute;
-  top: 21px;
-  right: 70px;
-  height: 15px;
-  width: 150px;
-  background-color: #e5101b;
-  border: 1px solid white;
-}*/
-
   $(".splash_msg").css("font-size","25px"); 
 }
 
@@ -301,8 +264,7 @@ var levels = [{
    {
   container:{width:20,height:20},
   mainCharacter:{row:17,col:10},
-  //mainCharacter:{row:7.5,col:3},
-   win:{row:3.5,col:18.15},
+  win:{row:3.5,col:18.15},
   platforms:[{row:17,col:1, width:18, height:3, enemies : [{col:5},{col:12}]},
          {row:0,col:0, width:1, height:23},
          {row:0,col:19, width:1, height:23},
@@ -346,19 +308,12 @@ renderer.backgroundColor = 0x09a6df;
 renderer.view.style.position = "absolute";
 renderer.view.style.display = "block";
 renderer.autoResize = true;
-//renderer.resize(window.innerWidth, window.innerHeight);
 
 
 //Add the canvas to the HTML document
 var display = $("#display");
 
 display[0].appendChild(renderer.view);
-
-//display.width(rendererWidth);
-//display.height(rendererHeight);
-// TODO dimesioni sprites 
-
-//var t = new Tink(PIXI, controlLayerRenderer.view);
 
 
 var stage = null;
@@ -388,7 +343,6 @@ loader
   .add("uberfranzJumpL", "images/uberfranz_jump_l.png")
   .add("uberfranzWeaponL", "images/uberfranz_weapon_l.png")
   .add("uberfranzDead", "images/uberfranz_dead.png")
-  //.add("punch", "images/punch.png")
   .add("cinghialeRun0L", "images/cinghiale_l.png")
   .add("cinghialeRun0R", "images/cinghiale_r.png")
   .add("cinghialeRun1L", "images/cinghiale_1_l.png")
@@ -404,13 +358,12 @@ loader
   .add("sign_r", "images/sign_r.png")
   .add("tile", "images/tile.png")
   .add("cloud", "images/cloud.png")
-  
   .load(onSetupImages);
 
   
 
-var movementSpeed = 0.8;
-var movementSpeedInAir = 0.1;
+var movementSpeed = 0.8 * spriteScale;
+var movementSpeedInAir = 0.1 * spriteScale;
 var gravity = 0.1;
 var velocityMultiplier = 0.96;
 var velocityMultiplierLand = 0.8;
@@ -480,8 +433,6 @@ function createPlatformSprite(row,col,width,height,tileTexture){
        platform0.addChild(tile);
     }
   }
-
-  /*var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture,width * TILE_SIZE_H,height*TILE_SIZE_V);*/
 
   platform.addChild(platform0);
 
@@ -557,9 +508,6 @@ var rightCostumes = function(){
     weaponCostume = resources.uberfranzWeaponR.texture;
 }
 
-var lastTap = 0;
-var lastTapX = 0;
-var lastTapY = 0;
 function detectActions(touches){
 
  if(touches.length == 2){  
@@ -570,15 +518,9 @@ function detectActions(touches){
     rightGesture = false;
     upGesture = false;
 
-   var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
   
-
     for (var i = touches.length - 1; i >= 0; i--) {
-      if(touches[i].clientX < window_width / 2  ){
-        //leftCostumes();
         leftGesture = true;
-      } else if((touches[i].clientX > window_width / 2 ) && touches[i].clientY > 100){
-        //rightCostumes();
         rightGesture = true;
       } 
     }
@@ -587,25 +529,7 @@ function detectActions(touches){
 
 $(".main").on("touchstart", function(ev) {
     var e = ev.originalEvent;
-    //console.log(e.touches);
-
-/*    var currentTime = new Date().getTime();
-    var tapLength = currentTime - lastTap;
-    lastTap = currentTime;
-    var deltaY = Math.abs(lastTapX - (e.touches.length > 0 ? e.touches[0].clientX : 0));
-    var deltaX = Math.abs(lastTapY - (e.touches.length > 0 ? e.touches[0].clientY : 0));
-    lastTapX = e.touches.length > 0 ? e.touches[0].clientX : 0;
-    lastTapY = e.touches.length > 0 ? e.touches[0].clientY : 0;
-
-    console.log("LAST" + lastTapX + ' - ' + lastTapY);
-    console.log(deltaX + ' - ' + deltaY);
-
-    if(e.touches.length == 1 && deltaX < 10 && deltaY < 10 && tapLength < 750 && tapLength > 0) {
-      punch();
-      return;
-    }*/ 
     
-
     detectActions(e.touches);
 });
 
@@ -634,34 +558,10 @@ var punch = function(){
 }
 
 
-$(".punch_left").click(function(event) {
-    punch();
-    event.stopPropagation();
-});
-
-$(".punch_right").click(function(event) {
-    punch();
-    event.stopPropagation();
-});
-
-$(".punch_left").on("touchstart", function(event) {
-    punch();
-    event.stopPropagation();
-});
-
-$(".punch_right").on("touchstart", function(event) {
-    punch();
-    event.stopPropagation();
-});
 
 function start(){
   $(".splash").hide();
   $(".start_button").hide();
-   $(".display").show();
-  if(isMobile){
-    $(".punch_right").show();
-    $(".punch_left").show();
-  }
   $(".healt_bar_container").show();
 
   state = play;
@@ -705,7 +605,6 @@ function onSetupImages() {
 
   weaponCostume = resources.uberfranzWeaponR.texture;
   deadCostume = resources.uberfranzDead.texture;
-  /*uberfranzBeatEnemy = resources.uberfranzBeatEnemy.texture;*/
  
   rightCostumes();
 
@@ -931,15 +830,6 @@ weaponKey.press = function() {
   punch();
 };
 
-/*
-left.press = function(){
-  leftCostumes();
-}
-
-right.press = function(){
-    rightCostumes();
-}*/
-
 function changeLevel(newLevel){
 
   var oldLevel = currLevel;
@@ -1024,10 +914,7 @@ function play() {
   xCollision = false;
   yCollision = false;
 
- //punchSprite.y = $(window).scrollTop();
-
   mainSprite.x += mainSprite.vx;
-  if(hitPlatform() /*|| mainSprite.x <= TILE_SIZE_H || (mainSprite.x + mainSprite.width) >= TILE_SIZE_H * (levels[currLevel].container.width -1)*/){
     xCollision = true;
   }
   if(xCollision){
@@ -1371,8 +1258,6 @@ var endWin = function(){
   </div>
    <div style="font-size:80px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
   <div class="skip_div"/><a class="skip" href="#">Go capì, molime! >></a></div>
-  <div class="punch_left" style="display:none"><img src="images/punch.png"></img></div>
-  <div class="punch_right" style="display:none"><img src="images/punch.png"></img></div>
   <div class="healt_bar_container" style="display:none"><span class="healt_bar_title" style="font-size:14px; color:#fff100;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }" class="healt_bar_title">Morbin</span><span style="font-size:10px; color:white;" class="healt_bar_msg"></span><div class="healt_bar"><div class="healt_bar_inner"></div></div></div>
   <div id="display" class="display" style="display:none;"></div>
