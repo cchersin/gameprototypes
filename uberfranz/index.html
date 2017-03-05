@@ -5,9 +5,9 @@
 <head>
 <style>
 
-/*@font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
+@font-face { font-family: Pixel; src: url('fonts/pixel.otf'); } 
 @font-face { font-family: Title; src: url('fonts/title.ttf'); } 
-*/
+
 
 body {
   background-color: #6b6060;
@@ -243,7 +243,7 @@ var levels = [{
          {row:3.5,col:11, width:8, height:1},
          {row:6,col:7, width:4, height:1, enemies : [{col:2}]},
          {row:7.5,col:1, width:3, height:1},
-         {row:10,col:3, width:6, height:1, enemies : [{col:1},{col:3}]},
+         {row:10,col:3, width:7, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1, enemies : [{col:1},{col:5}]},
          {row:14.5,col:5, width:9, height:1, enemies : [{col:1}]}],
          clouds : [{row:12,col:2}, {row:6,col:12}],
@@ -1011,7 +1011,7 @@ function play() {
     mainSprite.vy = mainSprite.vy * 0.6;
   }
 
-  if(hitTestRectangle(mainSprite,levels[currLevel].win.sprite)){
+  if(hitTestCenter(mainSprite,levels[currLevel].win.sprite)){
     mainSprite.visible = false;
     if(currLevel == levels.length -1){
       winSound.play();
@@ -1021,7 +1021,13 @@ function play() {
         $(".healt_bar_container").hide();
         $(".splash").show();
 
-        var winMsg = "Mitico!!  Te  ga  vinto!!!!! ------ NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
+        var windowSize = getWindowSize();
+
+        $(".start_button").css("left", ((windowSize.width - $(".start_button").width()) / 2 + $('.main').scrollLeft()) + "px");
+        $(".start_button").css("top", ((windowSize.height - $(".start_button").height()) / 2 + $('.main').scrollTop()) + "px");
+      
+
+        var winMsg = "Bravo mulo!!  Ben cazzada!-I  cinghiai  pol  finir  in  pignata!!! ------ NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
         messageAnimation(winMsg);
        
       }, 2000);
