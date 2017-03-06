@@ -12,7 +12,12 @@
 #warning-message { display: none; }
 @media only screen and (orientation:portrait){
     .main { display:none; }
-    #warning-message { display:block; }
+    #warning-message { display:block; 
+                      padding: 100px 50px 100px 50px; 
+                      height: 100%; 
+                      background-color: #09a6df; 
+                      font-family: Pixel, sans-serif; 
+                      font-size: 80px;}
 }
 @media only screen and (orientation:landscape){
     #warning-message { display:none; }
@@ -24,13 +29,6 @@ body {
   font-family: Pixel, sans-serif;
 }
 
-#warning-message  {
-  background-color: #09a6df;
-  font-family: Pixel, sans-serif;
-  font-size: 80px;
-  margin: auto;
-  padding: 20px;
-}
 
 div {
   font-family: Pixel, sans-serif;
@@ -210,6 +208,7 @@ if(isMobile){
   $(".credits_div").css("font-size", "14px");
   $(".splash_cloud").css("left", 750);
   $(".skip").css("font-size","14px"); 
+  $(".skip_div").css("bottom","30px"); 
   $(".healt_bar_title").css("font-size","18px");
   $(".healt_bar_msg").css("font-size","16px");
   $(".healt_bar_container").css("max-width", "3000px");
@@ -218,6 +217,7 @@ if(isMobile){
   $(".healt_bar").css("height", "18px");
   $(".healt_bar_inner").css("height", "18px");
   $(".splash_msg").css("font-size","25px"); 
+  $("start_button").css("font-size","40px"); 
 }
 
 
@@ -240,9 +240,9 @@ $(window).resize(function(){
 });
 
 // Listen for orientation changes
-window.addEventListener("orientationchange", function() {
+/*window.addEventListener("orientationchange", function() {
   fitToWindow();
-}, false);
+}, false);*/
 
 
 var levels = [{
@@ -508,6 +508,7 @@ var rightCostumes = function(){
     weaponCostume = resources.uberfranzWeaponR.texture;
 }
 
+
 function detectActions(touches){
 
  if(touches.length == 2){  
@@ -518,11 +519,14 @@ function detectActions(touches){
     rightGesture = false;
     upGesture = false;
 
+    var window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
   
     for (var i = touches.length - 1; i >= 0; i--) {
-        leftGesture = true;
-        rightGesture = true;
-      } 
+       if(touches[i].clientX < window_width / 2  ){
+          leftGesture = true;
+        } else if((touches[i].clientX > window_width / 2 ) && touches[i].clientY > 100){
+          rightGesture = true;
+        }
     }
   }
 }
@@ -548,20 +552,37 @@ var punch = function(){
    if(state != play)
       return;
 
+    if(weaponCount > 0)
+      return;
+
     punchSound.play();
     weaponCount++;
     setTimeout(function(){ if( weaponCount > 0 )
-                              weaponCount--; }, 500);
+                                weaponCount--; }, 500);
     animation(bounce2,function(delta) {
       stageX = 10*(delta);
     });
 }
 
+if (window.DeviceMotionEvent) {
+  window.addEventListener('devicemotion', function(eventData){
+    var acceleration = eventData.acceleration;
+   //  $(".healt_bar_msg").html(Math.floor(acceleration.x) + " " + Math.floor(acceleration.y) + " " + Math.floor(acceleration.z));
+
+     if(Math.abs(acceleration.x) > 2 
+      || Math.abs(acceleration.y) > 2 
+      || Math.abs(acceleration.z) > 2)
+       punch(); 
+  }, false);
+} else {
+  document.getElementById("dmEvent").innerHTML = "Not supported."
+}
 
 
 function start(){
   $(".splash").hide();
   $(".start_button").hide();
+  $(".display").show();
   $(".healt_bar_container").show();
 
   state = play;
@@ -675,11 +696,7 @@ function messageAnimation(msg){
           var windowSize = getWindowSize();
 
           animation(makeEaseOut(bounce3),function(delta) {
-            if(isMobile){
-              $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())/2) + "px");
-            } else {
               $(".start_button").css("top", (delta * (windowSize.height- $(".start_button").height())*3/4) + "px");
-            }
             }, 70);
         }, 800);
       }
@@ -711,7 +728,7 @@ function onSetupSounds(){
     var welcomeMsg ="";
 
     if(isMobile){
-      welcomeMsg ="Toca  a  destra  per andar  a  destra,  toca  a  sinistra  per  andar  a   sinistra,  toca   in  alto  per  saltar,  toca co  do  dedi  per  tirar  pugnoni...";
+      welcomeMsg ="Toca  a  destra  per andar  a  destra,  toca  a  sinistra  per  andar  a   sinistra,  toca  co  do  dedi per  saltar,  scasa  el  telefonin  per  tirar  pugnoni...";
     }
     else {
        welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
@@ -915,6 +932,7 @@ function play() {
   yCollision = false;
 
   mainSprite.x += mainSprite.vx;
+  if(hitPlatform()){
     xCollision = true;
   }
   if(xCollision){
@@ -990,7 +1008,13 @@ function play() {
         $(".start_button").css("top", ((windowSize.height - $(".start_button").height()) / 2 + $('.main').scrollTop()) + "px");
       
 
-        var winMsg = "Bravo mulo!!  Ben cazzada!-I  cinghiai  pol  finir  in  pignata!!! ------ NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
+        var winMsg = "";
+        if(isMobile){
+          winMsg = "Bravo mulo!!  Ben cazzada!  I  cinghiai  pol  finir  in  pignata!!! -- NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
+         } else {
+            winMsg = "Bravo mulo!!  Ben cazzada!-I  cinghiai  pol  finir  in  pignata!!! ------ NB:  Nessun  animale  è  stato  maltrattato  nella  realizzazione  di  questo  videogioco";
+        }
+
         messageAnimation(winMsg);
        
       }, 2000);
@@ -1243,7 +1267,7 @@ var endWin = function(){
 
 <body>
 <div id="warning-message">
-    Gira el telefonin....
+    <img src="images/uberfranz_idle_r.png" style="margin-right:20px; height:100px;"/> Gira  el  telefonin....
 </div>
 <div class="main" >
   <div class="splash" style="display:none; padding:20px">
@@ -1253,7 +1277,7 @@ var endWin = function(){
     </div>
          
 
-    <div style="font-size:16px; color:white; margin-top:10px;" class="splash_msg" ></div>
+    <div style="font-size:16px; color:white; margin-top:10px;" class="splash_msg" >Speta...</div>
     <img class="splash_cloud" src="images/cloud.png" style="position:absolute; top:30px; left: 600px"/>
   </div>
    <div style="font-size:80px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;color:#fff100; display:none; border:5px solid #03779d;  background-color:#0099cc; border-radius: 10px;" class="start_button" ><div style="background-color:#5cc8f1; width:100%; height:5px;"></div><div style="padding:3px 30px 8px 30px;">ZOGA</div></div>
