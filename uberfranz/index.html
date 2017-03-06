@@ -1300,7 +1300,8 @@ function play() {
   var c = stage.children[0].children;
 
   for (var i = 0; i < c.length; i++) {  
-    c[i].visible = true;
+    if(c[i].dead != true)
+      c[i].visible = true;
 
     if(c[i].position.y + c[i].height < main.scrollTop() || c[i].position.y > main.scrollTop() + main_height)
       c[i].visible = false;
