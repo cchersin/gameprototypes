@@ -239,10 +239,17 @@ $(window).resize(function(){
   fitToWindow();
 });
 
-// Listen for orientation changes
-/*window.addEventListener("orientationchange", function() {
-  fitToWindow();
-}, false);*/
+var paused = false;
+
+if(isMobile){
+  paused=window.matchMedia("(orientation: portrait)").matches;
+  console.log(paused);
+  // Listen for orientation changes
+  $(window).on("orientationchange", function(e) {
+    paused=window.matchMedia("(orientation: portrait)").matches;
+    console.log(e.orientation);
+  });
+}
 
 
 var levels = [{
@@ -510,6 +517,8 @@ var rightCostumes = function(){
 
 
 function detectActions(touches){
+  if(paused)
+    return;
 
  if(touches.length == 2){  
     upGesture = true;
@@ -539,16 +548,18 @@ $(".main").on("touchstart", function(ev) {
 
 $(".main").on("touchend", function(ev) {
     var e = ev.originalEvent;
-    //console.log(e.touches);
   
     detectActions(e.touches);
 });
 
-document.body.addEventListener('touchmove', function(event) {
+/*document.body.addEventListener('touchmove', function(event) {
   event.preventDefault();
-}, false); 
+}, false);*/ 
 
 var punch = function(){
+   if(paused)
+      return;
+
    if(state != play)
       return;
 
@@ -735,18 +746,7 @@ function onSetupSounds(){
    }
 
     messageAnimation(welcomeMsg);
-    //levels[currLevel].scene.visible = true;
-   
-
-    /*var pointer = t.makePointer();
-    pointer.visible=true;
-    pointer.x=0;
-    pointer.y=0;*/
-
-    //$('.loading').hide();
-    
-
-    
+  
 
     gameLoop();
 };
@@ -917,6 +917,9 @@ function gameLoop() {
 }
 
 function play() {
+
+  if(paused)
+    return;
 
   var platforms = levels[currLevel].platforms;
   var mainSprite = levels[currLevel].mainCharacter.sprite;
