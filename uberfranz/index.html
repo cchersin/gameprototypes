@@ -285,7 +285,6 @@ if(isMobile){
   });
 }
 
-
 var levels = [{
   container:{width:20,height:20},
   mainCharacter:{row:17,col:12},
@@ -321,12 +320,9 @@ var levels = [{
 ];
 
 
-
 var currLevel = 0;
 var TILE_SIZE_H = 60 * spriteScale;
 var TILE_SIZE_V = 45 * spriteScale;
-var CONTROL_BUTTON_WIDTH = 0;
-var CONTROL_BUTTON_HEIGHT = 0;
 var power = 100;
 
 
@@ -338,7 +334,7 @@ var Container = PIXI.Container,
     Sprite = PIXI.Sprite,
     Rectangle = PIXI.Rectangle;
 
-var rendererWidth = levels[currLevel].container.width*TILE_SIZE_H+CONTROL_BUTTON_WIDTH*2;
+var rendererWidth = levels[currLevel].container.width*TILE_SIZE_H;
 var rendererHeight = levels[currLevel].container.height*TILE_SIZE_V;
 
 //Create the renderer
@@ -464,21 +460,25 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
 // ParticleContainer
   var platform = new Container();
-  var platform0 = new PIXI.ParticleContainer(100,{rotation:false,alpha:false,scale:false,uvs:false});
+  /*var platform0 = new PIXI.ParticleContainer(100,{rotation:false,alpha:false,scale:false,uvs:false});
 
   for(var i=0; i < width; i++){
     for(var j=0; j < height; j++){
        var tile = new Sprite(resources.tile.texture);
        tile.scale.x = spriteScale;
        tile.scale.y = spriteScale;
-       tile.x = CONTROL_BUTTON_WIDTH + i * TILE_SIZE_H;
+       tile.x =  i * TILE_SIZE_H;
        tile.y = j * TILE_SIZE_V;
        platform0.addChild(tile);
     }
-  }
+  }*/
+
+  var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture, TILE_SIZE_H * width, TILE_SIZE_V * height);
+  
 
   platform.addChild(platform0);
 
+  //if(!isMobile){
   var border1 = new PIXI.Graphics();
   border1.lineStyle(1, 0x6b6060, 1);
   border1.beginFill(0x6b6060);
@@ -515,7 +515,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   borderRight.x = width * TILE_SIZE_H;
   borderRight.y = 0;
   platform.addChild(borderRight);
-  
+  //}
 
 
   platform.x = col * TILE_SIZE_H;
@@ -772,7 +772,7 @@ function onSetupSounds(){
     var welcomeMsg ="";
 
     if(isMobile){
-      welcomeMsg ="Toca  a  destra  per andar  a  destra,  toca  a  sinistra  per  andar  a   sinistra,  toca  co  do  dedi per  saltar,  scasa  el  telefonin  per  tirar  pugnoni...";
+      welcomeMsg ="Toca  a  destra  per andar  a  destra,  toca  a  sinistra  per  andar  a   sinistra,  toca  co  do  dedi per  saltar,  scassa  el  telefonin/tablet  per  tirar  pugnoni...";
     }
     else {
        welcomeMsg = "Eco  qua  el  zogheto  del  nostro  eroe  preferito.--Per  moverte  usa  le  frecce:-freccia  a  destra  per  'ndar  a  destra-freccia  a  sinistra per  'ndar  a  sinistra-freccia  in  alto  per  saltar-struca  la  'A'  per  el  mitico  maglio  d'Asburgo  contro  i  cinghiai.--Te  devi, finchè  te  ga  morbin,  zercar  de  uscir  dala porta  in  alto.--Adeso che te ga capì....";
@@ -828,7 +828,7 @@ function setupLevel(level){
        cinghialeSprite.scale.x = spriteScale;
        cinghialeSprite.scale.y = spriteScale;
 
-       cinghialeSprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
+       cinghialeSprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col);
        cinghialeSprite.y = (TILE_SIZE_V * platforms[i].row) - cinghialeSprite.height;
        cinghialeSprite.vx = 1;
        cinghialeSprite.vy = 0;
@@ -914,8 +914,9 @@ function changeLevel(newLevel){
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
         enemies[j].sprite.visible = true;
+        enemies[j].sprite.dead = false;
         enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
-        enemies[j].sprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col) + CONTROL_BUTTON_WIDTH;
+        enemies[j].sprite.x = TILE_SIZE_H * (platforms[i].col + enemies[j].col);
         enemies[j].sprite.y = (TILE_SIZE_V * platforms[i].row) - enemies[j].sprite.height;
         enemies[j].sprite.vx = 1;
         enemies[j].sprite.vy = 0;
@@ -934,17 +935,31 @@ function changeLevel(newLevel){
 
 }
 
+var fps = 60;
+var now;
+var then = Date.now();
+var interval = 1000/fps;
+var delta;
+  
 
 function gameLoop() {
 
   //Loop this function at 60 frames per second
   requestAnimationFrame(gameLoop);
 
-  //Update the current game state:
-  state();
+  now = Date.now();
+  delta = now - then;
+     
+  if (delta > interval) {
 
-  //Render the stage to see the animation
-  renderer.render(stage);
+    then = now - (delta % interval);
+
+    //Update the current game state:
+    state();
+
+    //Render the stage to see the animation
+    renderer.render(stage);
+  }
 }
 
 function play() {
@@ -955,6 +970,8 @@ function play() {
   var platforms = levels[currLevel].platforms;
   var mainSprite = levels[currLevel].mainCharacter.sprite;
 
+  var main_width = main.width(); 
+  var main_height = main.height(); 
 
   
   oldYCollions = yCollision;
@@ -1151,6 +1168,7 @@ function play() {
 
     setTimeout(function(){
               enemy.sprite.visible = false;
+              enemy.sprite.dead = true;
             },500);
     
   }
@@ -1159,16 +1177,16 @@ function play() {
     var enemies = platforms[i].enemies;
     if(enemies != null){
       for(var j = 0; j < enemies.length; j++){
-        if(enemies[j].sprite.visible == false  || enemies[j].sprite.vx == 0)
+        if(enemies[j].sprite.dead == true || enemies[j].sprite.vx == 0)
           continue;
 
   	    enemies[j].sprite.x += enemies[j].sprite.vx; 
         enemies[j].sprite.y += enemies[j].sprite.vy; 
 
-        if(enemies[j].sprite.x > TILE_SIZE_H * (platforms[i].col + platforms[i].width -1) + CONTROL_BUTTON_WIDTH){
+        if(enemies[j].sprite.x > TILE_SIZE_H * (platforms[i].col + platforms[i].width -1)){
           enemies[j].sprite.vx = -1;
           enemies[j].sprite.texture = resources.cinghialeRun0L.texture;
-        } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col) + CONTROL_BUTTON_WIDTH){
+        } else if(enemies[j].sprite.x < TILE_SIZE_H * (platforms[i].col)){
           enemies[j].sprite.vx = 1;
           enemies[j].sprite.texture = resources.cinghialeRun0R.texture;
         } else {
@@ -1238,10 +1256,7 @@ function play() {
     }
   }
 
-  var main_width = main.width(); 
-  var main_height = main.height(); 
-
-
+ 
   var MAIN_SPRITE_WIDTH = mainSprite.width;
   var MAIN_SPRITE_HEIGTH = mainSprite.height;
   var hBorder = 200;
@@ -1260,7 +1275,7 @@ function play() {
       var scrollTo  = mainSprite.y - vBorder;
       if(scrollTo < 0)
         scrollTo = 0;
-    main.scrollTop(scrollTo);
+      main.scrollTop(scrollTo);
     }
   }
 
@@ -1281,6 +1296,19 @@ function play() {
      main.scrollLeft(scrollTo);
     }
   }
+
+  var c = stage.children[0].children;
+
+  for (var i = 0; i < c.length; i++) {  
+    c[i].visible = true;
+
+    if(c[i].position.y + c[i].height < main.scrollTop() || c[i].position.y > main.scrollTop() + main_height)
+      c[i].visible = false;
+
+    if(c[i].position.x + c[i].width < main.scrollLeft() || c[i].position.x > main.scrollLeft() + main_width)
+      c[i].visible = false;
+      //console.log(i);
+  };
 
 }
 
@@ -1306,7 +1334,7 @@ var endWin = function(){
 
 <body>
 <div id="warning-message">
-    <img src="images/uberfranz_idle_r.png" style="margin-right:20px; height:100px;"/> Gira  el  telefonin....
+    <img src="images/uberfranz_idle_r.png" style="margin-right:20px; height:100px;"/> Gira  el  telefonin/tablet....
 </div>
 <div class="main">
   <div class="splash">
