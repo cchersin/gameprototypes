@@ -850,12 +850,12 @@ function setupLevel(level){
   var doorSprite = new Sprite(
     resources.win.texture
   );
-  doorSprite.x = levels[level].win.col * TILE_SIZE_H;
-  doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
 
   doorSprite.scale.x = spriteScale;
   doorSprite.scale.y = spriteScale;
 
+  doorSprite.x = levels[level].win.col * TILE_SIZE_H;
+  doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
 
   scene.addChild(doorSprite);
   levels[level].win.sprite = doorSprite;
