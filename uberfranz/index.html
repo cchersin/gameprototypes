@@ -276,7 +276,7 @@ var levels = [{
          {row:0,col:0, width:1, height:23},
          {row:0,col:19, width:1, height:23},
          {row:3.5,col:11, width:8, height:1},
-         {row:6,col:7, width:4, height:1, enemies : [{col:2}]},
+         {row:6,col:7, width:3, height:1, enemies : [{col:2}]},
          {row:7.5,col:1, width:3, height:1},
          {row:10,col:3, width:7, height:1, enemies : [{col:1},{col:3}]},
          {row:11.8,col:12, width:7, height:1, enemies : [{col:1},{col:5}]},
@@ -375,7 +375,9 @@ var gravity = 0.1;
 var velocityMultiplier = 0.96;
 var velocityMultiplierLand = 0.8;
 var jumped = false;
-var jumpHeight = 7 * spriteScale;
+var jumpHeight = 7;
+if(isMobile)
+  jumpHeight = 9;
 var runJumpMultipler = 0.2;
 var idleCostume = null;
 var moving = false;
@@ -815,6 +817,10 @@ function setupLevel(level){
   doorSprite.x = levels[level].win.col * TILE_SIZE_H;
   doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
 
+  doorSprite.scale.x = spriteScale;
+  doorSprite.scale.y = spriteScale;
+
+
   scene.addChild(doorSprite);
   levels[level].win.sprite = doorSprite;
   
@@ -1110,8 +1116,13 @@ function play() {
 
     enemy.sprite.vx = 0;
 
-    if(power <= 98)
-      power += 2;
+    if(isMobile){
+      if(power <= 95)
+        power += 5;
+    } else {
+      if(power <= 98)
+        power += 2;
+    }
 
     setTimeout(function(){
               enemy.sprite.visible = false;
@@ -1162,8 +1173,8 @@ function play() {
         }
 
 	      if (hitTestRectangle(mainSprite, enemies[j].sprite)) {
-          if(weaponCount>0 && ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
-                           || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0))){
+          if(weaponCount>0 && (isMobile || ((mainSprite.x < enemies[j].sprite.x && mainSprite.vx > 0)
+                           || (mainSprite.x > enemies[j].sprite.x && mainSprite.vx < 0)))){
   
             enemyBeated(enemies[j]);
         } else {
