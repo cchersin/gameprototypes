@@ -1,6 +1,5 @@
 <!doctype html>
 <meta charset="utf-8">
-<!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />-->
 <title>Uberfranz</title>
 <head>
 <style type="text/css">
@@ -23,12 +22,10 @@
     #warning-message { display:none; }
 }
 
-
 body {
   background-color: #6b6060;
   font-family: Pixel, sans-serif;
 }
-
 
 div {
   font-family: Pixel, sans-serif;
@@ -876,9 +873,6 @@ function setupLevel(level){
   mainSprite.x = levels[level].mainCharacter.col * TILE_SIZE_H;
   mainSprite.y = levels[level].mainCharacter.row * TILE_SIZE_V - mainSprite.height;
 
-
-
-
   return scene;
 }
 
@@ -947,9 +941,6 @@ function gameLoop() {
 
   //Update the current game state:
   state();
-
-  //Update Tink
-  //t.update();
 
   //Render the stage to see the animation
   renderer.render(stage);
