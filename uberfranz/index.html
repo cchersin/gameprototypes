@@ -1311,18 +1311,18 @@ function play() {
     }
   }
 
-  var c = stage.children[0].children;
+  var c = background.children;
 
   for (var i = 0; i < c.length; i++) {  
-    if(c[i].dead != true)
-      c[i].visible = true;
-
-    if(c[i].position.y + c[i].height < main.scrollTop() || c[i].position.y > main.scrollTop() + main_height)
-      c[i].visible = false;
-
-    if(c[i].position.x + c[i].width < main.scrollLeft() || c[i].position.x > main.scrollLeft() + main_width)
-      c[i].visible = false;
+    if(c[i].dead != true){
+      
+      if((c[i].position.y + c[i].height < -background.y || c[i].position.y > -background.y + main_height)
+        || (c[i].position.x + c[i].width < -background.x || c[i].position.x > -background.x + main_width))
+        c[i].visible = false;
+      else  
+        c[i].visible = true;
       //console.log(i);
+    }
   };
 
 }
