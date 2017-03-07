@@ -329,16 +329,19 @@ function getWindowSize(){
   var window_width = 0;
   var window_height = 0;
   
-  if(isMobile){
+  /*if(isMobile){
     window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  } else {  
+  } else {*/  
     window_width = 800;
     window_height = 600;
-  }
+  /*}*/
 
   if(window_width > rendererWidth)
     window_width = rendererWidth;
+
+  if(window_height > rendererHeight)
+    window_height = rendererHeight;
 
   return {
     width : window_width,
