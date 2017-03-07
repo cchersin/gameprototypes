@@ -235,9 +235,9 @@ var setHealtMgs = function(idx){
 
 if(isMobile){
   spriteScale = 1.5;
-  main.css("border", "0px");
+  /*main.css("border", "0px");
   main.css("padding", "10px 0px 10px 0px");
-  $("body").css("margin", "0px");
+  $("body").css("margin", "0px");*/
   $(".credits_div").css("margin", "10px 0px 0px 0px");
   $(".credits_div").css("font-size", "14px");
   $(".splash_cloud").css("left", 750);
@@ -329,13 +329,17 @@ function getWindowSize(){
   var window_width = 0;
   var window_height = 0;
   
-  /*if(isMobile){
-    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  } else {*/  
+  if(isMobile){
+    /*window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);*/
+
+    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) - 20;
+    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 20;
+  
+  } else { 
     window_width = 800;
     window_height = 600;
-  /*}*/
+  }
 
   if(window_width > rendererWidth)
     window_width = rendererWidth;
