@@ -325,6 +325,27 @@ var TILE_SIZE_H = 60 * spriteScale;
 var TILE_SIZE_V = 45 * spriteScale;
 var power = 100;
 
+function getWindowSize(){
+  var window_width = 0;
+  var window_height = 0;
+  
+  if(isMobile){
+    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  } else {  
+    window_width = 800;
+    window_height = 600;
+  }
+
+  if(window_width > rendererWidth)
+    window_width = rendererWidth;
+
+  return {
+    width : window_width,
+    height : window_height
+  };
+}
+
 
 ///Aliases
 var Container = PIXI.Container,
@@ -337,8 +358,10 @@ var Container = PIXI.Container,
 var rendererWidth = levels[currLevel].container.width*TILE_SIZE_H;
 var rendererHeight = levels[currLevel].container.height*TILE_SIZE_V;
 
+var windowSize = getWindowSize();
+
 //Create the renderer
-var renderer = autoDetectRenderer(rendererWidth, rendererHeight, 
+var renderer = autoDetectRenderer(windowSize.width, windowSize.height, 
                                   {antialias: false, transparent: false, resolution: 1});
 renderer.backgroundColor = 0x09a6df;
 
@@ -691,26 +714,7 @@ function onSetupImages() {
   sounds.whenLoaded = onSetupSounds;
 }
 
-function getWindowSize(){
-  var window_width = 0;
-  var window_height = 0;
-  
-  if(isMobile){
-    window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-  } else {  
-    window_width = 800;
-    window_height = 600;
-  }
 
-  if(window_width > rendererWidth)
-    window_width = rendererWidth;
-
-  return {
-    width : window_width,
-    height : window_height
-  };
-}
 
 var msgAnimation = null;
 
@@ -796,6 +800,9 @@ function setupLevel(level){
 
   var scene = new Container();
 
+  var background = new Container();
+  scene.addChild(background);
+
   var platforms = levels[level].platforms;
   var clouds = levels[level].clouds;
   var signs = levels[level].signs;
@@ -803,19 +810,19 @@ function setupLevel(level){
 
   for(var i = 0; i < clouds.length; i++){
     clouds[i].sprite = createCloud(clouds[i].row, clouds[i].col);
-    scene.addChild(clouds[i].sprite);
+    background.addChild(clouds[i].sprite);
   }
 
  for(var i = 0; i < signs.length; i++){
     signs[i].sprite = createSign(signs[i].row, signs[i].col,signs[i].direction);
-    scene.addChild(signs[i].sprite);
+    background.addChild(signs[i].sprite);
   }
 
 
 
   for(var i = 0; i < platforms.length; i++){
     platforms[i].sprite = createPlatformSprite(platforms[i].row, platforms[i].col, platforms[i].width, platforms[i].height,null);
-    scene.addChild(platforms[i].sprite);
+    background.addChild(platforms[i].sprite);
 
     if(platforms[i].enemies != null){
       var enemies = platforms[i].enemies;
@@ -833,7 +840,7 @@ function setupLevel(level){
        cinghialeSprite.vx = 1;
        cinghialeSprite.vy = 0;
 
-       scene.addChild(cinghialeSprite);
+       background.addChild(cinghialeSprite);
 
        enemies[j].sprite = cinghialeSprite;
       }
@@ -852,7 +859,7 @@ function setupLevel(level){
   doorSprite.x = levels[level].win.col * TILE_SIZE_H;
   doorSprite.y = levels[level].win.row * TILE_SIZE_V - doorSprite.height;
 
-  scene.addChild(doorSprite);
+  background.addChild(doorSprite);
   levels[level].win.sprite = doorSprite;
   
   var mainSprite = new Sprite(
@@ -864,8 +871,9 @@ function setupLevel(level){
   mainSprite.texture = idleCostume;
 
   levels[level].mainCharacter.sprite = mainSprite;
+  levels[level].backgroundSprite = background;
 
-  scene.addChild(mainSprite);
+  background.addChild(mainSprite);
 
   mainSprite.vx = 0;
   mainSprite.vy = 0;
@@ -969,6 +977,7 @@ function play() {
 
   var platforms = levels[currLevel].platforms;
   var mainSprite = levels[currLevel].mainCharacter.sprite;
+  var background = levels[currLevel].backgroundSprite;
 
   var main_width = main.width(); 
   var main_height = main.height(); 
@@ -1262,38 +1271,43 @@ function play() {
   var hBorder = 200;
   var vBorder = 200;
 
-  var scrollTop = main.scrollTop();
+  var scrollTop = -background.y; //main.scrollTop();
+
   if(mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder > scrollTop + main_height){
        var scrollTo = mainSprite.y + MAIN_SPRITE_HEIGTH + vBorder - main_height;
     if(scrollTo > rendererHeight - main_height)
         scrollTo = rendererHeight - main_height;
 
-    main.scrollTop(scrollTo);
+    //main.scrollTop(scrollTo);
+    background.y = -scrollTo;
   } else {
     if(mainSprite.y - hBorder < scrollTop ){
       //console.log("out of screen top");
       var scrollTo  = mainSprite.y - vBorder;
       if(scrollTo < 0)
         scrollTo = 0;
-      main.scrollTop(scrollTo);
+      //main.scrollTop(scrollTo);
+      background.y = -scrollTo;
     }
   }
 
   
-  var scrollLeft = main.scrollLeft();
+  var scrollLeft = -background.x;//main.scrollLeft();
   if(mainSprite.x + MAIN_SPRITE_WIDTH + hBorder > scrollLeft + main_width){
     //console.log("out of screen - right");
     var scrollTo = mainSprite.x + MAIN_SPRITE_WIDTH + hBorder - main_width;
     if(scrollTo > rendererWidth - main_width)
         scrollTo = rendererWidth - main_width;
-    main.scrollLeft(scrollTo);
+    //main.scrollLeft(scrollTo);
+    background.x = -scrollTo;
   } else {
     if(mainSprite.x - hBorder < scrollLeft ){
       //console.log("out of screen left");
       var scrollTo  = mainSprite.x - hBorder;
       if(scrollTo < 0)
         scrollTo = 0;
-     main.scrollLeft(scrollTo);
+     //main.scrollLeft(scrollTo);
+     background.x = -scrollTo;
     }
   }
 
