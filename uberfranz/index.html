@@ -503,9 +503,8 @@ function createPlatformSprite(row,col,width,height,tileTexture){
     }
   }*/
 
-  var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture, TILE_SIZE_H * width, TILE_SIZE_V * height);
-  
 
+  var platform0 = new PIXI.extras.TilingSprite(resources.tile.texture, TILE_SIZE_H * width, TILE_SIZE_V * height);
   platform.addChild(platform0);
 
   //if(!isMobile){
@@ -518,6 +517,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   border1.y = 0;
   platform.addChild(border1);
 
+
   var border2 = new PIXI.Graphics();
   border2.lineStyle(1, 0x181512, 1);
   border2.beginFill(0x181512);
@@ -526,6 +526,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
   border2.x = 0;
   border2.y = 5;
   platform.addChild(border2);
+
 
 
   var borderLeft = new PIXI.Graphics();
@@ -550,6 +551,7 @@ function createPlatformSprite(row,col,width,height,tileTexture){
 
   platform.x = col * TILE_SIZE_H;
   platform.y = row * TILE_SIZE_V;
+  platform.cacheAsBitmap = true;
 
   return platform;
 }
@@ -807,7 +809,7 @@ function setupLevel(level){
 
   var scene = new Container();
 
-  var background = new Container();
+  var background = new PIXI.DisplayObjectContainer(); ///* new PIXI.ParticleContainer(100,{rotation:false,alpha:false,scale:false,uvs:false}); */new Container();
   scene.addChild(background);
 
   var platforms = levels[level].platforms;
