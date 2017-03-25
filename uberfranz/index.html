@@ -335,8 +335,8 @@ function getWindowSize(){
     window_height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);*/
 
     if(window.matchMedia("(orientation: portrait)").matches){
-      window_width = Math.max(document.documentElement.clientHeight, window.innerWidth || 0) - 20;
-      window_height = Math.max(document.documentElement.clientWidth, window.innerHeight || 0) - 20;
+      window_width = Math.max(document.documentElement.clientHeight, window.innerHeight || 0) - 20;
+      window_height = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) - 20;
     }
     else {
       window_width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) - 20;
